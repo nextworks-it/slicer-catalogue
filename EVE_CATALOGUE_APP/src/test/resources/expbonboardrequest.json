@@ -1,0 +1,64 @@
+{
+  "expBlueprint": {
+    "expBlueprintId": "vCDNStressTest_1",
+    "version": "0.1",
+    "name": "vCDNStressTest",
+    "description": "Experiment to test a vCDN under heavy traffic",
+    "vsBlueprintId": "1",
+    "ctxBlueprintIds": [
+
+    ],
+    "sites": [
+      "test_site_1",
+      "test_site_2"
+
+    ],
+    "kpis": [
+      {
+        "kpiId": "test_kpi",
+        "name": "test_kpi",
+        "formula": "param1*param2",
+        "unit": "%"
+
+      }
+
+    ],
+    "metrics": [{
+        "name":"test_metric",
+        "metricId":"test_metric",
+        "metricType": "LOST_PKT",
+        "metricCollectionType": "DELTA",
+        "unit": "packets",
+        "interval": "60s"
+      }
+
+    ]
+
+
+  },
+
+      "nsds": [
+
+      ],
+
+  "expTranslationRules": [
+    {
+      "input": [
+        {
+          "parameterId": "test_parameter",
+          "minValue": "0",
+          "maxValue": "10"
+        }
+      ],
+      "nsdId": "test_nsd",
+      "nsdVersion": "1.0",
+      "nsFlavourId": "test_ns_flavour",
+      "nsInstantiationLevelId": "test_il"
+
+
+    }
+  ]
+
+
+}
+
