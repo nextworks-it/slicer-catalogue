@@ -1,6 +1,6 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;

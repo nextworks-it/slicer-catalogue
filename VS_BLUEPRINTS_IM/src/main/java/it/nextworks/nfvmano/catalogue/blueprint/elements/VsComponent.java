@@ -47,7 +47,8 @@ public class VsComponent implements DescriptorInformationElement {
 	
 	@JsonIgnore
 	@ManyToOne
-	private VsBlueprint vsb;
+	private Blueprint vsb;
+	//private VsBlueprint vsb;
 	
 	private String componentId;
 	
@@ -80,14 +81,14 @@ public class VsComponent implements DescriptorInformationElement {
 	/**
 	 * Constructor
 	 * 
-	 * @param vsb blueprint this component belongs to
+	 * @param blueprint this component belongs to
 	 * @param componentId ID of the atomic component
 	 * @param serversNumber number of application servers
 	 * @param imagesUrls URLs of the images of the application
 	 * @param endPointsIds IDs of the connection end points of the applications 
 	 * @param lifecycleOperations map with LCM operation as key and script to be executed as value 
 	 */
-	public VsComponent(VsBlueprint vsb,
+	public VsComponent(Blueprint vsb,
 			String componentId,
 			int serversNumber,
 			List<String> imagesUrls,
@@ -106,7 +107,7 @@ public class VsComponent implements DescriptorInformationElement {
 	/**
 	 * @return the vsb
 	 */
-	public VsBlueprint getVsb() {
+	public Blueprint getVsb() {
 		return vsb;
 	}
 

@@ -55,7 +55,7 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 	@Autowired
 	private VsBlueprintCatalogueService vsBlueprintCatalogueService;
 	
-	@Value("${sebastian.admin}")
+	@Value("${catalogue.admin}")
 	private String adminTenant;
 	
 	public VsDescriptorCatalogueService() { }

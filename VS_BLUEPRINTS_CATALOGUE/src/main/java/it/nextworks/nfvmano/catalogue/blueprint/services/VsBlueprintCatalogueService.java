@@ -29,14 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.nextworks.nfvmano.libs.catalogues.interfaces.elements.AppPackageInfo;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnBoardVnfPackageResponse;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageRequest;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageResponse;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardNsdRequest;
 import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.QueryNsdResponse;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.QueryOnBoardedVnfPkgInfoResponse;
 import it.nextworks.nfvmano.libs.common.elements.Filter;
 import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
@@ -49,13 +43,16 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsComponent;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbLink;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbForwardingPathHop;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbForwardingPathHopRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbLinkRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
+
 
 @Service
 public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterface {
@@ -67,6 +64,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	
 	@Autowired
 	private VsBlueprintInfoRepository vsBlueprintInfoRepository;
+	
+	@Autowired
+	private VsbForwardingPathHopRepository vsbForwardingPathHopRepository;
 	
 	@Autowired
 	private VsbLinkRepository vsbLinkRepository;
@@ -101,44 +101,6 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		log.debug("Processing SO descriptors");
 		try {
-			log.debug("Storing VNF packages");
-			List<OnBoardVnfPackageRequest> vnfPackages = request.getVnfPackages();
-			for (OnBoardVnfPackageRequest vnfR : vnfPackages) {
-				try {
-					OnBoardVnfPackageResponse vnfReply = nfvoCatalogueService.onBoardVnfPackage(vnfR);
-					String vnfPackageId = vnfReply.getOnboardedVnfPkgInfoId();
-					log.debug("Added VNF package for VNF " + vnfR.getName() + 
-							", version " + vnfR.getVersion() + ", provider " + vnfR.getProvider() + " in NFVO catalogue. VNF package ID: " + vnfPackageId);
-					vsBlueprintInfo.addVnfPackageInfoId(vnfPackageId);
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The VNF package is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryOnBoardedVnfPkgInfoResponse r = 
-							nfvoCatalogueService.queryVnfPackageInfo(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVnfPackageInfoFilter(vnfR.getName(), vnfR.getVersion(), vnfR.getProvider()), null));
-					String oldVnfPackageId = r.getQueryResult().get(0).getOnboardedVnfPkgInfoId();
-					log.debug("Retrieved VNF package ID: " + oldVnfPackageId);
-					vsBlueprintInfo.addVnfPackageInfoId(oldVnfPackageId);
-				}
-			}
-
-			log.debug("Storing MEC app packages");
-			List<OnboardAppPackageRequest> appPackages = request.getMecAppPackages();
-			for (OnboardAppPackageRequest appR : appPackages) {
-				try {
-					OnboardAppPackageResponse appReply = nfvoCatalogueService.onboardAppPackage(appR);
-					String appPackageId = appReply.getOnboardedAppPkgId();
-					log.debug("Added MEC app package for app " + appR.getName() + 
-							", version " + appR.getVersion() + " in NFVO catalogue. MEC app package ID: " + appPackageId);
-					vsBlueprintInfo.addMecAppInfoId(appPackageId);
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The MEC app package is already present in the NFVO catalogue. Retrieving its ID.");
-					List<AppPackageInfo> apps = 
-							nfvoCatalogueService.queryApplicationPackage(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildMecAppPackageInfoFilter(appR.getName(), appR.getVersion()), null)).getQueryResult();
-					String oldAppPackageId = apps.get(0).getAppPackageInfoId();
-					log.debug("Retrieved MEC app package ID: " + oldAppPackageId);
-					vsBlueprintInfo.addMecAppInfoId(oldAppPackageId);
-				}
-			}
-
 			log.debug("Storing NSDs");
 			List<Nsd> nsds = request.getNsds();
 			for (Nsd nsd : nsds) {
@@ -262,13 +224,13 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throw new AlreadyExistingEntityException("VS Blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion() + " already present in DB.");
 		}
 		
-		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getImgUrl(), vsBlueprint.getParameters(),
-				vsBlueprint.getServiceSequence(), vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters());
+		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
+				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint());
 		vsBlueprintRepository.saveAndFlush(target);
 		
 		Long vsbId = target.getId();
 		String vsbIdString = String.valueOf(vsbId);
-		target.setVsBlueprintId(vsbIdString);
+		target.setBlueprintId(vsbIdString);
 		vsBlueprintRepository.saveAndFlush(target);
 		log.debug("Added VS Blueprint with ID " + vsbIdString);
 		
@@ -279,6 +241,15 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);
+		}
+		
+		List<VsbForwardingPathHop> hops = vsBlueprint.getServiceSequence();
+		if (hops != null) {
+			for (VsbForwardingPathHop hop : hops) {
+				VsbForwardingPathHop targetHop = new VsbForwardingPathHop(target, hop.getHopEndPoints());
+				vsbForwardingPathHopRepository.saveAndFlush(targetHop);
+			}
+			log.debug("Added VSB FP hop in VS blueprint " + vsbIdString);
 		}
 		
 		List<VsbLink> connectivityServices = vsBlueprint.getConnectivityServices();

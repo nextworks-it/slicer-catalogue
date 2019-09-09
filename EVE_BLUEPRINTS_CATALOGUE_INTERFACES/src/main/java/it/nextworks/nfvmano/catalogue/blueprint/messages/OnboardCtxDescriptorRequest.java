@@ -16,12 +16,9 @@
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.libs.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 
-import java.util.List;
 
 public class OnboardCtxDescriptorRequest implements InterfaceMessage {
 

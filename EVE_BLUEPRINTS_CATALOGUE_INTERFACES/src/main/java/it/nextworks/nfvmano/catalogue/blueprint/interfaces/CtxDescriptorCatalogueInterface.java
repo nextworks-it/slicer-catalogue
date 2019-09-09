@@ -16,7 +16,6 @@
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.*;

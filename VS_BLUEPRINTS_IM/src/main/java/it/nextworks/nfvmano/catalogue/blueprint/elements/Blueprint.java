@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /*
  * Copyright 2018 Nextworks s.r.l.
  *
@@ -16,7 +18,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
  * limitations under the License.
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
@@ -25,10 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.validation.Valid;
 
@@ -39,21 +45,21 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
-public abstract class Blueprint implements DescriptorInformationElement {
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@DiscriminatorColumn(name="BLUEPRINT_TYPE")
+public class Blueprint implements DescriptorInformationElement {
 
+	@Id
+	@GeneratedValue
+	@JsonIgnore
+	public Long id;
 
-
-    @NotBlank
+	protected String blueprintId;
     protected String version;
-    @NotBlank
     protected String name;
     protected String description;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    protected String imgUrl;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch = FetchType.EAGER)
@@ -65,106 +71,148 @@ public abstract class Blueprint implements DescriptorInformationElement {
     @OneToMany(mappedBy = "vsb", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @NotEmpty
     protected List<@Valid VsComponent> atomicComponents = new ArrayList<>();
+    
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	protected List<VsbForwardingPathHop> serviceSequence = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @NotEmpty
     protected List<@Valid VsbEndpoint> endPoints = new ArrayList<>();
+    
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@LazyCollection(LazyCollectionOption.FALSE)
+    protected List<VsbLink> connectivityServices = new ArrayList<>();
 
-    public Blueprint() {
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	protected List<String> configurableParameters = new ArrayList<>();
+
+    public Blueprint() { }
+
+    public Blueprint(String blueprintId,
+			String version,
+			String name,
+			String description,
+			List<VsBlueprintParameter> parameters,
+			List<VsbEndpoint> endPoints,
+			List<String> configurableParameters) {
+    	this.blueprintId = blueprintId;
+		this.version = version;
+		this.name = name;
+		this.description = description;
+		if (parameters != null) this.parameters = parameters;
+		if (endPoints != null) this.endPoints = endPoints;
+		if (configurableParameters != null) this.configurableParameters = configurableParameters;
     }
+    
+    
 
-    public Blueprint(String version, String name, String description, String imgUrl,
-                     List<VsBlueprintParameter> parameters,
-                     List<VsComponent> atomicComponents,
-                     List<VsbEndpoint> endPoints) {
-        this.version = version;
-        this.name = name;
-        this.description = description;
-        this.imgUrl = imgUrl;
-        if (parameters != null) {
-            this.parameters = parameters;
-        }
-        if (atomicComponents != null) {
-            this.atomicComponents = atomicComponents;
-        }
-        if (endPoints != null) {
-            this.endPoints = endPoints;
-        }
-    }
+    /**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	/**
+	 * @return the blueprintId
+	 */
+	public String getBlueprintId() {
+		return blueprintId;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	/**
+	 * @param blueprintId the blueprintId to set
+	 */
+	public void setBlueprintId(String blueprintId) {
+		this.blueprintId = blueprintId;
+	}
 
+	/**
+	 * @return the serviceSequence
+	 */
+	public List<VsbForwardingPathHop> getServiceSequence() {
+		return serviceSequence;
+	}
 
+	/**
+	 * @return the connectivityServices
+	 */
+	public List<VsbLink> getConnectivityServices() {
+		return connectivityServices;
+	}
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return the configurableParameters
+	 */
+	public List<String> getConfigurableParameters() {
+		return configurableParameters;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	
 
-    public String getDescription() {
-        return description;
-    }
+    /**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    public List<VsBlueprintParameter> getParameters() {
-        return parameters;
-    }
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    public void setParameters(List<VsBlueprintParameter> parameters) {
-        this.parameters = parameters;
-    }
+	/**
+	 * @return the parameters
+	 */
+	public List<VsBlueprintParameter> getParameters() {
+		return parameters;
+	}
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
+	/**
+	 * @return the atomicComponents
+	 */
+	public List<VsComponent> getAtomicComponents() {
+		return atomicComponents;
+	}
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
+	/**
+	 * @return the endPoints
+	 */
+	public List<VsbEndpoint> getEndPoints() {
+		return endPoints;
+	}
 
-    public List<VsComponent> getAtomicComponents() {
-        return atomicComponents;
-    }
-
-    public void setAtomicComponents(List<VsComponent> atomicComponents) {
-        this.atomicComponents = atomicComponents;
-    }
-
-    public List<VsbEndpoint> getEndPoints() {
-        return endPoints;
-    }
-
-    public void setEndPoints(List<VsbEndpoint> endPoints) {
-        this.endPoints = endPoints;
-    }
-
-    @Override
+	@Override
     public void isValid() throws MalformattedElementException {
         for (VsBlueprintParameter p : parameters) {
             p.isValid();
         }
         if (version == null) {
-            throw new MalformattedElementException("VS blueprint without version");
+            throw new MalformattedElementException("Blueprint without version");
         }
         if (name == null) {
-            throw new MalformattedElementException("VS blueprint without name");
+            throw new MalformattedElementException("Blueprint without name");
         }
         if (atomicComponents != null) {
             for (VsComponent c : atomicComponents) {
@@ -176,5 +224,11 @@ public abstract class Blueprint implements DescriptorInformationElement {
                 e.isValid();
             }
         }
+        if (serviceSequence != null) {
+			for (VsbForwardingPathHop e : serviceSequence) e.isValid();
+		}
+        if (connectivityServices != null) {
+			for (VsbLink l : connectivityServices) l.isValid();
+		}
     }
 }

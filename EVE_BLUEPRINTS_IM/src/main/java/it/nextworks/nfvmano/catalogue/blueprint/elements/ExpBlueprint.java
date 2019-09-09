@@ -21,13 +21,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import org.hibernate.annotations.*;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,15 +70,7 @@ public class ExpBlueprint  implements DescriptorInformationElement {
 
     private String vsBlueprintId;
 
-    @OneToMany
-    @JsonIgnore
-    @ElementCollection(fetch = FetchType.EAGER)
-    @JoinTable(
-            name="ExpBlueprintTranslationRules",
-            joinColumns = @JoinColumn( name="expblueprint_id"),
-            inverseJoinColumns = @JoinColumn( name="translationrule_id")
-    )
-    protected List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
+    
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
@@ -93,7 +82,7 @@ public class ExpBlueprint  implements DescriptorInformationElement {
     }
 
     public ExpBlueprint(String version, String name, String description, String imgUrl, List<String> sites,
-                                            String expBlueprintId, List<Metric> metrics, List<KeyPerformanceIndicator> kpis, List<VsdNsdTranslationRule> translationRules) {
+                                            String expBlueprintId, List<Metric> metrics, List<KeyPerformanceIndicator> kpis) {
         this.version = version;
         this.name = name;
         this.description = description;
@@ -104,8 +93,6 @@ public class ExpBlueprint  implements DescriptorInformationElement {
             this.metrics=metrics;
         if(kpis!=null)
             this.kpis=kpis;
-        if(translationRules!=null)
-            this.translationRules= translationRules;
     }
 
     public String getVersion() {
@@ -189,11 +176,4 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         return metrics;
     }
 
-    public List<VsdNsdTranslationRule> getTranslationRules() {
-        return translationRules;
-    }
-
-    public void setTranslationRules(List<VsdNsdTranslationRule> translationRules) {
-        this.translationRules = translationRules;
-    }
 }

@@ -36,7 +36,7 @@ import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 
 @Entity
-public class VsbLink implements DescriptorInformationElement {
+public class VsbForwardingPathHop implements DescriptorInformationElement {
 
 	@Id
     @GeneratedValue
@@ -45,76 +45,42 @@ public class VsbLink implements DescriptorInformationElement {
 	
 	@JsonIgnore
 	@ManyToOne
-	//private it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint vsb;
+	//private VsBlueprint vsb;
 	private Blueprint vsb;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<String> endPointIds = new ArrayList<>();
+	private List<VsbForwardingPathEndPoint> hopEndPoints = new ArrayList<>();
 	
-	private boolean external;
-	
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	@ElementCollection(fetch=FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<String> connectivityProperties = new ArrayList<>();
-	
-	public VsbLink() {
+	public VsbForwardingPathHop() {
 		// JPA only
 	}
 	
 	/**
 	 * Constructor
 	 * 
-	 * @param vsb Blueprint this link belongs to
-	 * @param endPointIds list of end points attached to the link
-	 * @param external if the link is used to interconnect to an external network
-	 * @param connectivityProperties e.g. QoS, protection, restoration
+	 * @param vsb Blueprint owing the forwarding path this hop belongs to
+	 * @param hopEndPoints list of FP end points that constitute the leaves of the given FP hop 
 	 */
-	public VsbLink(Blueprint vsb,
-                   List<String> endPointIds,
-                   boolean external,
-                   List<String> connectivityProperties) {
+	public VsbForwardingPathHop(Blueprint vsb,
+			List<VsbForwardingPathEndPoint> hopEndPoints) {
 		this.vsb = vsb;
-		if (endPointIds != null) this.endPointIds = endPointIds;
-		this.external = external;
-		if (connectivityProperties != null) this.connectivityProperties = connectivityProperties;
+		if (hopEndPoints != null) this.hopEndPoints = hopEndPoints;
+	}
+
+	/**
+	 * @return the hopEndPoints
+	 */
+	public List<VsbForwardingPathEndPoint> getHopEndPoints() {
+		return hopEndPoints;
 	}
 	
-	
-
-	/**
-	 * @return the vsb
-	 */
-	public Blueprint getVsb() {
-		return vsb;
-	}
-
-	/**
-	 * @return the endPointIds
-	 */
-	public List<String> getEndPointIds() {
-		return endPointIds;
-	}
-
-	/**
-	 * @return the external
-	 */
-	public boolean isExternal() {
-		return external;
-	}
-
-	/**
-	 * @return the connectivityProperties
-	 */
-	public List<String> getConnectivityProperties() {
-		return connectivityProperties;
-	}
-
 	@Override
-	public void isValid() throws MalformattedElementException {	}
+	public void isValid() throws MalformattedElementException {
+		if ((hopEndPoints == null) || (hopEndPoints.isEmpty())) throw new MalformattedElementException("VSB Forwarding Path hop without any end point");
+		for (VsbForwardingPathEndPoint ep : hopEndPoints) ep.isValid();
+	}
 
 }

@@ -47,10 +47,10 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> input = new ArrayList<>();
+	private List<VsdParameterValueRange> input = new ArrayList<>();
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	private String vsbId;
+	private String blueprintId;
 	
 	private String nsdId; 
 	private String nsdVersion;
@@ -71,7 +71,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	 * @param nsFlavourId
 	 * @param nsInstantiationLevelId
 	 */
-	public VsdNsdTranslationRule(List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> input, String nsdId, String nsdVersion,
+	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nsdId, String nsdVersion,
                                  String nsFlavourId, String nsInstantiationLevelId) {
 		if (input!= null) this.input = input;
 		this.nsdId = nsdId;
@@ -99,7 +99,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	/**
 	 * @return the input
 	 */
-	public List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> getInput() {
+	public List<VsdParameterValueRange> getInput() {
 		return input;
 	}
 
@@ -133,20 +133,24 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	
 	
+
+
+
+
 	/**
-	 * @return the vsbId
+	 * @return the blueprintId
 	 */
-	public String getVsbId() {
-		return vsbId;
+	public String getBlueprintId() {
+		return blueprintId;
 	}
 
 
 
 	/**
-	 * @param vsbId the vsbId to set
+	 * @param blueprintId the blueprintId to set
 	 */
-	public void setVsbId(String vsbId) {
-		this.vsbId = vsbId;
+	public void setBlueprintId(String blueprintId) {
+		this.blueprintId = blueprintId;
 	}
 
 
@@ -169,7 +173,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		for (Map.Entry<String, String> entry : vsdParameters.entrySet()) {
 			String parameterId = entry.getKey();
 			try {
-				it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange vr = getVsdParameterValueRange(parameterId);
+				VsdParameterValueRange vr = getVsdParameterValueRange(parameterId);
 				String parameterValue = entry.getValue();
 				if (!(vr.matchesVsdParameter(parameterValue))) return false;
 			} catch (NotExistingEntityException e) {
@@ -180,8 +184,8 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	}
 	
 	@JsonIgnore
-	private it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange getVsdParameterValueRange (String parameterId) throws NotExistingEntityException {
-		for (it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange p : input) {
+	private VsdParameterValueRange getVsdParameterValueRange (String parameterId) throws NotExistingEntityException {
+		for (VsdParameterValueRange p : input) {
 			if (p.getParameterId().equals(parameterId)) return p;
 		}
 		throw new NotExistingEntityException("VSD parameter not found in the rule");

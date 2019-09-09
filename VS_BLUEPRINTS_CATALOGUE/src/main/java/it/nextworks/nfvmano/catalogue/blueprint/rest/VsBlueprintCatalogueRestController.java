@@ -17,6 +17,11 @@ package it.nextworks.nfvmano.catalogue.blueprint.rest;
 
 import java.util.List;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsBlueprintCatalogueService;
 import org.slf4j.Logger;
@@ -34,6 +39,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.nextworks.nfvmano.libs.common.elements.Filter;
@@ -45,6 +51,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
 
+@Api(tags = "Vertical Service Blueprint Catalogue API")
 @RestController
 @CrossOrigin
 @RequestMapping("/vs/catalogue")
@@ -68,6 +75,15 @@ public class VsBlueprintCatalogueRestController {
 
 	public VsBlueprintCatalogueRestController() { }
 	
+	@ApiOperation(value = "Onboard a new Vertical Service Blueprint, including the associated Network Service Descriptors and translation rules.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "The ID of the created Vertical Service Blueprint.", response = String.class),
+			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
+			//@ApiResponse(code = 409, message = "There is a conflict with the request", response = ResponseEntity.class),
+			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+
+	})
+	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsBlueprint(@RequestBody OnBoardVsBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a VS blueprint.");
@@ -91,6 +107,13 @@ public class VsBlueprintCatalogueRestController {
 		}
 	}
 	
+	@ApiOperation(value = "Get ALL the Vertical Service Blueprints")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "List of all the Vertical Service Blueprints of the user", response = VsBlueprintInfo.class, responseContainer = "Set"),
+			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
+			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
+			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+	})
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsBlueprints() {
 		log.debug("Received request to retrieve all the VS blueprints.");
@@ -109,6 +132,14 @@ public class VsBlueprintCatalogueRestController {
 		}
 	}
 	
+	@ApiOperation(value = "Get a Vertical Service Blueprint with a given ID")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Vertical Service Blueprint with the given ID", response = VsBlueprintInfo.class),
+			//@ApiResponse(code = 400, message = "The supplied element contains elements impossible to process", response = ResponseEntity.class),
+			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
+			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+
+	})
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsBlueprint(@PathVariable String vsbId) {
 		log.debug("Received request to retrieve VS blueprint with ID " + vsbId);
@@ -127,6 +158,13 @@ public class VsBlueprintCatalogueRestController {
 		}
 	}
 	
+	@ApiOperation(value = "Delete a Vertical Service Blueprint with a given ID")
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
+			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
+			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
+			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+	})
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to delete VS blueprint with ID " + vsbId);
@@ -137,7 +175,7 @@ public class VsBlueprintCatalogueRestController {
 		}
 		try {
 			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId); 
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -21,12 +21,12 @@ import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 
 @Embeddable
-public class VsbForwardingGraphEntry implements DescriptorInformationElement {
+public class VsbForwardingPathEndPoint implements DescriptorInformationElement {
 
 	private String vsComponentId;
 	private String endPointId;
 	
-	public VsbForwardingGraphEntry() {
+	public VsbForwardingPathEndPoint() {
 		// JPA only
 	}
 	
@@ -36,7 +36,7 @@ public class VsbForwardingGraphEntry implements DescriptorInformationElement {
 	 * @param vsComponentId ID of the VS atomic component
 	 * @param endPointId ID of the end point within the atomic component
 	 */
-	public VsbForwardingGraphEntry(String vsComponentId, String endPointId) {
+	public VsbForwardingPathEndPoint(String vsComponentId, String endPointId) {
 		this.vsComponentId = vsComponentId;
 		this.endPointId = endPointId;
 	}

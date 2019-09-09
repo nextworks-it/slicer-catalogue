@@ -3,7 +3,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.List;
+
 
 @Entity
 public class Site {

@@ -15,23 +15,17 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
-import it.nextworks.nfvmano.libs.catalogues.interfaces.messages.OnboardAppPackageRequest;
-import it.nextworks.nfvmano.libs.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
-public class OnboardCtxBlueprintRequest implements InterfaceMessage {
+public class OnboardCtxBlueprintRequest extends OnBoardBlueprintRequest {
 
 	private CtxBlueprint ctxBlueprint;
-	private List<Nsd> nsds = new ArrayList<>();
-	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
 	
 	public OnboardCtxBlueprintRequest() { }
 	
@@ -43,9 +37,8 @@ public class OnboardCtxBlueprintRequest implements InterfaceMessage {
 	public OnboardCtxBlueprintRequest(CtxBlueprint ctxBlueprint,
 									  List<Nsd> nsds,
 									  List<VsdNsdTranslationRule> translationRules) {
+		super(nsds, translationRules);
 		this.ctxBlueprint = ctxBlueprint;
-		if (nsds != null) this.nsds = nsds;
-		if (translationRules != null) this.translationRules = translationRules;
 	}
 
 	/**
@@ -55,42 +48,11 @@ public class OnboardCtxBlueprintRequest implements InterfaceMessage {
 		return ctxBlueprint;
 	}
 
-	/**
-	 * @return the nsds
-	 */
-	public List<Nsd> getNsds() {
-		return nsds;
-	}
-
-
-	/**
-	 * @return the translationRules
-	 */
-	public List<VsdNsdTranslationRule> getTranslationRules() {
-		return translationRules;
-	}
-	
-	@JsonIgnore
-	public void setBlueprintIdInTranslationRules(String vsbId) {
-		for (VsdNsdTranslationRule tr : translationRules) 
-			tr.setVsbId(vsbId);
-	}
-	
-	@JsonIgnore
-	public void setNsdInfoIdInTranslationRules(String nsdInfoId, String nsdId, String nsdVersion) {
-		for (VsdNsdTranslationRule tr : translationRules) {
-			if (tr.matchesNsdIdAndNsdVersion(nsdId, nsdVersion)) tr.setNsdInfoId(nsdInfoId);
-		}
-	}
-
 	@Override
 	public void isValid() throws MalformattedElementException {
+		super.isValid();
 		if (ctxBlueprint == null) throw new MalformattedElementException("Onboard CTX blueprint request without CTX blueprint");
 		else ctxBlueprint.isValid();
-
-		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard CTX blueprint request without translation rules");
-		for (Nsd nsd : nsds) nsd.isValid();
-		for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
 	}
 
 }
