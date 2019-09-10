@@ -283,7 +283,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	}
 	
 	private VsBlueprint getVsBlueprint(String vsbId) throws NotExistingEntityException {
-		if (vsBlueprintRepository.findByVsBlueprintId(vsbId).isPresent()) return vsBlueprintRepository.findByVsBlueprintId(vsbId).get();
+		if (vsBlueprintRepository.findByBlueprintId(vsbId).isPresent()) return vsBlueprintRepository.findByBlueprintId(vsbId).get();
 		else throw new NotExistingEntityException("VS Blueprint with ID " + vsbId + " not found in DB.");
 	}
 	
@@ -308,7 +308,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	}
 
 	public Optional<VsBlueprint> findByVsBlueprintId(String id){
-		return vsBlueprintRepository.findByVsBlueprintId(id);
+		return vsBlueprintRepository.findByBlueprintId(id);
 	}
 
 

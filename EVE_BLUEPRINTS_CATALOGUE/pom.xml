@@ -50,10 +50,11 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
 			<artifactId>VsBlueprintsCatalogue</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.2-EVE-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -61,6 +62,7 @@
 			<artifactId>EveBlueprintsIM</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
@@ -78,12 +80,24 @@
 			<artifactId>EveBlueprintsCatalogueInterfaces</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>VsBlueprintsCatalogueInterfaces</artifactId>
+			<version>0.0.2-EVE-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>VsBlueprintsIM</artifactId>
+			<version>0.0.2-EVE-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
 			<artifactId>SebastianMgmtCatalogue</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>

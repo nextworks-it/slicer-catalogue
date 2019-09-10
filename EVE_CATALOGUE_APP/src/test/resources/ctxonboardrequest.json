@@ -41,13 +41,15 @@
 
     ],
     "serviceSequence": [
-      {
+      { "hopEndPoints" : [{
         "vsComponentId": "traffic_source",
         "endPointId":  "traffic_source_ext"
+        }]
       },
-      {
+      { "hopEndPoints" : [{
         "vsComponentId": "traffic_sink",
         "endPointId":  "traffic_sink_ext"
+        }]
       }
 
     ],

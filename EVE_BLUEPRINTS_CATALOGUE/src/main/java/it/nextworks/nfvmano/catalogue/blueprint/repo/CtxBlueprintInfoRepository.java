@@ -22,7 +22,7 @@ import java.util.Optional;
 
 public interface CtxBlueprintInfoRepository extends JpaRepository<CtxBlueprintInfo, Long> {
 
-	Optional<CtxBlueprintInfo> findByCtxBlueprintId(String id);
+	Optional<CtxBlueprintInfo> findByCtxBlueprintId(String ctxBlueprintId);
 	Optional<CtxBlueprintInfo> findByNameAndCtxBlueprintVersion(String name, String version);
 	
 }

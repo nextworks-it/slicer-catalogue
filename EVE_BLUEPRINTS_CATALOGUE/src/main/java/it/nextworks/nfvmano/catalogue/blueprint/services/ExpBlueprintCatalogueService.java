@@ -21,6 +21,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.interfaces.ExpBlueprintCatalogue
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.KeyPerformanceIndicatorRepository;
@@ -45,11 +46,13 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	private static final Logger log = LoggerFactory.getLogger(ExpBlueprintCatalogueService.class);
 
 
-	@Autowired
-    private CtxBlueprintCatalogueService ctxBlueprintCatalogueService;
+	
 
 	@Autowired
     private VsBlueprintCatalogueService vsBlueprintCatalogueService;
+	
+	@Autowired
+	private CtxBlueprintRepository ctxBlueprintRepository;
 
 	@Autowired
 	private ExpBlueprintRepository expBlueprintRepository;
@@ -90,7 +93,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
         if(!vsBlueprint.isPresent())
             throw new FailedOperationException("VsBlueprint with ID:"+vsBlueprintId+" NOT FOUND");
         for(String ctxBlueprintId : request.getExpBlueprint().getCtxBlueprintIds()){
-            Optional<CtxBlueprint> ctxBlueprint= ctxBlueprintCatalogueService.findByCtxBlueprintId(ctxBlueprintId);
+            Optional<CtxBlueprint> ctxBlueprint= ctxBlueprintRepository.findByBlueprintId(ctxBlueprintId);
             if(!ctxBlueprint.isPresent())
                 throw new FailedOperationException("CtxBlueprint with ID:"+ctxBlueprintId+" NOT FOUND");
 
@@ -124,8 +127,9 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
             translationRuleRepository.saveAndFlush(tr);
         }
         log.debug("Translation rules saved in internal DB.");
-        expBlueprint.setTranslationRules(request.getExpTranslationRules());
-        expBlueprintRepository.saveAndFlush(expBlueprint);
+        //TODO: save translation rule in repo
+        //expBlueprint.setTranslationRules(request.getExpTranslationRules());
+        //expBlueprintRepository.saveAndFlush(expBlueprint);
         return expBinfoId;
 
 

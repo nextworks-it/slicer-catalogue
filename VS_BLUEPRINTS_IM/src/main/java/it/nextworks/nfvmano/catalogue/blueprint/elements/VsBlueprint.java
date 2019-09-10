@@ -34,15 +34,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 
-@Entity
+
+@Entity(name = "VsBlueprint")
 @DiscriminatorValue("VSB")
 public class VsBlueprint extends Blueprint {
 
-	@Id
-	@GeneratedValue
-	@JsonIgnore
-	private Long id;
-	
+//	@Id
+//	@GeneratedValue
+//	@JsonIgnore
+//	private Long id;
+//	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -259,8 +260,8 @@ public class VsBlueprint extends Blueprint {
 	}
 
 	//SHOULD ONLY BE USED FOR TESTING PURPOSES
-	public void setId(Long id) {
-		this.id = id;
-	}
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
 
 }

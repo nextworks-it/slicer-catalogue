@@ -49,16 +49,6 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<String> onBoardedVnfPackageInfoId = new ArrayList<>();
-
-	@ElementCollection(fetch=FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<String> onBoardedMecAppPackageInfoId = new ArrayList<>();
-
-	@ElementCollection(fetch=FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> activeCtxdId = new ArrayList<>();
 
 	public CtxBlueprintInfo() {	}
@@ -131,20 +121,6 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	}
 
 	/**
-	 * @return the onBoardedVnfPackageInfoId
-	 */
-	public List<String> getOnBoardedVnfPackageInfoId() {
-		return onBoardedVnfPackageInfoId;
-	}
-
-	/**
-	 * @return the onBoardedMecAppPackageInfoId
-	 */
-	public List<String> getOnBoardedMecAppPackageInfoId() {
-		return onBoardedMecAppPackageInfoId;
-	}
-
-	/**
 	 * @return the activeCtxdId
 	 */
 	public List<String> getActiveCtxdId() {
@@ -152,7 +128,6 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	}
 
 
-	//TODO: Verify with Giada
 	public void addCtxd(String ctxdId) {
 		if (!(activeCtxdId.contains(ctxdId)))
 			activeCtxdId.add(ctxdId);
@@ -163,16 +138,8 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 			activeCtxdId.remove(ctxdId);
 	}
 	
-	public void addMecAppInfoId(String appDInfoId) {
-		onBoardedMecAppPackageInfoId.add(appDInfoId);
-	}
-	
 	public void addNsdInfoId(String nsdInfoId) {
 		onBoardedNsdInfoId.add(nsdInfoId);
-	}
-
-	public void addVnfPackageInfoId(String vnfPackageInfoId) {
-		onBoardedVnfPackageInfoId.add(vnfPackageInfoId);
 	}
 	
 	@Override

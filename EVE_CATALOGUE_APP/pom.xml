@@ -57,21 +57,43 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvoCatalogueService</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
+        
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>VsBlueprintsCatalogue</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
+        
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>EveBlueprintsCatalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
+        
+        <dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>EveBlueprintsCatalogueInterfaces</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>VsBlueprintsCatalogueInterfaces</artifactId>
+			<version>0.0.2-EVE-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>VsBlueprintsIM</artifactId>
+			<version>0.0.2-EVE-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>EveBlueprintsIM</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
+        
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>NfvoCatalogueService</artifactId>
@@ -112,18 +134,20 @@
             <artifactId>commons-compress</artifactId>
             <version>1.2</version>
         </dependency>
+        
         <!-- Swagger dependencies  -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.9.2</version>
-
         </dependency>
+        
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
         </dependency>
+        
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>

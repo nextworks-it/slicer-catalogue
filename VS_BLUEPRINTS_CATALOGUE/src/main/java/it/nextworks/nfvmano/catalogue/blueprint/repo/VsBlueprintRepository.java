@@ -23,6 +23,6 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 
 public interface VsBlueprintRepository extends JpaRepository<VsBlueprint, Long> {
 
-	Optional<VsBlueprint> findByVsBlueprintId(String id);
+	Optional<VsBlueprint> findByBlueprintId(String id);
 	Optional<VsBlueprint> findByNameAndVersion(String name, String version);
 }

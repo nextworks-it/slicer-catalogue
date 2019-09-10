@@ -1,7 +1,6 @@
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.CtxDescriptorCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-;
 
 @Service
 public class CtxDescriptorCatalogueService implements CtxDescriptorCatalogueInterface {

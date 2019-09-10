@@ -26,14 +26,14 @@ import java.util.List;
 import javax.persistence.*;
 import javax.persistence.Entity;
 
-@Entity
+@Entity(name = "ContextBlueprint")
 @DiscriminatorValue("CTXB")
 public class CtxBlueprint extends Blueprint {
 
-    @Id
-    @GeneratedValue
-    @JsonIgnore
-    protected Long id;
+//    @Id
+//    @GeneratedValue
+//    @JsonIgnore
+//    protected Long id;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
@@ -41,6 +41,10 @@ public class CtxBlueprint extends Blueprint {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<EveSite> compatibleSites = new ArrayList<>();
 
+    public CtxBlueprint() {
+    	//JPA only
+    }
+    
     public CtxBlueprint(String blueprintId,
 			String version,
 			String name,
@@ -55,10 +59,19 @@ public class CtxBlueprint extends Blueprint {
 
     
 
-    //This should be used only for testing purposes
-    public void setId(Long id){
-        this.id=id;
-    }
+    /**
+	 * @return the compatibleSites
+	 */
+	public List<EveSite> getCompatibleSites() {
+		return compatibleSites;
+	}
+
+
+
+	//This should be used only for testing purposes
+ //   public void setId(Long id){
+ //       this.id=id;
+ //   }
 
     @Override
     public void isValid() throws MalformattedElementException {
@@ -83,7 +96,7 @@ public class CtxBlueprint extends Blueprint {
         }
     }
 
-    public Long getId(){
-        return id;
-    }
+//    public Long getId(){
+//        return id;
+//    }
 }

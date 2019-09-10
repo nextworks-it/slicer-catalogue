@@ -97,13 +97,14 @@ public class ExpBlueprintCatalogueTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    
     @Test
     public void expBlueprintOnboardTest(){
         when(expBlueprintInfoRepository.findByNameAndExpBlueprintVersion(anyString(), anyString())).thenReturn(Optional.empty());
 
         when(vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(anyString(), anyString())).thenReturn(Optional.empty());
 
-
+/*
 
         VsBlueprint testVsBlueprint = new VsBlueprint("1",
                         null,
@@ -112,10 +113,10 @@ public class ExpBlueprintCatalogueTest {
                         null,
                         null,
                         null,
-                        null
-                        );
+                        null,
+                        null);
 
-        when(vsBlueprintRepository.findByVsBlueprintId(anyString()))
+        when(vsBlueprintRepository.findByBlueprintId(anyString()))
                 .thenReturn(Optional.of(testVsBlueprint));
         when(vsBlueprintRepository.findByNameAndVersion(anyString(), anyString()))
                 .thenReturn(Optional.of(testVsBlueprint));
@@ -166,8 +167,9 @@ public class ExpBlueprintCatalogueTest {
             fail(e.getMessage());
         }
 
-
+*/
     }
+    
 
 
 

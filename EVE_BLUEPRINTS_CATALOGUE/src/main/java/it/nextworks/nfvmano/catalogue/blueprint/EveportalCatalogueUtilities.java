@@ -1,8 +1,5 @@
 package it.nextworks.nfvmano.catalogue.blueprint;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import it.nextworks.nfvmano.libs.common.elements.Filter;
 
 import java.util.HashMap;
@@ -16,6 +13,14 @@ public class EveportalCatalogueUtilities {
         //CTXB_ID
         Map<String, String> filterParams = new HashMap<>();
         filterParams.put("CTXB_ID", ctxbId);
+        return new Filter(filterParams);
+    }
+    
+    public static Filter buildCtxBlueprintFilter(String name, String version) {
+        //CTXB_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("CTXB_NAME", name);
+        filterParams.put("CTXB_VERSION", version);
         return new Filter(filterParams);
     }
 

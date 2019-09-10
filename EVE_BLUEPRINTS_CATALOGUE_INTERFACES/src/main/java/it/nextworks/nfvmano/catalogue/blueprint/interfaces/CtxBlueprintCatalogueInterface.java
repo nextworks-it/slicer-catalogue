@@ -15,13 +15,11 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
+
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxBlueprintResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.*;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
-
-import java.util.Optional;
 
 public interface CtxBlueprintCatalogueInterface {
 
@@ -63,21 +61,5 @@ public interface CtxBlueprintCatalogueInterface {
 	public void deleteCtxBlueprint(String ctxBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
-	/**
-	 * Method to retrieve the CtxBlueprint element from the catalogue
-	 * @param ctxBlueprintId ID of the blueprint to retrieve
-	 * @return the CTX Blueprint element
-	 */
-
-	Optional<CtxBlueprint> findByCtxBlueprintId(String ctxBlueprintId);
-
-
-	/**
-	 * Method to retrieve the first CtxBlueprint matching the name and version specified
-	 * @param name Name of the VS Blueprint
-	 * @param version Version of the VS Blueprint
-	 * @return the VS Blueprint element
-	 */
-	Optional<CtxBlueprint> findByNameAndVersion(String name, String version);
 	
 }

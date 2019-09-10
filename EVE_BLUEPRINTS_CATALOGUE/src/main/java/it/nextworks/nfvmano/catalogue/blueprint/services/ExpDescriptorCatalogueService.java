@@ -1,8 +1,6 @@
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
-;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.ExpDescriptorCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpDescriptorResponse;
