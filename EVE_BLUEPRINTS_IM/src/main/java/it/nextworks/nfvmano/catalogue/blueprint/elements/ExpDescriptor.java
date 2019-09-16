@@ -31,15 +31,6 @@ import java.util.Map;
 @Entity
 public class ExpDescriptor implements DescriptorInformationElement {
 
-	/**
-	 * @param expBlueprintId the expBlueprintId to set
-	 */
-	public void setExpBlueprintId(String expBlueprintId) {
-		this.expBlueprintId = expBlueprintId;
-	}
-
-
-
 	@Id
     @GeneratedValue
     @JsonIgnore
@@ -50,16 +41,19 @@ public class ExpDescriptor implements DescriptorInformationElement {
 	private String version;
 	private String expBlueprintId;
 
-
 	private String vsDescriptorId;
-
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> ctxDescriptorIds;
-
+	
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> testCaseDescriptorIds;
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -68,44 +62,47 @@ public class ExpDescriptor implements DescriptorInformationElement {
 	//Key: kpi ID; Value: comparison operator + KPI threshold
 	private Map<String,String> kpiThresholds = new HashMap<>();
 
-	public String getVsDescriptorId() {
-		return vsDescriptorId;
-	}
-
-	public List<String> getCtxDescriptorIds() {
-		return ctxDescriptorIds;
-	}
-
 	@JsonIgnore
 	private boolean isPublic;
 	
 	@JsonIgnore
 	private String tenantId;
 	
-
-	//TODO: add further fields
-	
 	public ExpDescriptor() {	}
 	
 	
 
 	/**
+	 * Constructor
+	 * 
 	 * @param name
 	 * @param version
 	 * @param expBlueprintId
 	 * @param isPublic
 	 * @param tenantId
-	 * 
+	 * @param vsDescriptorId
+	 * @param ctxDescriptorIds
+	 * @param testCaseDescriptorIds
+	 * @param kpiThresholds
 	 */
-	public ExpDescriptor(String name, String version, String expBlueprintId,
-						 boolean isPublic, String tenantId) {
+	public ExpDescriptor(String name, 
+			String version, 
+			String expBlueprintId,
+			boolean isPublic, 
+			String tenantId,
+			String vsDescriptorId,
+			List<String> ctxDescriptorIds,
+			List<String> testCaseDescriptorIds,
+			Map<String,String> kpiThresholds) {
 		this.name = name;
 		this.version = version;
 		this.expBlueprintId = expBlueprintId;
-
-
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
+		this.vsDescriptorId = vsDescriptorId;
+		if (ctxDescriptorIds != null) this.ctxDescriptorIds = ctxDescriptorIds;
+		if (testCaseDescriptorIds != null) this.testCaseDescriptorIds = testCaseDescriptorIds;
+		if (kpiThresholds != null) this.kpiThresholds = kpiThresholds;
 	}
 
 
@@ -126,6 +123,13 @@ public class ExpDescriptor implements DescriptorInformationElement {
 		this.expDescriptorId = expDescriptorId;
 	}
 
+	public String getVsDescriptorId() {
+		return vsDescriptorId;
+	}
+
+	public List<String> getCtxDescriptorIds() {
+		return ctxDescriptorIds;
+	}
 
 
 	/**
@@ -183,24 +187,31 @@ public class ExpDescriptor implements DescriptorInformationElement {
 		return isPublic;
 	}
 
+	
+
+	/**
+	 * @return the testCaseDescriptorIds
+	 */
+	public List<String> getTestCaseDescriptorIds() {
+		return testCaseDescriptorIds;
+	}
+
 
 
 	/**
-	 * @param isPublic the isPublic to set
+	 * @return the kpiThresholds
 	 */
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
+	public Map<String, String> getKpiThresholds() {
+		return kpiThresholds;
 	}
 
 
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if (name == null) throw new MalformattedElementException("VSD without name");
-		if (version == null) throw new MalformattedElementException("VSD without version");
-		if (expBlueprintId == null) throw new MalformattedElementException("VSD without VS blueprint ID");
-
-
+		if (name == null) throw new MalformattedElementException("ExpD without name");
+		if (version == null) throw new MalformattedElementException("ExpD without version");
+		if (expBlueprintId == null) throw new MalformattedElementException("ExpD without blueprint ID");
 	}
 
 }

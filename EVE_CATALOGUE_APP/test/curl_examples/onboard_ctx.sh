@@ -1,4 +1,5 @@
 curl -X POST http://localhost:8082/ctx/catalogue/ctxblueprint \
+  -b pippo_token \
   -H 'Content-Type: application/json' \
   -d '{
     "ctxBlueprint": {
@@ -52,7 +53,15 @@ curl -X POST http://localhost:8082/ctx/catalogue/ctxblueprint \
                 ],
                 "external": true
             }
-        ]
+        ],
+	"applicationMetrics": [ {
+    		"metricId": "metricSample",
+    		"name": "metricSampleName",
+    		"metricCollectionType": "DELTA",
+    		"unit": "s",
+    		"interval": "5s",
+    		"topic": "metricSampleTopic"
+    	}]
     },
     "nsds": [
         {

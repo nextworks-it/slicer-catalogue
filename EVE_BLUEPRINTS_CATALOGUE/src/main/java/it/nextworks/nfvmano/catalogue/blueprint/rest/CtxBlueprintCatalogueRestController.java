@@ -20,7 +20,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxBlueprintResponse;
@@ -45,7 +44,7 @@ import java.util.List;
 @Api(tags = "Context Blueprint Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/ctx/catalogue")
+@RequestMapping("/portal/catalogue")
 public class CtxBlueprintCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(CtxBlueprintCatalogueRestController.class);
@@ -69,7 +68,7 @@ public class CtxBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Onboard CtxBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Element created. Returns the id of the element created.", response = String.class),
+			@ApiResponse(code = 201, message = "Creates a new context blueprint and returns its ID.", response = String.class),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 409, message = "There is a conflict with the request", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
@@ -101,7 +100,7 @@ public class CtxBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Get ALL CtxBlueprints")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "List of all the CtxBlueprints of the user", response = String.class, responseContainer = "Set"),
+			@ApiResponse(code = 200, message = "Return the list of all the CtxBlueprints of the user", response = CtxBlueprintInfo.class, responseContainer = "Set"),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
@@ -126,7 +125,7 @@ public class CtxBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Get CtxBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Information element with the supplied ID", response = CtxBlueprintInfo.class),
+			@ApiResponse(code = 200, message = "Returns the context blueprint with the given ID", response = CtxBlueprintInfo.class),
 			//@ApiResponse(code = 400, message = "The supplied element contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
@@ -152,7 +151,7 @@ public class CtxBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Delete CtxBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Deleted information element with the supplied ID", response = ResponseEntity.class),
+			@ApiResponse(code = 200, message = "Delete the context blueprint with the given ID", response = ResponseEntity.class),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)

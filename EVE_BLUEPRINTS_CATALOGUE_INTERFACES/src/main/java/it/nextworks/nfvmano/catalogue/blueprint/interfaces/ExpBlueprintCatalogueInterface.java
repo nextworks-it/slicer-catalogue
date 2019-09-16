@@ -15,13 +15,11 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.*;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 
-import java.util.Optional;
 
 public interface ExpBlueprintCatalogueInterface {
 
@@ -63,21 +61,5 @@ public interface ExpBlueprintCatalogueInterface {
 	public void deleteExpBlueprint(String expBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
-	/**
-	 * Method to retrieve the ExpBlueprint element from the catalogue
-	 * @param expBlueprintId ID of the blueprint to retrieve
-	 * @return the Exp Blueprint element
-	 */
-
-	Optional<ExpBlueprint> findByExpBlueprintId(String expBlueprintId);
-
-
-	/**
-	 * Method to retrieve the first expBlueprint matching the name and version specified
-	 * @param name Name of the Exp Blueprint
-	 * @param version Version of the Exp Blueprint
-	 * @return the Exp Blueprint element
-	 */
-	Optional<ExpBlueprint> findByNameAndVersion(String name, String version);
 	
 }

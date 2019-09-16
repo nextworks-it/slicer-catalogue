@@ -56,44 +56,31 @@ public class CtxDescriptor implements DescriptorInformationElement {
 	@JsonIgnore
 	private String tenantId;
 
-	
-
-	
-
-	
-
 	public CtxDescriptor() {	}
 
-
-
 	/**
+	 * Constructor
+	 * 
 	 * @param name
 	 * @param version
 	 * @param ctxBlueprintId
-	 * @param sst
-	 * @param managementType
+	 * @param ctxParameters
 	 * @param isPublic
 	 * @param tenantId
-	 *
 	 */
-	public CtxDescriptor(String name, String version, String ctxBlueprintId, SliceServiceType sst,
-                         SliceManagementControlType managementType, Map<String, String> ctxParameters,
-                         boolean isPublic, String tenantId) {
+	public CtxDescriptor(String name, 
+			String version, 
+			String ctxBlueprintId,
+            Map<String, String> ctxParameters,
+            boolean isPublic, 
+            String tenantId) {
 		this.name = name;
 		this.version = version;
 		this.ctxBlueprintId = ctxBlueprintId;
+		if (ctxParameters != null) this.ctxParameters = ctxParameters;
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
 	}
-
-
-	/**
-	 * @param ctxBlueprintId the ctxBlueprintId to set
-	 */
-	public void setCtxBlueprintId(String ctxBlueprintId) {
-		this.ctxBlueprintId = ctxBlueprintId;
-	}
-
 
 
 	/**
@@ -179,25 +166,11 @@ public class CtxDescriptor implements DescriptorInformationElement {
 	}
 
 
-
-	/**
-	 * @param isPublic the isPublic to set
-	 */
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-
-
-
-
-
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if (name == null) throw new MalformattedElementException("VSD without name");
-		if (version == null) throw new MalformattedElementException("VSD without version");
-		if (ctxBlueprintId == null) throw new MalformattedElementException("VSD without VS blueprint ID");
-
+		if (name == null) throw new MalformattedElementException("CTXD without name");
+		if (version == null) throw new MalformattedElementException("CTXD without version");
+		if (ctxBlueprintId == null) throw new MalformattedElementException("CTXD without blueprint ID");
 	}
 
 }

@@ -30,10 +30,10 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	public OnBoardVsBlueprintRequest() { }
 	
 	/**
+	 * Constructor
+	 * 
 	 * @param vsBlueprint
 	 * @param nsds
-	 * @param vnfPackages
-	 * @param mecAppPackages
 	 * @param translationRules
 	 */
 	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint, 

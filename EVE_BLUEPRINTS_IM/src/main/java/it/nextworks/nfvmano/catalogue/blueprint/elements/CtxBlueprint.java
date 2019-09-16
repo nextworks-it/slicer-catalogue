@@ -15,9 +15,8 @@
  */
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import org.hibernate.annotations.*;
 
 
@@ -52,12 +51,12 @@ public class CtxBlueprint extends Blueprint {
 			List<VsBlueprintParameter> parameters,
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters, 
-			List<EveSite> compatibleSites) {
-    	super(blueprintId, version, name, description, parameters, endPoints, configurableParameters);
+			List<EveSite> compatibleSites,
+			List<ApplicationMetric> applicationMetrics) {
+    	super(blueprintId, version, name, description, parameters, endPoints, 
+    			configurableParameters, applicationMetrics);
 		if (compatibleSites != null) this.compatibleSites = compatibleSites;
-    }
-
-    
+    }    
 
     /**
 	 * @return the compatibleSites
@@ -66,37 +65,4 @@ public class CtxBlueprint extends Blueprint {
 		return compatibleSites;
 	}
 
-
-
-	//This should be used only for testing purposes
- //   public void setId(Long id){
- //       this.id=id;
- //   }
-
-    @Override
-    public void isValid() throws MalformattedElementException {
-        for (VsBlueprintParameter p : parameters) {
-            p.isValid();
-        }
-        if (version == null) {
-            throw new MalformattedElementException("CTX blueprint without version");
-        }
-        if (name == null) {
-            throw new MalformattedElementException("CTX blueprint without name");
-        }
-        if (atomicComponents != null) {
-            for (VsComponent c : atomicComponents) {
-                c.isValid();
-            }
-        }
-        if (endPoints != null) {
-            for (VsbEndpoint e : endPoints) {
-                e.isValid();
-            }
-        }
-    }
-
-//    public Long getId(){
-//        return id;
-//    }
 }

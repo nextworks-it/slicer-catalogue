@@ -1,11 +1,30 @@
+/*
+ * Copyright 2018 Nextworks s.r.l.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embeddable;
+import javax.persistence.Inheritance;
 
 @Embeddable
+@Inheritance
+@DiscriminatorColumn(name="METRIC_T")
 public class Metric implements DescriptorInformationElement {
 
 
@@ -13,9 +32,6 @@ public class Metric implements DescriptorInformationElement {
 
 
     private String name;
-
-
-    private MetricType metricType;
 
 
     private MetricCollectionType metricCollectionType;
@@ -36,10 +52,9 @@ public class Metric implements DescriptorInformationElement {
     public Metric() {
     }
 
-    public Metric(String metricId, String name, MetricType metricType, MetricCollectionType metricCollectionType, String unit, String interval) {
+    public Metric(String metricId, String name, MetricCollectionType metricCollectionType, String unit, String interval) {
         this.metricId = metricId;
         this.name = name;
-        this.metricType = metricType;
         this.metricCollectionType = metricCollectionType;
         this.unit = unit;
         this.interval = interval;
@@ -93,10 +108,6 @@ public class Metric implements DescriptorInformationElement {
     //    this.metadata = metadata;
     //}
 
-    public MetricType getMetricType() {
-        return metricType;
-    }
-
     @Override
     public void isValid() throws MalformattedElementException {
 
@@ -108,11 +119,6 @@ public class Metric implements DescriptorInformationElement {
             throw new MalformattedElementException("Metric without unit");
         if(metricCollectionType == null)
             throw new MalformattedElementException("Metric without MetricCollectionType");
-        if(metricType == null)
-            throw new MalformattedElementException("Metric without MetricType");
-        if(interval == null || interval.equals(""))
-            throw new MalformattedElementException("Metric without interval");
-
 
     }
 
@@ -122,15 +128,4 @@ public class Metric implements DescriptorInformationElement {
         GAUGE
     }
 
-    enum MetricType {
-        LOST_PKT,
-        RECEIVED_PKT,
-        SENT_PKT,
-        BANDWIDTH,
-        LATENCY,
-        JITTER,
-        CPU_CONSUMPTION,
-        MEMORY_CONSUMPTION,
-        OTHER
-    }
 }

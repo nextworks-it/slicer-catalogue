@@ -46,15 +46,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 @Entity
 public class VsDescriptor implements DescriptorInformationElement {
 
-	/**
-	 * @param vsBlueprintId the vsBlueprintId to set
-	 */
-	public void setVsBlueprintId(String vsBlueprintId) {
-		this.vsBlueprintId = vsBlueprintId;
-	}
-
-
-
+	
 	@Id
     @GeneratedValue
     @JsonIgnore
@@ -65,7 +57,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	private String version;
 	private String vsBlueprintId;
 	
-	private it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceType sst;
+	private SliceServiceType sst;
 	private SliceManagementControlType managementType;
 	
 	//Key: parameter ID as in the blueprint; value: desired value
@@ -86,13 +78,13 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@OneToMany(mappedBy = "vsd", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<it.nextworks.nfvmano.catalogue.blueprint.elements.ServiceConstraints> serviceConstraints = new ArrayList<>();
+	private List<ServiceConstraints> serviceConstraints = new ArrayList<>();
 	
 	@Embedded
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private VsdSla sla;
 	
-	//TODO: add further fields
+	
 	
 	public VsDescriptor() {	}
 	
@@ -110,7 +102,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 * @param tenantId
 	 * 
 	 */
-	public VsDescriptor(String name, String version, String vsBlueprintId, it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceType sst,
+	public VsDescriptor(String name, String version, String vsBlueprintId, SliceServiceType sst,
 			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
 			boolean isPublic, String tenantId) {
 		this.name = name;
@@ -133,9 +125,8 @@ public class VsDescriptor implements DescriptorInformationElement {
 	public String getVsDescriptorId() {
 		return vsDescriptorId;
 	}
-
-
-
+	
+	
 	/**
 	 * @param vsDescriptorId the vsDescriptorId to set
 	 */
@@ -179,6 +170,12 @@ public class VsDescriptor implements DescriptorInformationElement {
 		return vsBlueprintId;
 	}
 
+	/**
+	 * @param vsBlueprintId the vsBlueprintId to set
+	 */
+	public void setVsBlueprintId(String vsBlueprintId) {
+		this.vsBlueprintId = vsBlueprintId;
+	}
 
 
 	/**

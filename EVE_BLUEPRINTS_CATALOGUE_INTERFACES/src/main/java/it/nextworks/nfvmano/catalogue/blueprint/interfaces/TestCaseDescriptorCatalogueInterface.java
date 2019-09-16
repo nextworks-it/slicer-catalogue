@@ -15,15 +15,15 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
-import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorRequest;
-import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardTestCaseDescriptorRequest;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryTestCaseDescriptorResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.*;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 
-public interface CtxDescriptorCatalogueInterface {
+public interface TestCaseDescriptorCatalogueInterface {
 
 	/**
-	 * Method to create a new CtxD
+	 * Method to create a new test case descriptor
 	 * 
 	 * @param request
 	 * @return
@@ -32,11 +32,11 @@ public interface CtxDescriptorCatalogueInterface {
 	 * @throws AlreadyExistingEntityException
 	 * @throws FailedOperationException
 	 */
-	public String onboardCtxDescriptor(OnboardCtxDescriptorRequest request)
+	public String onboardTestCaseDescriptor(OnboardTestCaseDescriptorRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException;
 	
 	/**
-	 * Method to request info about an existing CtxD
+	 * Method to request info about an existing test case descriptor
 	 * 
 	 * @param request
 	 * @return
@@ -45,20 +45,20 @@ public interface CtxDescriptorCatalogueInterface {
 	 * @throws NotExistingEntityException
 	 * @throws FailedOperationException
 	 */
-	public QueryCtxDescriptorResponse queryCtxDescriptor(GeneralizedQueryRequest request)
+	public QueryTestCaseDescriptorResponse queryTestCaseDescriptor(GeneralizedQueryRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 	
 	/**
-	 * Method to remove a CtxD
+	 * Method to remove a test case descriptor
 	 * 
-	 * @param ctxDescriptorId
+	 * @param testcaseDescriptorId
 	 * @param tenantId
 	 * @throws MethodNotImplementedException
 	 * @throws MalformattedElementException
 	 * @throws NotExistingEntityException
 	 * @throws FailedOperationException
 	 */
-	public void deleteCtxDescriptor(String ctxDescriptorId, String tenantId)
+	public void deleteTestCaseDescriptor(String testcaseDescriptorId, String tenantId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
 }

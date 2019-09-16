@@ -18,7 +18,6 @@ package it.nextworks.nfvmano.catalogue.blueprint.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
@@ -39,6 +38,7 @@ import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.EveSite;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsComponent;
@@ -99,7 +99,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		request.setBlueprintIdInTranslationRules(vsbId);
 		
-		log.debug("Processing SO descriptors");
+		log.debug("Processing NFV descriptors");
 		try {
 			log.debug("Storing NSDs");
 			List<Nsd> nsds = request.getNsds();
@@ -147,6 +147,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		//VSB_NAME & VSB_VERSION
 		//2. VS Blueprint ID
 		//VSB_ID
+		//3. Site
+		//SITE
         //No attribute selector is supported at the moment
 		
 		List<VsBlueprintInfo> vsbs = new ArrayList<>();
@@ -160,6 +162,12 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
             	VsBlueprintInfo vsb = getVsBlueprintInfo(vsbId);
             	vsbs.add(vsb);
             	log.debug("Added VSB info for VSB ID " + vsbId);
+            } else if (fp.size() == 1 && fp.containsKey("SITE")) {
+            	String siteStr = fp.get("SITE");
+            	EveSite site = EveSite.valueOf(siteStr);
+            	List<VsBlueprintInfo> vsb = getVsBlueprintInfoFromSite(site);
+            	vsbs.addAll(vsb);
+            	log.debug("Added VSBs info");
             } else if (fp.size() == 2 && fp.containsKey("VSB_NAME") && fp.containsKey("VSB_VERSION")) {
             	String vsbName = fp.get("VSB_NAME");
             	String vsbVersion = fp.get("VSB_VERSION");
@@ -225,7 +233,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
-				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint());
+				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
+				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
+				vsBlueprint.getApplicationMetrics());
 		vsBlueprintRepository.saveAndFlush(target);
 		
 		Long vsbId = target.getId();
@@ -296,6 +306,21 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		return vsBlueprintInfo;
 	}
 	
+	private List<VsBlueprintInfo> getVsBlueprintInfoFromSite(EveSite site) throws NotExistingEntityException {
+		log.debug("Searching for VSB compatible with site " + site);
+		List<VsBlueprint> vsbs = vsBlueprintRepository.findByCompatibleSitesIn(site);
+		if (vsbs.isEmpty()) throw new NotExistingEntityException("VS blueprint for site " + site + " not found in DB");
+		List<VsBlueprintInfo> vsbis = new ArrayList<>();
+		for (VsBlueprint vsb : vsbs) {
+			String vsbId = vsb.getBlueprintId();
+			VsBlueprintInfo vsbi = vsBlueprintInfoRepository.findByVsBlueprintId(vsbId).get();
+			vsbi.setVsBlueprint(vsb);
+			vsbis.add(vsbi);
+			log.debug("Added VSB " + vsbId);
+		}
+		return vsbis;
+	}
+	
 	private List<VsBlueprintInfo> getAllVsBlueprintInfos() throws NotExistingEntityException {
 		List<VsBlueprintInfo> vsbis = vsBlueprintInfoRepository.findAll();
 		for (VsBlueprintInfo vsbi : vsbis) {
@@ -305,15 +330,6 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			vsbi.setVsBlueprint(vsb);
 		}
 		return vsbis;
-	}
-
-	public Optional<VsBlueprint> findByVsBlueprintId(String id){
-		return vsBlueprintRepository.findByBlueprintId(id);
-	}
-
-
-	public Optional<VsBlueprint> findByNameAndVersion(String name, String version){
-		return vsBlueprintRepository.findByNameAndVersion(name,version);
 	}
 	
 }

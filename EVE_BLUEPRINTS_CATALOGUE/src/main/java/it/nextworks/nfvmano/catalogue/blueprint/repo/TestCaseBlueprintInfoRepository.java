@@ -15,15 +15,14 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprint;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 import java.util.Optional;
 
-public interface ExpBlueprintRepository extends JpaRepository<ExpBlueprint, Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
 
-	Optional<ExpBlueprint> findByExpBlueprintId(String id);
-	Optional<ExpBlueprint> findByNameAndVersion(String name, String version);
-	List<ExpBlueprint> findByVsBlueprintId(String vsBlueprintId);
+import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprintInfo;
+
+public interface TestCaseBlueprintInfoRepository extends JpaRepository<TestCaseBlueprintInfo, Long> {
+	
+	Optional<TestCaseBlueprintInfo> findByTestCaseBlueprintId(String testCaseBlueprintId);
+	Optional<TestCaseBlueprintInfo> findByNameAndVersion(String name, String version);
 }

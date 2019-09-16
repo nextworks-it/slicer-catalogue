@@ -16,6 +16,9 @@
 package it.nextworks.nfvmano.catalogue.blueprint.rest;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
@@ -42,7 +45,7 @@ import java.util.List;
 @Api(tags = "Experiment Descriptor Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/exp/catalogue")
+@RequestMapping("/portal/catalogue")
 public class ExpDescriptorCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(ExpDescriptorCatalogueRestController.class);
@@ -63,9 +66,18 @@ public class ExpDescriptorCatalogueRestController {
 	
 	public ExpDescriptorCatalogueRestController() { } 
 	
+	@ApiOperation(value = "Onboard Experiment Descriptor")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Element created. Returns the id of the element created.", response = String.class),
+			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
+			//@ApiResponse(code = 409, message = "There is a conflict with the request", response = ResponseEntity.class),
+			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+
+	})
+	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/expdescriptor", method = RequestMethod.POST)
 	public ResponseEntity<?> createExpDescriptor(@RequestBody OnboardExpDescriptorRequest request, Authentication auth) {
-		log.debug("Received request to create a EXP descriptor.");
+		log.debug("Received request to create an EXP descriptor.");
 		String user = getUserFromAuth(auth);
 		if (!request.getTenantId().equals(user)) {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -77,13 +89,15 @@ public class ExpDescriptorCatalogueRestController {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (AlreadyExistingEntityException e) {
-			log.error("EXP Blueprint already existing");
+			log.error("EXP Descriptor already existing");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			log.error("Internal exception");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
 	
 	@RequestMapping(value = "/expdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllExpDescriptors(Authentication auth) {

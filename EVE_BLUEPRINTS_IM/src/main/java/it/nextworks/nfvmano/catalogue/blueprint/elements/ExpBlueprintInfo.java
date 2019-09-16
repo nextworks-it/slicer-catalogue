@@ -47,9 +47,6 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> activeExpdId = new ArrayList<>();
 
-
-
-
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -145,6 +142,7 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 		if (expBlueprintVersion == null) throw new MalformattedElementException("EXP Blueprint info without EXP version");
 		if (name == null) throw new MalformattedElementException("EXP Blueprint info without Exp name");
 	}
+	
 	public String getName() {
 		return name;
 	}

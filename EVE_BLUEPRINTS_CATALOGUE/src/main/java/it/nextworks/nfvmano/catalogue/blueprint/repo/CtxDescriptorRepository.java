@@ -28,6 +28,5 @@ public interface CtxDescriptorRepository extends JpaRepository<CtxDescriptor, Lo
 	Optional<CtxDescriptor> findByCtxDescriptorId(String vsdId);
 	Optional<CtxDescriptor> findByCtxDescriptorIdAndTenantId(String vsdId, String tenantId);
 	List<CtxDescriptor> findByIsPublic(boolean isPublic);
-	Optional<CtxDescriptor> findByNameAndVersionAndTenantId(String name, String version, String tenantId);
 	
 }

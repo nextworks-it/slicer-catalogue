@@ -15,30 +15,13 @@
       {
         "componentId": "traffic_source",
         "serversNumber": 1,
-        "imagesUrls": [],
-        "endPointsIds": ["traffic_source_ext" ],
-        "lifecycleOperations": {
-          "update": "scripts/update",
-          "heal": "scripts/heal",
-          "instantiate": "scripts/instantiate",
-          "terminate": "scripts/terminate"
-        }
-
-
+        "endPointsIds": ["traffic_source_ext" ]
       },
       {
-
         "componentId": "traffic_sink",
         "serversNumber": 1,
-        "imagesUrls": [],
-        "endPointsIds": ["traffic_sink_ext"],
-        "lifecycleOperations": {
-          "update": "scripts/update",
-          "heal": "scripts/heal"
-
-        }
+        "endPointsIds": ["traffic_sink_ext"]
       }
-
     ],
     "serviceSequence": [
       { "hopEndPoints" : [{
@@ -71,9 +54,15 @@
     ],
     "configurableParameters": [
 
-    ]
-
-
+    ],
+    "applicationMetrics": [ {
+    	"metricId": "metricSample",
+    	"name": "metricSampleName",
+    	"metricCollectionType": "DELTA",
+    	"unit": "s",
+    	"interval": "5s",
+    	"topic": "metricSampleTopic"
+    }]
   },
   "nsds": [
 

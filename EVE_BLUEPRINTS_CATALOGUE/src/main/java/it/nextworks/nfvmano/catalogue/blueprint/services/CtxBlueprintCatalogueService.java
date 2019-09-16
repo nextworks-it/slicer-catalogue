@@ -222,12 +222,11 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
                 ctxBlueprint.getParameters(),
                 ctxBlueprint.getEndPoints(),
                 ctxBlueprint.getConfigurableParameters(),
-                ctxBlueprint.getCompatibleSites());	
+                ctxBlueprint.getCompatibleSites(),
+                ctxBlueprint.getApplicationMetrics());	
 
         ctxBlueprintRepository.saveAndFlush(target);
         Long ctxbId = target.getId();
-        //Long ctxbId = ctxBlueprintRepository.findByNameAndVersion(ctxBlueprint.getName(), ctxBlueprint.getVersion()).get().getId();
-        log.debug(">>>>>>>>>>>>>>>>>>>> ID: " + ctxbId);
         String ctxbIdString = String.valueOf(ctxbId);
         target.setBlueprintId(ctxbIdString);
         ctxBlueprintRepository.saveAndFlush(target);
@@ -244,23 +243,13 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		
 		List<VsbForwardingPathHop> hops = ctxBlueprint.getServiceSequence();
 		if (hops != null) {
-			log.debug("1111111111111111111111111111");
 			for (VsbForwardingPathHop hop : hops) {
-				if (hop == null) log.debug("66666666666666666666666666666666");
-				log.debug("222222222222222222222222222222222");
 				VsbForwardingPathHop targetHop = new VsbForwardingPathHop(target, hop.getHopEndPoints());
-				log.debug("555555555");
-				if (targetHop == null) log.debug("777777777777777777777777");
-				if (hop.getHopEndPoints() == null) log.debug("888888888888888888888");
-				if (vsbForwardingPathHopRepository == null) log.debug("9999999999999999999999999");
 				vsbForwardingPathHopRepository.saveAndFlush(targetHop);
 			}
-			log.debug("333333");
 			log.debug("Added VSB FP hop in VS blueprint " + ctxbIdString);
 		}
 		
-		
-		log.debug("4444444");
 		List<VsbLink> connectivityServices = ctxBlueprint.getConnectivityServices();
 		if (connectivityServices != null) {
 			for (VsbLink l : connectivityServices) {

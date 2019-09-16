@@ -1,4 +1,4 @@
-package it.nextworks.nfvmano.catalogue.blueprint.elements;/*
+/*
  * Copyright 2018 Nextworks s.r.l.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 
 
@@ -38,20 +39,20 @@ public class ExpBlueprint  implements DescriptorInformationElement {
     @Id
     @GeneratedValue
     @JsonIgnore
-    protected Long id;
+    private Long id;
 
 
     private String expBlueprintId;
 
-    protected String version;
-    protected String name;
-    protected String description;
+    private String version;
+    private String name;
+    private String description;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<String> sites = new ArrayList<>();
+    private List<EveSite> sites = new ArrayList<>();
 
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -65,35 +66,43 @@ public class ExpBlueprint  implements DescriptorInformationElement {
     @ElementCollection(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Metric> metrics = new ArrayList<>();
+    private List<InfrastructureMetric> metrics = new ArrayList<>();
 
 
     private String vsBlueprintId;
-
-    
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<String> ctxBlueprintIds;
+    private List<String> ctxBlueprintIds = new ArrayList<>();
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @ElementCollection(fetch=FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<String> tcBlueprintIds = new ArrayList<>();
+    
     public ExpBlueprint() {
+    	//JPA only
     }
 
-    public ExpBlueprint(String version, String name, String description, String imgUrl, List<String> sites,
-                                            String expBlueprintId, List<Metric> metrics, List<KeyPerformanceIndicator> kpis) {
+    public ExpBlueprint(String version, String name, String description, 
+    		List<EveSite> sites, String vsBlueprintId, List<String> ctxBlueprintIds, 
+    		List<String> tcBlueprintIds, List<InfrastructureMetric> metrics) {
         this.version = version;
         this.name = name;
         this.description = description;
-        this.expBlueprintId = expBlueprintId;
         if(sites!=null)
-            this.sites=sites;
+            this.sites = sites;
+        this.vsBlueprintId = vsBlueprintId;
+        if (ctxBlueprintIds != null) 
+        	this.ctxBlueprintIds = ctxBlueprintIds;
+        if (tcBlueprintIds !=  null)
+        	this.tcBlueprintIds = tcBlueprintIds;
         if(metrics!=null)
-            this.metrics=metrics;
-        if(kpis!=null)
-            this.kpis=kpis;
-    }
+            this.metrics = metrics;
+    } 
 
     public String getVersion() {
         return version;
@@ -103,7 +112,7 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         return expBlueprintId;
     }
 
-    public List<String> getSites() {
+    public List<EveSite> getSites() {
         return sites;
     }
 
@@ -111,10 +120,7 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         return vsBlueprintId;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
+    
     public List<String> getCtxBlueprintIds() {
         return ctxBlueprintIds;
     }
@@ -127,23 +133,30 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    
 
+    /**
+	 * @return the tcBlueprintIds
+	 */
+	public List<String> getTcBlueprintIds() {
+		return tcBlueprintIds;
+	}
 
-    @Override
+	/**
+	 * @param expBlueprintId the expBlueprintId to set
+	 */
+	public void setExpBlueprintId(String expBlueprintId) {
+		this.expBlueprintId = expBlueprintId;
+	}
+
+	@Override
     public void isValid() throws MalformattedElementException {
-
-
         if(name==null || name.isEmpty())
             throw new MalformattedElementException("ExpBlueprint without name");
 
@@ -166,13 +179,21 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         //Check for duplicate kpi ids
         if(metricIdSet.size()!=metrics.size())
             throw  new MalformattedElementException("Duplicate Metric id inside the ExpBlueprint");
+        if (kpis != null) {
+        	for (KeyPerformanceIndicator kpi : kpis) kpi.isValid();
+        }
+        if (metrics != null) {
+        	for (InfrastructureMetric m : metrics) m.isValid();
+        }
+        if (vsBlueprintId == null) throw new MalformattedElementException("Experiment blueprint without vertical service blueprint");
+        if ( (tcBlueprintIds == null) || (tcBlueprintIds.isEmpty())) throw new MalformattedElementException("Experiment blueprint without test cases");
     }
 
     public List<KeyPerformanceIndicator> getKpis() {
         return kpis;
     }
 
-    public List<Metric> getMetrics() {
+    public List<InfrastructureMetric> getMetrics() {
         return metrics;
     }
 

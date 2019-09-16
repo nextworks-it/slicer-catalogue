@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,7 +55,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintRespons
 @Api(tags = "Vertical Service Blueprint Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/vs/catalogue")
+@RequestMapping("/portal/catalogue")
 public class VsBlueprintCatalogueRestController {
 	
 	private static final Logger log = LoggerFactory.getLogger(VsBlueprintCatalogueRestController.class);
@@ -62,7 +63,7 @@ public class VsBlueprintCatalogueRestController {
 	@Autowired
 	private VsBlueprintCatalogueService vsBlueprintCatalogueService;
 
-	@Value("${sebastian.admin}")
+	@Value("${catalogue.admin}")
 	private String adminTenant;
 
 	private static String getUserFromAuth(Authentication auth) {
@@ -115,11 +116,19 @@ public class VsBlueprintCatalogueRestController {
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
 	})
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.GET)
-	public ResponseEntity<?> getAllVsBlueprints() {
+	public ResponseEntity<?> getAllVsBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String site) {
 		log.debug("Received request to retrieve all the VS blueprints.");
 		try {
-			QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
-			return new ResponseEntity<List<VsBlueprintInfo>>(response.getVsBlueprintInfo(), HttpStatus.OK);
+			if ((id == null) && (site == null)) {
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
+				return new ResponseEntity<List<VsBlueprintInfo>>(response.getVsBlueprintInfo(), HttpStatus.OK);
+			} else if (id != null) {
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(id), null));
+				return new ResponseEntity<VsBlueprintInfo>(response.getVsBlueprintInfo().get(0), HttpStatus.OK);
+			} else if (site != null) {
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildSiteFilter(site), null));
+				return new ResponseEntity<List<VsBlueprintInfo>>(response.getVsBlueprintInfo(), HttpStatus.OK);
+			} else return new ResponseEntity<String>("Not acceptable query parameter", HttpStatus.BAD_REQUEST);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -3,6 +3,7 @@ package it.nextworks.nfvmano.catalogue.blueprint;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import it.nextworks.nfvmano.libs.common.elements.Filter;
 
 import java.util.HashMap;
@@ -29,14 +30,20 @@ public class BlueprintCatalogueUtilities {
         return new Filter(filterParams);
     }
 
+    public static Filter buildSiteFilter(String site) {
+        //SITE
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("SITE", site);
+        return new Filter(filterParams);
+    }
+    
     public static Filter buildVsBlueprintFilter(String vsbId) {
         //VSB_ID
         Map<String, String> filterParams = new HashMap<>();
         filterParams.put("VSB_ID", vsbId);
         return new Filter(filterParams);
     }
-
-
+    
     public static Filter buildVsDescriptorFilter(String vsdId, String tenantId) {
         //VSD_ID & TENANT_ID
         Map<String, String> filterParams = new HashMap<>();

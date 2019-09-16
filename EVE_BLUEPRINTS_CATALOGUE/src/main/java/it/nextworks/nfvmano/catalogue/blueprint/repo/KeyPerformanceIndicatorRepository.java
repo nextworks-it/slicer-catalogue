@@ -15,7 +15,6 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.KeyPerformanceIndicator;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -47,4 +47,21 @@ public class EveportalCatalogueUtilities {
         filterParams.put("TENANT_ID", tenantId);
         return new Filter(filterParams);
     }
+    
+    public static Filter buildTestCaseBlueprintFilterFromId(String tcbId) {
+        //TCB_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("TCB_ID", tcbId);
+        return new Filter(filterParams);
+    }
+    
+    public static Filter buildTestCaseDescriptorFilterFromId(String tcdId, String tenantId) {
+        //TCD_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("TCD_ID", tcdId);
+        filterParams.put("TENANT_ID", tenantId);
+        return new Filter(filterParams);
+    }
+
+
 }

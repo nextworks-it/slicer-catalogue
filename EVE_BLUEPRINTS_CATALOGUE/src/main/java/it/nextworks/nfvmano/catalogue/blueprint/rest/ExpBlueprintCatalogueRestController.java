@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
@@ -45,7 +46,7 @@ import java.util.List;
 @Api(tags = "Experiment Blueprint Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/exp/catalogue")
+@RequestMapping("/portal/catalogue")
 public class ExpBlueprintCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(ExpBlueprintCatalogueRestController.class);
@@ -68,7 +69,7 @@ public class ExpBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Onboard ExpBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Element created. Returns the id of the element created.", response = String.class),
+			@ApiResponse(code = 201, message = "Creates a new experiment blueprint and returns its ID.", response = String.class),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 409, message = "There is a conflict with the request", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
@@ -101,18 +102,26 @@ public class ExpBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Get ALL ExpBlueprints")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "List of all the ExpBlueprints of the user", response = String.class, responseContainer = "Set"),
+			@ApiResponse(code = 200, message = "Retrieve the list of all the experiment blueprints of the user", response = String.class, responseContainer = "Set"),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
 	})
 
 	@RequestMapping(value = "/expblueprint", method = RequestMethod.GET)
-	public ResponseEntity<?> getAllExpBlueprints() {
+	public ResponseEntity<?> getAllExpBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String vsbId) {
 		log.debug("Received request to retrieve all the EXP blueprints.");
 		try {
-			QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
-			return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
+			if ((id == null) && (vsbId == null)) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
+				return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
+			} else if (id != null) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(id), null));
+				return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
+			} else if (vsbId != null) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId), null));
+				return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
+			} else return new ResponseEntity<String>("Not acceptable query parameter", HttpStatus.BAD_REQUEST);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -127,7 +136,7 @@ public class ExpBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Get ExpBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Information element with the supplied ID", response = ExpBlueprintInfo.class),
+			@ApiResponse(code = 200, message = "Returns the experiment blueprint with the given ID", response = ExpBlueprintInfo.class),
 			//@ApiResponse(code = 400, message = "The supplied element contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
@@ -153,7 +162,7 @@ public class ExpBlueprintCatalogueRestController {
 
 	@ApiOperation(value = "Delete ExpBlueprint")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Deleted information element with the supplied ID", response = ResponseEntity.class),
+			@ApiResponse(code = 200, message = "Delete the experiment blueprint with the given ID", response = ResponseEntity.class),
 			//@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
 			//@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)

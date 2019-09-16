@@ -53,7 +53,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorRespon
 
 @RestController
 @CrossOrigin
-@RequestMapping("/vs/catalogue")
+@RequestMapping("/portal/catalogue")
 public class VsDescriptorCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(VsDescriptorCatalogueRestController.class);

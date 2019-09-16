@@ -22,8 +22,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -107,8 +105,10 @@ public class VsBlueprint extends Blueprint {
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters, 
 			List<EveSite> compatibleSites,
-			List<String> compatibleContextBlueprint) {
-		super(vsBlueprinId, version, name, description, parameters, endPoints, configurableParameters);
+			List<String> compatibleContextBlueprint, 
+			List<ApplicationMetric> applicationMetrics) {
+		super(vsBlueprinId, version, name, description, parameters, endPoints, 
+				configurableParameters, applicationMetrics);
 		if (compatibleSites != null) this.compatibleSites = compatibleSites;
 		if (compatibleContextBlueprint != null) this.compatibleContextBlueprint = compatibleContextBlueprint;
 //		this.vsBlueprintId = vsBlueprinId;

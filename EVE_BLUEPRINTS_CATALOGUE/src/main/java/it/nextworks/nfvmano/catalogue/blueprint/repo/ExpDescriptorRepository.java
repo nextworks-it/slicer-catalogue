@@ -16,7 +16,6 @@
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

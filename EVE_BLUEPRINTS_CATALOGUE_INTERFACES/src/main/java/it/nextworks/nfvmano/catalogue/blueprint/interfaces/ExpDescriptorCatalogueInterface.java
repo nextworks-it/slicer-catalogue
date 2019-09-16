@@ -15,13 +15,10 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpDescriptorResponse;
 import it.nextworks.nfvmano.libs.common.exceptions.*;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
-
-import java.util.Optional;
 
 public interface ExpDescriptorCatalogueInterface {
 
@@ -36,7 +33,7 @@ public interface ExpDescriptorCatalogueInterface {
 	 * @throws FailedOperationException
 	 */
 	public String onboardExpDescriptor(OnboardExpDescriptorRequest request)
-			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException;
+			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException, NotExistingEntityException;
 	
 	/**
 	 * Method to request info about an existing ExpD
@@ -64,12 +61,4 @@ public interface ExpDescriptorCatalogueInterface {
 	public void deleteExpDescriptor(String expDescriptorId, String tenantId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
-
-	/**
-	 * Method to retrieve a EXPD
-	 *
-	 * @param expDescriptorId
-	 * @return the EXP Descriptor Element
-	 */
-	public Optional<ExpDescriptor> findByExpDescriptorId(String expDescriptorId);
 }

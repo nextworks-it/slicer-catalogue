@@ -9,6 +9,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,114 +28,95 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
 
 
     private String kpiId;
-
-
     private String name;
-
-
     private String formula;
-
-
     private String unit;
-
-    //@NotBlank
-    //private String objective;
-
-    public void setBlueprint(ExpBlueprint blueprint) {
-        this.blueprint = blueprint;
-    }
-
+    private String interval;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch= FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<String> metrics;
+    private List<String> metricIds = new ArrayList<>();
 
-
-    private String interval;
-
-    public KeyPerformanceIndicator() {
-    }
+    public KeyPerformanceIndicator() { }
 
     public KeyPerformanceIndicator(ExpBlueprint blueprint,
                                     String kpiId,
                                     String name,
-                                   String formula,
-                                    String unit,
-                                   //@NotBlank String objective,
-                                   List<String> metrics,
-                                   String interval) {
+                                    String formula,
+                                    String unit,                                   
+                                    List<String> metricIds,
+                                    String interval) {
         this.blueprint = blueprint;
         this.kpiId = kpiId;
         this.name = name;
         this.formula = formula;
         this.unit = unit;
-        //this.objective = objective;
-        if(metrics!=null)
-            this.metrics = metrics;
+        if(metricIds!=null)
+            this.metricIds = metricIds;
         this.interval = interval;
     }
+    
+    
 
-    public String getKpiId() {
-        return kpiId;
-    }
+    /**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
-    public void setKpiId(String kpiId) {
-        this.kpiId = kpiId;
-    }
+	/**
+	 * @return the blueprint
+	 */
+	public ExpBlueprint getBlueprint() {
+		return blueprint;
+	}
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return the kpiId
+	 */
+	public String getKpiId() {
+		return kpiId;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    public String getFormula() {
-        return formula;
-    }
+	/**
+	 * @return the formula
+	 */
+	public String getFormula() {
+		return formula;
+	}
 
-    public void setFormula(String formula) {
-        this.formula = formula;
-    }
+	/**
+	 * @return the unit
+	 */
+	public String getUnit() {
+		return unit;
+	}
 
-    public String getUnit() {
-        return unit;
-    }
+	/**
+	 * @return the interval
+	 */
+	public String getInterval() {
+		return interval;
+	}
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
+	/**
+	 * @return the metricIds
+	 */
+	public List<String> getMetricIds() {
+		return metricIds;
+	}
 
-    /*
-    public String getObjective() {
-        return objective;
-    }
-
-    public void setObjective(String objective) {
-        this.objective = objective;
-    }
-     */
-
-    public List<String> getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(List<String> metrics) {
-        this.metrics = metrics;
-    }
-
-    public String getInterval() {
-        return interval;
-    }
-
-    public void setInterval(String interval) {
-        this.interval = interval;
-    }
-
-    @Override
+	@Override
     public void isValid() throws MalformattedElementException {
 
         if(name==null || name.equals(""))
@@ -144,7 +127,7 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
             throw  new MalformattedElementException("Missing KPI name");
         if(unit==null || unit.equals(""))
             throw  new MalformattedElementException("Missing KPI name");
-        if(metrics.size()<1)
+        if(metricIds.size()<1)
             throw  new MalformattedElementException("Missing KPI metrics");
         if(interval==null || interval.equals(""))
             throw  new MalformattedElementException("Missing KPI interval");

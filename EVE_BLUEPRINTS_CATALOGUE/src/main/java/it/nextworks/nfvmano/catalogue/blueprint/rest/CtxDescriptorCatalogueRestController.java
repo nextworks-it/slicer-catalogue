@@ -18,10 +18,8 @@ package it.nextworks.nfvmano.catalogue.blueprint.rest;
 import io.swagger.annotations.Api;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.services.CtxDescriptorCatalogueService;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
@@ -42,7 +40,7 @@ import java.util.List;
 @Api(tags = "Context Descriptor Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/ctx/catalogue")
+@RequestMapping("/portal/catalogue")
 public class CtxDescriptorCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(CtxDescriptorCatalogueRestController.class);
@@ -63,27 +61,29 @@ public class CtxDescriptorCatalogueRestController {
 	
 	public CtxDescriptorCatalogueRestController() { } 
 	
-	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.POST)
-	public ResponseEntity<?> createCtxDescriptor(@RequestBody OnboardCtxDescriptorRequest request, Authentication auth) {
-		log.debug("Received request to create a CTX descriptor.");
-		String user = getUserFromAuth(auth);
-		if (!request.getTenantId().equals(user)) {
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
-		try {
-			String ctxDescriptorId = ctxDescriptorCatalogueService.onboardCtxDescriptor(request);
-			return new ResponseEntity<String>(ctxDescriptorId, HttpStatus.CREATED);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (AlreadyExistingEntityException e) {
-			log.error("CTX Blueprint already existing");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+	//Note: only GET requests are supported by the REST controller, since create and delete actions are managed through the creation and deletion of the associated experiment descriptor
+	
+//	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.POST)
+//	public ResponseEntity<?> createCtxDescriptor(@RequestBody OnboardCtxDescriptorRequest request, Authentication auth) {
+//		log.debug("Received request to create a CTX descriptor.");
+//		String user = getUserFromAuth(auth);
+//		if (!request.getTenantId().equals(user)) {
+//			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+//		}
+//		try {
+//			String ctxDescriptorId = ctxDescriptorCatalogueService.onboardCtxDescriptor(request);
+//			return new ResponseEntity<String>(ctxDescriptorId, HttpStatus.CREATED);
+//		} catch (MalformattedElementException e) {
+//			log.error("Malformatted request");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//		} catch (AlreadyExistingEntityException e) {
+//			log.error("CTX Blueprint already existing");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+//		} catch (Exception e) {
+//			log.error("Internal exception");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 	
 	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllCtxDescriptors(Authentication auth) {
@@ -130,24 +130,24 @@ public class CtxDescriptorCatalogueRestController {
 		}
 	}
 	
-	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteCtxDescriptor(@PathVariable String ctxdId, Authentication auth) {
-		log.debug("Received request to delete CTX descriptor with ID " + ctxdId);
-		try {
-			String user = getUserFromAuth(auth);
-			ctxDescriptorCatalogueService.deleteCtxDescriptor(ctxdId, user);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (NotExistingEntityException e) {
-			log.error("CTX Blueprints not found");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+//	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.DELETE)
+//	public ResponseEntity<?> deleteCtxDescriptor(@PathVariable String ctxdId, Authentication auth) {
+//		log.debug("Received request to delete CTX descriptor with ID " + ctxdId);
+//		try {
+//			String user = getUserFromAuth(auth);
+//			ctxDescriptorCatalogueService.deleteCtxDescriptor(ctxdId, user);
+//			return new ResponseEntity<>(HttpStatus.OK);
+//		} catch (MalformattedElementException e) {
+//			log.error("Malformatted request");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//		} catch (NotExistingEntityException e) {
+//			log.error("CTX Blueprints not found");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+//		} catch (Exception e) {
+//			log.error("Internal exception");
+//			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	
 }

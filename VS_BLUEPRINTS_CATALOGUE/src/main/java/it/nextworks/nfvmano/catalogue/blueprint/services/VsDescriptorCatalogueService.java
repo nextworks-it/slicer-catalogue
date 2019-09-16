@@ -159,11 +159,6 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		}
 	}
 
-	@Override
-	public Optional<VsDescriptor> findByVsDescriptorId(String vsDescriptorId) {
-		return vsDescriptorRepository.findByVsDescriptorId(vsDescriptorId);
-	}
-
 	public VsDescriptor getVsd(String vsdId) throws NotExistingEntityException {
 		log.debug("Internal request to retrieve VSD with ID " + vsdId);
 		Optional<VsDescriptor> vsdOpt = vsDescriptorRepository.findByVsDescriptorId(vsdId);

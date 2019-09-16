@@ -1,4 +1,5 @@
 curl -X POST http://localhost:8082/vs/catalogue/vsblueprint \
+  -b pippo_token \
   -H 'Content-Type: application/json' \
   -d '{
     "vsBlueprint": {
@@ -66,7 +67,15 @@ curl -X POST http://localhost:8082/vs/catalogue/vsblueprint \
                 ],
                 "external": true
             }
-        ]
+        ],
+	"applicationMetrics": [ {
+    		"metricId": "metricSample",
+    		"name": "metricSampleName",
+    		"metricCollectionType": "DELTA",
+    		"unit": "s",
+    		"interval": "5s",
+    		"topic": "metricSampleTopic"
+    	}]
     },
     "nsds": [
         {
