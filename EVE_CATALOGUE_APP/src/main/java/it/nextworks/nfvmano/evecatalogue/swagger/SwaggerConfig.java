@@ -24,10 +24,11 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("it.nextworks.nfvmano"))
-                .paths(Predicates.or(PathSelectors.ant("/vs/catalogue/**"),
-                        PathSelectors.ant("/ctx/catalogue/**"), PathSelectors.ant("/exp/catalogue/**")))
+                .paths(Predicates.or(
+                        PathSelectors.ant("/portal/catalogue/**")
+                        //PathSelectors.ant("/ctx/catalogue/**"), PathSelectors.ant("/exp/catalogue/**")))
                 //.paths(PathSelectors.ant("/vs/catalogue/**"))
-                .build();
+                )).build();
     }
 
     private ApiInfo apiInfo() {
