@@ -1,0 +1,89 @@
+{
+  "ctxBlueprint": {
+
+    "version": "0.1",
+    "name": "trafficGenerator",
+    "description": "TCP traffic generator",
+    "parameters": [{
+      "parameterId": "bitrate",
+      "parameterName": "bitrate",
+      "parameterType": "number",
+      "parameterDescription": "Traffic bitrate",
+      "applicabilityField": "test"
+    }],
+    "atomicComponents": [
+      {
+        "componentId": "traffic_source",
+        "serversNumber": 1,
+        "endPointsIds": ["traffic_source_ext" ]
+      },
+      {
+        "componentId": "traffic_sink",
+        "serversNumber": 1,
+        "endPointsIds": ["traffic_sink_ext"]
+      }
+    ],
+    "serviceSequence": [
+      { "hopEndPoints" : [{
+        "vsComponentId": "traffic_source",
+        "endPointId":  "traffic_source_ext"
+        }]
+      },
+      { "hopEndPoints" : [{
+        "vsComponentId": "traffic_sink",
+        "endPointId":  "traffic_sink_ext"
+        }]
+      }
+
+    ],
+    "endPoints": [
+      {
+        "endPointId": "traffic_source_ext",
+        "external": false,
+        "management": false,
+        "ranConnection": false
+
+      },
+      {
+        "endPointId": "traffic_sink_ext",
+        "external": false,
+        "management": false,
+        "ranConnection": false
+
+      }
+    ],
+    "configurableParameters": [
+
+    ],
+    "applicationMetrics": [ {
+    	"metricId": "metricSample",
+    	"name": "metricSampleName",
+    	"metricCollectionType": "DELTA",
+    	"unit": "s",
+    	"interval": "5s",
+    	"topic": "metricSampleTopic"
+    }]
+  },
+  "nsds": [
+
+  ],
+
+  "translationRules": [
+    {
+      "input": [
+        {
+          "parameterId": "test_parameter",
+          "minValue": "0",
+          "maxValue": "10"
+        }
+      ],
+      "nsdId": "test_nsd",
+      "nsdVersion": "1.0",
+      "nsFlavourId": "test_ns_flavour",
+      "nsInstantiationLevelId": "test_il"
+
+
+    }
+  ]
+}
+

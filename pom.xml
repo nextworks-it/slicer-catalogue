@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>it.nextworks.nfvmano</groupId>
+    <artifactId>catalogue-aggregator</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+      <module>VS_BLUEPRINTS_IM</module>
+      <module>VS_BLUEPRINTS_CATALOGUE_INTERFACES</module>
+      <module>VS_BLUEPRINTS_CATALOGUE</module>
+      <module>EVE_BLUEPRINTS_IM</module>
+      <module>EVE_BLUEPRINTS_CATALOGUE_INTERFACES</module>
+      <module>EVE_BLUEPRINTS_CATALOGUE</module>
+      <module>EVE_CATALOGUE_APP</module>
+    </modules>
+
+</project>
