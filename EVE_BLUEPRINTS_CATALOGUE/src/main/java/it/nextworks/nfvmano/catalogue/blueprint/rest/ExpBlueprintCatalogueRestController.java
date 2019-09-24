@@ -25,11 +25,12 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.services.ExpBlueprintCatalogueService;
-import it.nextworks.nfvmano.libs.common.elements.Filter;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

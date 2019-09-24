@@ -39,9 +39,9 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintInfoReposi
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
-import it.nextworks.nfvmano.libs.common.elements.Filter;
-import it.nextworks.nfvmano.libs.common.exceptions.*;
-import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

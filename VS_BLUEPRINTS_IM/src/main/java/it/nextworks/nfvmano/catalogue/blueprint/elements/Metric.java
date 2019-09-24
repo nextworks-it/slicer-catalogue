@@ -15,8 +15,8 @@
  */
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
-import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embeddable;

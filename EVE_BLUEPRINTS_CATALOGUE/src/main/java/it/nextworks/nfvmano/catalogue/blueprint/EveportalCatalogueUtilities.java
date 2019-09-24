@@ -1,9 +1,9 @@
 package it.nextworks.nfvmano.catalogue.blueprint;
 
-import it.nextworks.nfvmano.libs.common.elements.Filter;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 
 public class EveportalCatalogueUtilities {
 

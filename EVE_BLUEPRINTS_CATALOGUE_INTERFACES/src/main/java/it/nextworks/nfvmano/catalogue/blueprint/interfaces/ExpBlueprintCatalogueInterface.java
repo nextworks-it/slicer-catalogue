@@ -17,8 +17,12 @@ package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
-import it.nextworks.nfvmano.libs.common.exceptions.*;
-import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 
 
 public interface ExpBlueprintCatalogueInterface {

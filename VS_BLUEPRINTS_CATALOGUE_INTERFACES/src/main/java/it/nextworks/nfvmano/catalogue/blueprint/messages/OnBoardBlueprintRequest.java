@@ -20,9 +20,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import it.nextworks.nfvmano.libs.common.InterfaceMessage;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 
 public class OnBoardBlueprintRequest implements InterfaceMessage {

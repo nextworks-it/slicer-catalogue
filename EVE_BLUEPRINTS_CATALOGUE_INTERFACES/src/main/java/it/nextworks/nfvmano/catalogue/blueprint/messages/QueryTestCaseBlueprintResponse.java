@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprintInfo;
-import it.nextworks.nfvmano.libs.common.InterfaceMessage;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 
 public class QueryTestCaseBlueprintResponse implements InterfaceMessage {

@@ -8,7 +8,8 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequ
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

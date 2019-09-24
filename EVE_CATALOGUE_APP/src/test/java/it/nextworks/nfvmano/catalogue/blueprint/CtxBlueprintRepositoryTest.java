@@ -10,7 +10,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

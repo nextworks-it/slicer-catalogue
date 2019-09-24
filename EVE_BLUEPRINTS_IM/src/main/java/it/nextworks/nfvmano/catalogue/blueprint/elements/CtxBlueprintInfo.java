@@ -16,8 +16,10 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.nextworks.nfvmano.libs.common.InterfaceInformationElement;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+
+import it.nextworks.nfvmano.libs.ifa.common.InterfaceInformationElement;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;

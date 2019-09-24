@@ -43,11 +43,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.nextworks.nfvmano.libs.common.elements.Filter;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;

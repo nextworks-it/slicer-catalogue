@@ -17,9 +17,8 @@ package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.descriptors.nsd.Nsd;
-
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 
 import java.util.List;
 

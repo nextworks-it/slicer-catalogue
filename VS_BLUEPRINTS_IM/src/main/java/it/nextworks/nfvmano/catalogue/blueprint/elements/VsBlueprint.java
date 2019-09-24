@@ -30,7 +30,7 @@ import org.hibernate.annotations.FetchMode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 
 @Entity(name = "VsBlueprint")

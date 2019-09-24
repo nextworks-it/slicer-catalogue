@@ -22,9 +22,9 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorReq
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.libs.common.elements.Filter;
-import it.nextworks.nfvmano.libs.common.exceptions.*;
-import it.nextworks.nfvmano.libs.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -20,8 +20,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 public class BlueprintUserInformation implements DescriptorInformationElement {
 	

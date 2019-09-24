@@ -2,7 +2,9 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import it.nextworks.nfvmano.libs.common.DescriptorInformationElement;
+
+import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;

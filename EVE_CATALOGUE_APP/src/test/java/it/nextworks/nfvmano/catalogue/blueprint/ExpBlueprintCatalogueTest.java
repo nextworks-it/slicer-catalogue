@@ -8,10 +8,10 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 import it.nextworks.nfvmano.catalogue.blueprint.services.CtxBlueprintCatalogueService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.ExpBlueprintCatalogueService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsBlueprintCatalogueService;
-import it.nextworks.nfvmano.libs.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.common.exceptions.MethodNotImplementedException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 
 import org.junit.Before;

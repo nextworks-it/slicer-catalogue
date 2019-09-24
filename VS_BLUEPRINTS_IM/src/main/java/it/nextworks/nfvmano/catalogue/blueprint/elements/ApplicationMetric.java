@@ -18,7 +18,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embeddable;
 
-import it.nextworks.nfvmano.libs.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 @Embeddable
 @DiscriminatorValue("APPLICATION")
