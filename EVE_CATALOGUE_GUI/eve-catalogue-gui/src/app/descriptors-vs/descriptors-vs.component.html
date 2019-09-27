@@ -1,0 +1,55 @@
+<mat-toolbar>
+  <h1 class="mat-h1">Vertical Service Descriptors</h1>
+</mat-toolbar>
+<mat-card style="min-height: 100%">
+  <div class="mat-elevation-z8">
+    <table mat-table class="full-width-table" matSort aria-label="Elements">
+      <!-- Id Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+        <td mat-cell *matCellDef="let row">{{row.id}}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let row"><b>{{row.name}}</b></td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="service">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Originating Blueprint</th>
+        <td mat-cell *matCellDef="let row">{{row.service}}</td>
+      </ng-container>
+
+      <!-- Parameters Column -->
+      <ng-container matColumnDef="parameters">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Parameters</th>
+        <!-- <td mat-cell *matCellDef="let param of row.parameters">{{row.parameters}}</td> -->
+        <td mat-cell *matCellDef="let row" class="margin-all"><tr *ngFor="let param of row.parameters"><td>- {{param}}</td></tr></td>
+      </ng-container>
+
+      <!-- Button Column -->
+      <ng-container matColumnDef="buttons">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
+            <mat-button-toggle value="view_VSD"><mat-icon color="primary">remove_red_eye</mat-icon></mat-button-toggle>
+            <mat-button-toggle value="delete"><mat-icon color="primary">delete_forever</mat-icon></mat-button-toggle>
+          </mat-button-toggle-group>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator #paginator
+        [length]="dataSource?.data.length"
+        [pageIndex]="0"
+        [pageSize]="50"
+        [pageSizeOptions]="[25, 50, 100, 250]">
+    </mat-paginator>
+  </div>
+</mat-card>
+    

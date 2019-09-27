@@ -1,0 +1,62 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer mode="side" opened="true">
+    <mat-toolbar><a href="https://www.5g-eve.eu/" target="_blank"><img src="assets/images/logo_5geve_120.png"></a></mat-toolbar>
+    <mat-nav-list>
+      <mat-list-item>
+        <div mat-line>Home</div>
+        <button mat-icon-button routerLink="/">
+          <mat-icon>home</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line>Blueprints</div>
+        <button mat-icon-button [matMenuTriggerFor]="blueprints_menu">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </mat-list-item>
+      <mat-list-item>
+        <div mat-line>Descriptors</div>
+        <button mat-icon-button [matMenuTriggerFor]="descriptors_menu">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </mat-list-item>
+      <!-- mat-list-item >
+        <div mat-line>NFV</div>
+        <button mat-icon-button [matMenuTriggerFor]="nfv_menu">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </mat-list-item -->
+      <mat-menu #blueprints_menu="matMenu">
+        <button mat-menu-item routerLink="/blueprints_vs">Vertical Service</button>
+        <button mat-menu-item routerLink="/blueprints_ec">Execution Context</button>
+        <button mat-menu-item routerLink="/blueprints_tc">Test Case</button>
+        <button mat-menu-item routerLink="/blueprints_exp">Experiment</button>
+      </mat-menu>
+      <mat-menu #descriptors_menu="matMenu">
+        <button mat-menu-item routerLink="/descriptors_vs">Vertical Service</button>
+        <button mat-menu-item routerLink="/descriptors_ec">Execution Context</button>
+        <button mat-menu-item routerLink="/blueprints_tc">Test Case</button>
+        <button mat-menu-item routerLink="/descriptors_exp">Experiment</button>
+      </mat-menu>
+      <!-- mat-menu #nfv_menu="matMenu">
+        <button mat-menu-item routerLink="/nfv_ns">NSD</button>
+        <button mat-menu-item routerLink="/nfv_vnf">VNF Package</button>
+        <button mat-menu-item routerLink="/nfv_pnf">PNFD</button>
+      </mat-menu -->  
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="sidenav-container">
+    <mat-toolbar color="primary">
+      <button mat-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button>
+      <span class="title"><a routerLink="/" ><!-- img src="assets/images/logo_5geve_100.png" -->5G EVE Portal Catalogue</a></span>
+
+      <!-- This fills the remaining space of the current row -->
+      <span class="fill-remaining-space"></span>
+
+      <span><a href="http://www.nextworks.it/" target="_blank"><img src="assets/images/logo_nextworks_150.png"></a></span>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

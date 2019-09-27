@@ -1,0 +1,78 @@
+<mat-toolbar>
+  <h1 class="mat-h1">Vertical Service Blueprints</h1>
+</mat-toolbar>
+<mat-tab-group>
+  <mat-tab label="View">
+    <mat-card>
+      <table mat-table class="full-width-table" matSort aria-label="Elements">
+        <!-- Id Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+          <td mat-cell *matCellDef="let row"><b>{{row.id}}</b></td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row"><b>{{row.name}}</b></td>
+        </ng-container>
+
+        <!-- Version Column -->
+        <ng-container matColumnDef="version">
+          <th mat-header-cell *matHeaderCellDef>Version</th>
+          <td mat-cell *matCellDef="let row">{{row.version}}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let row">{{row.description}}</td>
+        </ng-container>
+
+        <!-- Configurable Parameters Column -->
+        <ng-container matColumnDef="conf_params">
+          <th mat-header-cell *matHeaderCellDef>Configurable Parameters</th>
+          <td mat-cell *matCellDef="let row"><tr *ngFor="let param of row.confParams"><td> - {{param}}</td></tr></td>
+        </ng-container>
+
+        <!-- VSDs Column -->
+        <ng-container matColumnDef="vsds">
+          <th mat-header-cell *matHeaderCellDef>VSDs</th>
+          <td mat-cell *matCellDef="let row">
+            <tr *ngFor="let name of row.vsdNames">
+              <td>
+		            <a href="https://www.5g-eve.eu">{{name}}</a>
+              </td>
+            </tr>
+          </td>
+        </ng-container>
+
+        <!-- Button Column -->
+        <ng-container matColumnDef="buttons">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
+              <mat-button-toggle value="view_blueprint" routerLink="/blueprints_vs_graph"><mat-icon color="primary">remove_red_eye</mat-icon></mat-button-toggle>
+              <mat-button-toggle value="delete"><mat-icon color="primary">delete_forever</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator #paginator
+          [length]="dataSource?.data.length"
+          [pageIndex]="0"
+          [pageSize]="50"
+          [pageSizeOptions]="[25, 50, 100, 250]">
+      </mat-paginator>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Onboard">
+    <mat-card>
+      <app-blueprints-vs-stepper></app-blueprints-vs-stepper>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>

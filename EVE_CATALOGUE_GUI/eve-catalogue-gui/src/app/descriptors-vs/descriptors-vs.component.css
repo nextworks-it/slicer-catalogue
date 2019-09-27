@@ -1,0 +1,22 @@
+.full-width-table {
+  width: 100%;
+}
+
+.margin-all {
+  margin: 5px;
+}
+
+.mat-header-cell:first-child,.mat-cell:first-child {
+  flex:5%;
+}
+.mat-header-cell:nth-child(2),.mat-cell:nth-child(2) {
+  flex:10%;
+}
+
+.mat-header-cell:nth-child(4),.mat-cell:nth-child(4) {
+  flex:20%;
+}
+
+.mat-header-cell:last-child,.mat-cell:last-child {
+  flex:5%
+}
