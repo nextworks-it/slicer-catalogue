@@ -1,10 +1,12 @@
-<mat-card><div style="height: 90%; width: 20%; float: left; overflow: auto; overflow-x: hidden">
-    <h1>Selected Node Name</h1>
-    <h2>{{node_name}}</h2>
+<mat-toolbar>
+    <h1 class="mat-h1">Vertical Service Blueprint Graph</h1>
+</mat-toolbar>
+<div style="height: 90%; width: 18%; float: left; overflow: auto; overflow-x: hidden; margin: 1%">
+    <h2 class="mat-h2">Selected Node Name</h2>
+    <h3 class="mat-h3">{{node_name}}</h3>
 </div>
-<div style="height: 90%; width: 80%; float: left; overflow: auto; overflow-y: hidden">
+<div style="height: 90%; width: 78%; float: left; overflow: auto; overflow-y: hidden; margin: 1%">
     <app-blueprints-vs-graph [elements]="graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-vs-graph>
 </div>
-</mat-card>
 
 
