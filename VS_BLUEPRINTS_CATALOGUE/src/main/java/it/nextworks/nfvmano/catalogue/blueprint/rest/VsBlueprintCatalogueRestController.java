@@ -88,6 +88,11 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsBlueprint(@RequestBody OnBoardVsBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a VS blueprint.");
+
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		String user = getUserFromAuth(auth);
 		if (!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);
@@ -116,8 +121,12 @@ public class VsBlueprintCatalogueRestController {
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
 	})
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.GET)
-	public ResponseEntity<?> getAllVsBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String site) {
+	public ResponseEntity<?> getAllVsBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String site, Authentication auth) {
 		log.debug("Received request to retrieve all the VS blueprints.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			if ((id == null) && (site == null)) {
 				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
@@ -150,8 +159,12 @@ public class VsBlueprintCatalogueRestController {
 
 	})
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.GET)
-	public ResponseEntity<?> getVsBlueprint(@PathVariable String vsbId) {
+	public ResponseEntity<?> getVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to retrieve VS blueprint with ID " + vsbId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId), null));
 			return new ResponseEntity<VsBlueprintInfo>(response.getVsBlueprintInfo().get(0), HttpStatus.OK);
@@ -177,6 +190,11 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to delete VS blueprint with ID " + vsbId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+
 		String user = getUserFromAuth(auth);
 		if (!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);

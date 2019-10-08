@@ -118,6 +118,10 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the VS descriptors.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
@@ -146,6 +150,10 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor/{vsdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsDescriptor(@PathVariable String vsdId, Authentication auth) {
 		log.debug("Received request to retrieve VS descriptor with ID " + vsdId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
