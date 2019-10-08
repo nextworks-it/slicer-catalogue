@@ -100,7 +100,24 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
         List<String> attributeSelector = request.getAttributeSelector();
         if ((attributeSelector == null) || (attributeSelector.isEmpty())) {
         	Map<String, String> fp = filter.getParameters();
-            if (fp.size() == 2 && fp.containsKey("TCD_ID") && fp.containsKey("TENANT_ID")) {
+			if (fp.size() == 1 && fp.containsKey("TENANT_ID")) {
+				String tenantId = fp.get("TENANT_ID");
+				if (tenantId.equals(adminTenant)) {
+					log.debug("TCD query for admin: returning all the TCDs");
+					tcDescriptors = testCaseDescriptorRepository.findAll();
+					log.debug("Retrieved all the TCDs");
+				} else {
+					tcDescriptors = testCaseDescriptorRepository.findByTenantId(tenantId);
+					log.debug("Added TCDs for tenant " + tenantId);
+					List<TestCaseDescriptor> tmpPublicTCds = testCaseDescriptorRepository.findByIsPublic(true);
+					for (TestCaseDescriptor tcd : tmpPublicTCds) {
+						if (!(tcd.getTenantId().equals(tenantId))) {
+							tcDescriptors.add(tcd);
+							log.debug("Added public TCD " + tcd.getName());
+						}
+					}
+				}
+			} else 	if (fp.size() == 2 && fp.containsKey("TCD_ID") && fp.containsKey("TENANT_ID")) {
             	String tcdId = fp.get("TCD_ID");
             	String tenantId = fp.get("TENANT_ID");
             	Optional<TestCaseDescriptor> tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorIdAndTenantId(tcdId, tenantId);
