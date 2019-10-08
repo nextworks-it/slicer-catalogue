@@ -80,6 +80,10 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createTestCaseBlueprint(@RequestBody OnboardTestCaseBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a Test case blueprint.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		String user = getUserFromAuth(auth);
 		if (!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);
@@ -105,8 +109,12 @@ public class TestBlueprintCatalogueRestController {
 			@ApiResponse(code = 200, message = "List of all the Test Case Service Blueprints of the user", response = TestCaseBlueprintInfo.class, responseContainer = "Set"),
 	})
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.GET)
-	public ResponseEntity<?> getAllTestCaseBlueprints() {
+	public ResponseEntity<?> getAllTestCaseBlueprints(Authentication auth) {
 		log.debug("Received request to retrieve all the Test case blueprints.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
 			return new ResponseEntity<List<TestCaseBlueprintInfo>>(response.getTestCaseBlueprints(), HttpStatus.OK);
@@ -127,8 +135,12 @@ public class TestBlueprintCatalogueRestController {
 			@ApiResponse(code = 200, message = "Test Case Blueprint with the given ID", response = TestCaseBlueprintInfo.class),
 	})
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.GET)
-	public ResponseEntity<?> getTcBlueprint(@PathVariable String tcbId) {
+	public ResponseEntity<?> getTcBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to retrieve test case blueprint with ID " + tcbId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTestCaseBlueprintFilterFromId(tcbId), null));
 			return new ResponseEntity<TestCaseBlueprintInfo>(response.getTestCaseBlueprints().get(0), HttpStatus.OK);
@@ -151,6 +163,10 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteTestCaseBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to delete Test case blueprint with ID " + tcbId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		String user = getUserFromAuth(auth);
 		if (!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);
