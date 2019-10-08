@@ -323,7 +323,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 			}
 		}
 		
-        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(expBlueprint.getExpBlueprintId(), expBlueprint.getVersion(), expBlueprint.getName());
+        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(target.getExpBlueprintId(), target.getVersion(), target.getName());
         expBlueprintInfoRepository.saveAndFlush(expbInfo);
         log.debug("Added Experiment Blueprint Info with ID " + expbIdString);
 
