@@ -1,0 +1,953 @@
+{
+	"info": {
+		"_postman_id": "37cb08d6-e6bb-4edc-a4d8-caa0db2565b7",
+		"name": "eve_catalogue",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login_admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/login?username=admin&password=admin",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "admin",
+							"description": "\n"
+						},
+						{
+							"key": "password",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_group",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/vs/admin/group/{{group}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"admin",
+						"group",
+						"{{group}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_tenant",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\":\"{{tenant}}\",\"password\":\"{{tenant}}\",\"allocatedResources\":{\"diskStorage\":0,\"vCPU\":0,\"memoryRAM\":0}}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/vs/admin/group/{{group}}/tenant",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"admin",
+						"group",
+						"{{group}}",
+						"tenant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_sla",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"slaStatus\": \"ENABLED\",\n\t\"slaConstraints\": [{\n\t\t\"maxResourceLimit\": {\n\t\t\t\t\"diskStorage\": 60,\n\t\t\t\t\"vCPU\": 10,\n\t\t\t\t\"memoryRAM\": 10240\n\t\t\t},\n\t\t\"scope\": \"GLOBAL_VIRTUAL_RESOURCE\"\n\t\t}\n\t]\n}\n"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/vs/admin/group/{{group}}/tenant/{{tenant}}/sla",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"vs",
+						"admin",
+						"group",
+						"{{group}}",
+						"tenant",
+						"{{tenant}}",
+						"sla"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_cb_asti",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "667c5474-3927-4094-967f-c0450a4c04cd",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received cb_id: \"+JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"cb_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ctxBlueprint\": {\n        \"version\": \"0.1\",\n        \"name\": \"trafficGenerator\",\n        \"description\": \"Traffic Generator Service\",\n        \"parameters\": [\n            {\n                \"parameterId\": \"flow_amount\",\n                \"parameterName\": \"flow_amount\",\n                \"parameterType\": \"number\",\n                \"parameterDescription\": \"number of flows\",\n                \"applicabilityField\": \"test\"\n            }\n        ],\n        \"atomicComponents\": [\n            {\n                \"componentId\": \"source\",\n                \"serversNumber\": 3,\n                \"endPointsIds\": [\n                    \"source_data_ext\"\n                ]\n            },\n            {\n                \"componentId\": \"EPC\",\n                \"serversNumber\": 1,\n                \"endPointsIds\": [\n                    \"pEPC_data\"\n                ]\n            }\n        ],\n        \"endPoints\": [\n            {\n                \"endPointId\": \"tg_sap_data\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": true\n            },\n            {\n                \"endPointId\": \"source_data_ext\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            }\n        ],\n        \"compatibleSites\": [\n            \"ITALY_TURIN\"\n        ],\n        \"applicationMetrics\": [\n            {\n                \"interval\": \"ctx_app_metric_interval\",\n                \"metricCollectionType\": \"CUMULATIVE\",\n                \"metricId\": \"ctx_app_metric_id\",\n                \"name\": \"ctx_app_metric_name\",\n                \"topic\": \"ctx_app_metric_topic\",\n                \"unit\": \"ctx_app_metric_unit\"\n            }\n        ],\n        \"connectivityServices\": [\n            {\n                \"endPointIds\": [\n                    \"tg_sap_data\",\n                    \"source_data_ext\"\n                ],\n                \"external\": true\n            }\n        ]\n    },\n    \"nsds\": [\n        {\n            \"version\": \"0.1\",\n            \"nsdIdentifier\": \"trafficGenerator\",\n            \"designer\": \"NXW\",\n            \"nsdName\": \"Traffic Generator Service\",\n            \"nsdInvariantId\": \"Traffic Generator Service\",\n            \"vnfdId\": [\n                \"source\"\n            ],\n            \"sapd\": [\n                {\n                    \"cpdId\": \"tg_sap_data\",\n                    \"description\": \"SAP for all the TG service\",\n                    \"layerProtocol\": \"IPV4\",\n                    \"cpRole\": \"ROOT\",\n                    \"addressData\": [\n                        {\n                            \"addressType\": \"IP_ADDRESS\",\n                            \"iPAddressAssignment\": false,\n                            \"floatingIpActivated\": true,\n                            \"iPAddressType\": \"IPv4\",\n                            \"numberOfIpAddress\": 1\n                        }\n                    ],\n                    \"sapAddressAssignment\": false,\n                    \"nsVirtualLinkDescId\": \"tg_vl_data\"\n                }\n            ],\n            \"virtualLinkDesc\": [\n                {\n                    \"virtualLinkDescId\": \"tg_vl_data\",\n                    \"virtualLinkDescProvider\": \"NXW\",\n                    \"virtuaLinkDescVersion\": \"0.1\",\n                    \"connectivityType\": {\n                        \"layerProtocol\": \"IPV4\"\n                    },\n                    \"virtualLinkDf\": [\n                        {\n                            \"flavourId\": \"fc_vl_df_data\",\n                            \"qos\": {\n                                \"latency\": 0,\n                                \"packetDelayVariation\": 0,\n                                \"packetLossRatio\": 0,\n                                \"priority\": 0\n                            },\n                            \"serviceAvaibilityLevel\": \"LEVEL_1\",\n                            \"bitrateRequirements\": {\n                                \"root\": 2,\n                                \"leaf\": 2\n                            }\n                        }\n                    ],\n                    \"description\": \"Network to connect the TG to the external NWs\"\n                }\n            ],\n            \"nsDf\": [\n                {\n                    \"nsDfId\": \"nsTg_df\",\n                    \"flavourKey\": \"nsTg_fk\",\n                    \"vnfProfile\": [\n                        {\n                            \"vnfProfileId\": \"source_profile\",\n                            \"vnfdId\": \"source\",\n                            \"flavourId\": \"source_df\",\n                            \"instantiationLevel\": \"source_il\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 3,\n                            \"nsVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"tg_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"tg_data_ext\"\n                                    ]\n                                }\n                            ]\n                        }\n                    ],\n                    \"virtualLinkProfile\": [\n                        {\n                            \"virtualLinkProfileId\": \"tg_vl_profile_data\",\n                            \"virtualLinkDescId\": \"tg_vl_data\",\n                            \"flavourId\": \"tg_vl_df_data\",\n                            \"maxBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            },\n                            \"minBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            }\n                        }\n                    ],\n                    \"nsProfile\": [\n                        {\n                            \"nsdId\": \"trafficGenerator\",\n                            \"nsProfileId\": \"trafficGenerator_profile\",\n                            \"nsInstantiationLevelId\": \"nsTg_il\",\n                            \"nsDfId\": \"nsTg_df\"\n                        }\n                    ],\n                    \"nsInstantiationLevel\": [\n                        {\n                            \"nsLevelId\": \"nsTg_il\",\n                            \"description\": \"Default instantiation level for the TG service\",\n                            \"vnfToLevelMapping\": [\n                                {\n                                    \"vnfProfileId\": \"source_profile\",\n                                    \"numberOfInstances\": 1\n                                }\n                            ],\n                            \"virtualLinkToLevelMapping\": [\n                                {\n                                    \"virtualLinkProfileId\": \"tg_vl_profile_data\",\n                                    \"bitRateRequirements\": {\n                                        \"root\": \"1\",\n                                        \"leaf\": \"1\"\n                                    }\n                                }\n                            ]\n                        }\n                    ],\n                    \"defaultNsInstantiationLevelId\": \"nsTg_il\",\n                    \"dependencies\": []\n                }\n            ],\n            \"security\": {\n                \"signature\": \"NSD_SIGNATURE\",\n                \"algorithm\": \"NSD_ALGORITHM\",\n                \"certificate\": \"NSD_CERTIFICATE\"\n            }\n        }\n    ],\n    \"translationRules\": [\n        {\n            \"nsdId\": \"trafficGenerator\",\n            \"nsdVersion\": \"0.1\",\n            \"nsFlavourId\": \"nsTg_df\",\n            \"nsInstantiationLevelId\": \"nsTg_il\",\n            \"input\": [\n                {\n                    \"parameterId\": \"flow_amount\",\n                    \"minValue\": \"1\",\n                    \"maxValue\": \"5\"\n                }\n            ]\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/ctxblueprint",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"ctxblueprint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_vsb_asti",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0addd794-1cd8-44f2-b240-4cc65a01df2c",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received vsb_id: \"+JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"vsb_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"vsBlueprint\": {\n        \"version\": \"0.1\",\n        \"name\": \"AstiAGVControl\",\n        \"description\": \"Asti AGV control service \",\n        \"parameters\": [\n            {\n                \"parameterId\": \"sensor_amount\",\n                \"parameterName\": \"sensor_amount\",\n                \"parameterType\": \"number\",\n                \"parameterDescription\": \"number of guiding sensors\",\n                \"applicabilityField\": \"efactory\"\n            },\n            {\n                \"parameterId\": \"vehicle_amount\",\n                \"parameterName\": \"vehicle_amount\",\n                \"parameterType\": \"number\",\n                \"parameterDescription\": \"number of autonomous guided vehicles\",\n                \"applicabilityField\": \"efactory\"\n            }\n        ],\n        \"atomicComponents\": [\n            {\n                \"componentId\": \"masterPLC\",\n                \"serversNumber\": 3,\n                \"endPointsIds\": [\n                    \"mplc_data_ext\"\n                ]\n            },\n            {\n                \"componentId\": \"EPC\",\n                \"serversNumber\": 1,\n                \"endPointsIds\": [\n                    \"pEPC_data\"\n                ]\n            }\n        ],\n        \"endPoints\": [\n            {\n                \"endPointId\": \"agv_sap_data\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": true\n            },\n            {\n                \"endPointId\": \"mplc_data_ext\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            },\n            {\n                \"endPointId\": \"pEPC_data\",\n                \"external\": true,\n                \"management\": true,\n                \"ranConnection\": false\n            }\n        ],\n        \"connectivityServices\": [\n            {\n                \"endPointIds\": [\n                    \"agv_sap_data\",\n                    \"mplc_data_ext\",\n                    \"pEPC_data\"\n                ],\n                \"external\": true\n            }\n        ],\n        \"applicationMetrics\": [\n            {\n                \"interval\": \"test_interval\",\n                \"metricCollectionType\": \"CUMULATIVE\",\n                \"metricId\": \"test_metric_id\",\n                \"name\": \"test_metric_name\",\n                \"topic\": \"test_metric_topic\",\n                \"unit\": \"test_metric_unit\"\n            }\n        ],\n        \"compatibleContextBlueprint\": [\n            \"{{cb_id}}\"\n        ],\n        \"compatibleSites\": [\n            \"ITALY_TURIN\"\n        ],\n        \"serviceSequence\": [\n            {\n                \"hopEndPoints\": [\n                    {\n                        \"endPointId\": \"mplc_data_ext\",\n                        \"vsComponentId\": \"masterPLC\"\n                    }\n                ]\n            },\n            {\n                \"hopEndPoints\": [\n                    {\n                        \"endPointId\": \"pEPC_data\",\n                        \"vsComponentId\": \"EPC\"\n                    }\n                ]\n            }\n        ]\n    },\n    \"nsds\": [\n        {\n            \"nsdIdentifier\": \"nsAstiAgvControl\",\n            \"designer\": \"NXW\",\n            \"version\": \"0.1\",\n            \"nsdName\": \"Autonomous Guided Vehicle Control service @ 5GEVE\",\n            \"nsdInvariantId\": \"Autonomous Guided Vehicle Control service @ 5GEVE\",\n            \"vnfdId\": [\n                \"masterPLC\"\n            ],\n            \"pnfdId\": [\n                \"EPC\"\n            ],\n            \"sapd\": [\n                {\n                    \"cpdId\": \"agv_sap_data\",\n                    \"description\": \"SAP for all the AGV service\",\n                    \"layerProtocol\": \"IPV4\",\n                    \"cpRole\": \"ROOT\",\n                    \"addressData\": [\n                        {\n                            \"addressType\": \"IP_ADDRESS\",\n                            \"iPAddressAssignment\": false,\n                            \"floatingIpActivated\": true,\n                            \"iPAddressType\": \"IPv4\",\n                            \"numberOfIpAddress\": 1\n                        }\n                    ],\n                    \"sapAddressAssignment\": false,\n                    \"nsVirtualLinkDescId\": \"agv_vl_data\"\n                }\n            ],\n            \"virtualLinkDesc\": [\n                {\n                    \"virtualLinkDescId\": \"agv_vl_data\",\n                    \"virtualLinkDescProvider\": \"NXW\",\n                    \"virtuaLinkDescVersion\": \"0.1\",\n                    \"connectivityType\": {\n                        \"layerProtocol\": \"IPV4\"\n                    },\n                    \"virtualLinkDf\": [\n                        {\n                            \"flavourId\": \"fc_vl_df_data\",\n                            \"qos\": {\n                                \"latency\": 0,\n                                \"packetDelayVariation\": 0,\n                                \"packetLossRatio\": 0,\n                                \"priority\": 0\n                            },\n                            \"serviceAvaibilityLevel\": \"LEVEL_1\",\n                            \"bitrateRequirements\": {\n                                \"root\": 2,\n                                \"leaf\": 2\n                            }\n                        }\n                    ],\n                    \"description\": \"Network to connect to the AGV devices\"\n                }\n            ],\n            \"nsDf\": [\n                {\n                    \"nsDfId\": \"nsAgv_df\",\n                    \"flavourKey\": \"nsAgv_fk\",\n                    \"vnfProfile\": [\n                        {\n                            \"vnfProfileId\": \"vAgv_profile\",\n                            \"vnfdId\": \"masterPLC\",\n                            \"flavourId\": \"masterPLC_df\",\n                            \"instantiationLevel\": \"masterPLC_il\",\n                            \"minNumberOfInstances\": 1,\n                            \"maxNumberOfInstances\": 3,\n                            \"nsVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"agv_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"masterPLC_data_ext\"\n                                    ]\n                                }\n                            ]\n                        }\n                    ],\n                    \"pnfProfile\": [\n                        {\n                            \"pnfProfileId\": \"EPC_profile\",\n                            \"pnfdId\": \"EPC\",\n                            \"pnfVirtualLinkConnectivity\": [\n                                {\n                                    \"virtualLinkProfileId\": \"agv_vl_profile_data\",\n                                    \"cpdId\": [\n                                        \"EPC_data\"\n                                    ]\n                                }\n                            ]\n                        }\n                    ],\n                    \"virtualLinkProfile\": [\n                        {\n                            \"virtualLinkProfileId\": \"agv_vl_profile_data\",\n                            \"virtualLinkDescId\": \"agv_vl_data\",\n                            \"flavourId\": \"agv_vl_df_data\",\n                            \"maxBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            },\n                            \"minBitrateRequirements\": {\n                                \"root\": \"1\",\n                                \"leaf\": \"1\"\n                            }\n                        }\n                    ],\n                    \"nsProfile\":[\n                    \t{\n                    \t\t\"nsdId\":\"nsAstiAgvControl\",\n                    \t\t\"nsProfileId\": \"nsAstiAgvControl_profile\",\n                    \t\t\"nsInstantiationLevelId\": \"nsAgv_il\",\n                    \t\t\"nsDfId\": \"nsAgv_df\"\n                    \t}\n                    \t\n                    \t],\n                    \"nsInstantiationLevel\": [\n                        {\n                            \"nsLevelId\": \"nsAgv_il\",\n                            \"description\": \"Default instantiation level for the AGV service\",\n                            \"vnfToLevelMapping\": [\n                                {\n                                    \"vnfProfileId\": \"masterPLC_profile\",\n                                    \"numberOfInstances\": 1\n                                }\n                            ],\n                            \"virtualLinkToLevelMapping\": [\n                                {\n                                    \"virtualLinkProfileId\": \"agv_vl_profile_data\",\n                                    \"bitRateRequirements\": {\n                                        \"root\": \"1\",\n                                        \"leaf\": \"1\"\n                                    }\n                                }\n                            ]\n                        }\n                    ],\n                    \"defaultNsInstantiationLevelId\": \"nsAgv_il\",\n                    \"dependencies\": []\n                }\n            ],\n            \"security\": {\n                \"signature\": \"FC_NSD_SIGNATURE\",\n                \"algorithm\": \"FC_NSD_ALGORITHM\",\n                \"certificate\": \"FC_NSD_CERTIFICATE\"\n            }\n        }\n    ],\n    \"translationRules\": [\n        {\n            \"nsdId\": \"nsAstiAgvControl\",\n            \"nsdVersion\": \"0.1\",\n            \"nsFlavourId\": \"nsAgv_df\",\n            \"nsInstantiationLevelId\": \"nsAgv_il\",\n            \"input\": [\n                {\n                    \"parameterId\": \"sensor_amount\",\n                    \"minValue\": \"1\",\n                    \"maxValue\": \"5\"\n                },\n                {\n                    \"parameterId\": \"vehicle_amount\",\n                    \"minValue\": \"1\",\n                    \"maxValue\": \"5\"\n                }\n            ]\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/vsblueprint",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"vsblueprint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_tcb_asti",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3daac12c-4bed-4abc-a508-ef75613c260d",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received tcb_id: \"+JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"tcb_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"testCaseBlueprint\": {\n    \"description\": \"string\",\n    \"infrastructureParameters\": {\n      \"additionalProp1\": \"string\",\n      \"additionalProp2\": \"string\",\n      \"additionalProp3\": \"string\"\n    },\n    \"name\": \"string\",\n    \"script\": \"string\",\n    \"userParameters\": {\n      \"additionalProp1\": \"string\",\n      \"additionalProp2\": \"string\",\n      \"additionalProp3\": \"string\"\n    },\n    \"version\": \"string\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/testcaseblueprint",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"testcaseblueprint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_expb_asti",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e52c27f8-0ea1-4726-bfbe-0af5f09b4a5e",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received expb_id: \"+JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"expb_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nsds\": [\n    {\n      \"nsdIdentifier\": \"astiExpNsd\",\n      \"designer\": \"NXW\",\n      \"version\": \"0.1\",\n      \"nsdName\": \"ASTI Experiment NSD\",\n      \"nsdInvariantId\": \"Traffic Generator Service\",\n      \"vnfdId\": [\n       \n      ],\n      \"nestedNsdId\":[\n      \t\t\"trafficGenerator\",\n      \t\t\"nsAstiAgvControl\"\n      \t],\n      \"sapd\": [\n     \n      ],\n      \"virtualLinkDesc\": [\n     \n      ],\n      \"nsDf\": [\n        {\n          \"nsDfId\": \"nsExp_df\",\n          \"flavourKey\": \"nsExp_fk\",\n          \"vnfProfile\": [\n         \n          ],\n          \"virtualLinkProfile\": [\n            \n          ],\n          \"nsInstantiationLevel\": [\n            {\n              \"nsLevelId\": \"nsExp_il\",\n              \"description\": \"Default instantiation level for the Exp NS\",\n              \"vnfToLevelMapping\": [\n               \n              ],\n              \"virtualLinkToLevelMapping\": [\n                \n              ],\n              \"nsToLevelMapping\":[\n              \t{\n              \t\t\"nsProfileId\":\"nsAstiAgvControl_profile\",\n              \t\t\"numberOfInstances\":1\n              \t},{\n              \t\t\"nsProfileId\":\"trafficGenerator_profile\",\n              \t\t\"numberOfInstances\":1\n              \t}\n              \t]\n            }\n          ],\n          \"defaultNsInstantiationLevelId\": \"nsExp_il\",\n          \"dependencies\": []\n        }\n      ],\n      \"security\": {\n        \"signature\": \"NSD_SIGNATURE\",\n        \"algorithm\": \"NSD_ALGORITHM\",\n        \"certificate\": \"NSD_CERTIFICATE\"\n      }\n    }\n  ],\n  \"translationRules\": [\n    {\n      \"nsdId\": \"string\",\n      \"nsdVersion\": \"string\",\n      \"nsFlavourId\": \"string\",\n      \"nsInstantiationLevelId\": \"string\",\n      \"input\": [\n        {\n          \"parameterId\": \"string\",\n          \"minValue\": 0,\n          \"maxValue\": 0\n        }\n      ],\n      \"blueprintId\": \"string\"\n    }\n  ],\n  \"expBlueprint\": {\n    \"ctxBlueprintIds\": [\n      \"{{cb_id}}\"\n    ],\n    \"description\": \"ASTI Control loop stress experiment\",\n    \"kpis\": [\n      {\n        \"formula\": \"kpi_formula\",\n        \"interval\": \"kpi_interval\",\n        \"kpiId\": \"kpi_id\",\n        \"metricIds\": [\n          \"test_metric_id\",\n          \"ctx_app_metric_id\"\n        ],\n        \"name\": \"string\",\n        \"unit\": \"string\"\n      }\n    ],\n    \"metrics\": [\n      {\n        \"iMetricType\": \"LOST_PKT\",\n        \"interval\": \"string\",\n        \"metricCollectionType\": \"CUMULATIVE\",\n        \"metricId\": \"exp_metric_id\",\n        \"name\": \"exp_metric_name\",\n        \"unit\": \"exp_metric_unit\"\n      }\n    ],\n    \"name\": \"ASTI control loop stress experiment\",\n    \"sites\": [\n      \"ITALY_TURIN\"\n    ],\n    \"tcBlueprintIds\": [\n      \"{{tcb_id}}\"\n    ],\n    \"version\": 0.1,\n    \"vsBlueprintId\": {{vsb_id}}\n  }\n}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expblueprint",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expblueprint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_tenant",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/login?username={{tenant}}&password={{tenant}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "{{tenant}}",
+							"description": "\n"
+						},
+						{
+							"key": "password",
+							"value": "{{tenant}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "onboard_expd_asti",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3125ff1-5a14-41a4-866a-54bca9d43409",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(\"received expd_id: \"+JSON.stringify(jsonData));",
+							"",
+							"pm.environment.set(\"expd_id\", jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"contextDetails\": [\n        {\n            \"blueprintId\": \"{{cb_id}}\",\n            \"parameters\": {\n                \"flow_amount\": \"10\"\n            }\n        }\n    ],\n    \"experimentBlueprintId\": \"{{expb_id}}\",\n    \"kpiThresholds\": {\n        \"additionalProp1\": \"string\",\n        \"additionalProp2\": \"string\",\n        \"additionalProp3\": \"string\"\n    },\n    \"name\": \"ASTI STRESS TEST\",\n    \"tenantId\": \"{{tenant}}\",\n    \"testCaseConfiguration\": [\n        {\n            \"blueprintId\": \"{{tcb_id}}\",\n            \"parameters\": {\n                \"additionalProp1\": \"string\",\n                \"additionalProp2\": \"string\",\n                \"additionalProp3\": \"string\"\n            }\n        }\n    ],\n    \"version\": \"0.1\",\n    \"vsDescriptor\": {\n        \"managementType\": \"PROVIDER_MANAGED\",\n        \"name\": \"string\",\n        \"qosParameters\": {\n            \"vehicle_amount\": 10\n           \n        },\n        \"serviceConstraints\": [\n            {\n                \"atomicComponentId\": \"string\",\n                \"canIncludeSharedElements\": true,\n                \"nonPreferredProviders\": [\n                    \"string\"\n                ],\n                \"preferredProviders\": [\n                    \"string\"\n                ],\n                \"priority\": \"LOW\",\n                \"prohibitedProviders\": [\n                    \"string\"\n                ],\n                \"sharable\": true\n            }\n        ],\n        \"sla\": {\n            \"availabilityCoverage\": \"AVAILABILITY_COVERAGE_HIGH\",\n            \"lowCostRequired\": true,\n            \"serviceCreationTime\": \"SERVICE_CREATION_TIME_LOW\"\n        },\n        \"sst\": \"NONE\",\n        \"version\": \"string\",\n        \"vsBlueprintId\": \"{{vsb_id}}\"\n    }\n}"
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expdescriptor",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expdescriptor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_expbs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expblueprint?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expblueprint"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_expb",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expblueprint/{{expb_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expblueprint",
+						"{{expb_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_cbs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/ctxblueprint?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"ctxblueprint"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_cb",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/ctxblueprint/{{cb_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"ctxblueprint",
+						"{{cb_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_vsbs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/vsblueprint?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"vsblueprint"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_vsb",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/vsblueprint/{{vsb_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"vsblueprint",
+						"{{vsb_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_tcbs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/testcaseblueprint?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"testcaseblueprint"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_tcb",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/testcaseblueprint/{{tcb_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"testcaseblueprint",
+						"{{tcb_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_expds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "06671780-a4a8-42f3-9bbb-8f7575750298",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expdescriptor",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expdescriptor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_expd",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "06671780-a4a8-42f3-9bbb-8f7575750298",
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"",
+							"var vsd_id = jsonData.vsDescriptorId;",
+							"var tcd_id = jsonData.testCaseDescriptorIds[0];",
+							"var ctxd_id = jsonData.ctxDescriptorIds[0];",
+							"console.log(\"received vsd_id: \"+JSON.stringify(vsd_id));",
+							"console.log(\"received tcd_id: \"+JSON.stringify(tcd_id));",
+							"console.log(\"received ctxd_id: \"+JSON.stringify(ctxd_id));",
+							"pm.environment.set(\"vsd_id\", vsd_id);",
+							"pm.environment.set(\"tcd_id\", tcd_id);",
+							"pm.environment.set(\"ctx_id\", ctxd_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/expdescriptor/{{expd_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"expdescriptor",
+						"{{expd_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_cds",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/ctxdescriptor?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"ctxdescriptor"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_cd",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/ctxdescriptor/{{cd_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"ctxdescriptor",
+						"{{cd_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_tcds",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/testcasedescriptor?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"testcasedescriptor"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_tcd",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/testcasedescriptor/{{tcd_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"testcasedescriptor",
+						"{{tcd_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_vsds",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/vsdescriptor?Accept=application/json",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"vsdescriptor"
+					],
+					"query": [
+						{
+							"key": "Accept",
+							"value": "application/json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_vsd",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{portal}}:8082/portal/catalogue/vsdescriptor/{{vsd_id}}",
+					"protocol": "http",
+					"host": [
+						"{{portal}}"
+					],
+					"port": "8082",
+					"path": [
+						"portal",
+						"catalogue",
+						"vsdescriptor",
+						"{{vsd_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7283dc5b-cd4f-427a-970b-f351606cd0d9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e97b130b-af94-485a-8bb3-5366e875704c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "98285159-fea3-44c1-8058-5f7bbb7bd333",
+			"key": "slicer_address",
+			"value": "10.20.8.5",
+			"type": "string"
+		},
+		{
+			"id": "d842ad40-1e87-483e-86b7-72da659dd53e",
+			"key": "group",
+			"value": "NXW",
+			"type": "string"
+		},
+		{
+			"id": "1bf1bc15-e6e8-4a88-84c8-2ee63de682c2",
+			"key": "tenant",
+			"value": "NXW",
+			"type": "string"
+		},
+		{
+			"id": "4e0fecd6-533d-4997-8394-5d7d15e77913",
+			"key": "vsi_id",
+			"value": "27",
+			"type": "string"
+		}
+	]
+}
