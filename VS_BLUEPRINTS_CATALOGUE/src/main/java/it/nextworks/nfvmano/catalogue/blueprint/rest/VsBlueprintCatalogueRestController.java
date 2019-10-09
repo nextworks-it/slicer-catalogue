@@ -66,12 +66,23 @@ public class VsBlueprintCatalogueRestController {
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 
 	public VsBlueprintCatalogueRestController() { }
@@ -85,11 +96,12 @@ public class VsBlueprintCatalogueRestController {
 
 	})
 	@ResponseStatus(HttpStatus.CREATED)
+
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsBlueprint(@RequestBody OnBoardVsBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a VS blueprint.");
 
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -123,7 +135,7 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String site, Authentication auth) {
 		log.debug("Received request to retrieve all the VS blueprints.");
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -161,7 +173,7 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to retrieve VS blueprint with ID " + vsbId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -190,11 +202,10 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to delete VS blueprint with ID " + vsbId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-
 		String user = getUserFromAuth(auth);
 		if (!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);

@@ -64,12 +64,23 @@ public class VsDescriptorCatalogueRestController {
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 	
 	public VsDescriptorCatalogueRestController() { }
@@ -118,7 +129,7 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the VS descriptors.");
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -150,7 +161,7 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor/{vsdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsDescriptor(@PathVariable String vsdId, Authentication auth) {
 		log.debug("Received request to retrieve VS descriptor with ID " + vsdId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
