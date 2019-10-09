@@ -77,6 +77,10 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllTestCaseDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the TC descriptors.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
@@ -102,6 +106,10 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor/{tcdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getTcDescriptor(@PathVariable String tcdId, Authentication auth) {
 		log.debug("Received request to retrieve Test case descriptor with ID " + tcdId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(

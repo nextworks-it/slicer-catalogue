@@ -20,10 +20,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprint;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface TestCaseBlueprintRepository extends JpaRepository<TestCaseBlueprint, Long> {
 
+	@Transactional
 	Optional<TestCaseBlueprint> findByTestcaseBlueprintId(String testcaseBlueprintId);
+
+	@Transactional
 	Optional<TestCaseBlueprint> findByNameAndVersion(String name, String version);
 	
 }

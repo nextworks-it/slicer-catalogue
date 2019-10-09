@@ -28,5 +28,6 @@ public interface TestCaseDescriptorRepository extends JpaRepository<TestCaseDesc
 	Optional<TestCaseDescriptor> findByTestCaseDescriptorIdAndTenantId(String testCaseDescriptorId, String tenantId);
 	List<TestCaseDescriptor> findByTestCaseBlueprintId(String testCaseBlueprintId);
 	List<TestCaseDescriptor> findByTenantId(String tenantId);
+	List<TestCaseDescriptor> findByIsPublic(boolean isPublic);
 	
 }

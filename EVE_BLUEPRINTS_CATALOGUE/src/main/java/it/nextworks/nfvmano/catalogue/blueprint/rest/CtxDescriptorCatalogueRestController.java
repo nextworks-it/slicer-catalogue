@@ -88,46 +88,59 @@ public class CtxDescriptorCatalogueRestController {
 	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllCtxDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the CTX descriptors.");
-		try {
-			String user = getUserFromAuth(auth);
-			QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
-					new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
-			);
-			return new ResponseEntity<List<CtxDescriptor>>(response.getCtxDescriptors(), HttpStatus.OK);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (NotExistingEntityException e) {
-			log.error("CTX Blueprints not found");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		if(auth!=null){
+			try {
+				String user = getUserFromAuth(auth);
+				QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
+						new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
+				);
+				return new ResponseEntity<List<CtxDescriptor>>(response.getCtxDescriptors(), HttpStatus.OK);
+			} catch (MalformattedElementException e) {
+				log.error("Malformatted request");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			} catch (NotExistingEntityException e) {
+				log.error("CTX Blueprints not found");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+			} catch (Exception e) {
+				log.error("Internal exception");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+
 	}
 	
 	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getCtxDescriptor(@PathVariable String ctxdId, Authentication auth) {
 		log.debug("Received request to retrieve CTX descriptor with ID " + ctxdId);
-		try {
-			String user = getUserFromAuth(auth);
-			QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
-					new GeneralizedQueryRequest(
-							EveportalCatalogueUtilities.buildCtxDescriptorFilter(ctxdId, user),
-							null
-					)
-			);
-			return new ResponseEntity<CtxDescriptor>(response.getCtxDescriptors().get(0), HttpStatus.OK);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (NotExistingEntityException e) {
-			log.error("CTX Blueprints not found");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		if(auth!=null){
+			try {
+				String user = getUserFromAuth(auth);
+				QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
+						new GeneralizedQueryRequest(
+								EveportalCatalogueUtilities.buildCtxDescriptorFilter(ctxdId, user),
+								null
+						)
+				);
+				return new ResponseEntity<CtxDescriptor>(response.getCtxDescriptors().get(0), HttpStatus.OK);
+			} catch (MalformattedElementException e) {
+				log.error("Malformatted request");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			} catch (NotExistingEntityException e) {
+				log.error("CTX Blueprints not found");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+			} catch (Exception e) {
+				log.error("Internal exception");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+
+
 	}
 	
 //	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.DELETE)

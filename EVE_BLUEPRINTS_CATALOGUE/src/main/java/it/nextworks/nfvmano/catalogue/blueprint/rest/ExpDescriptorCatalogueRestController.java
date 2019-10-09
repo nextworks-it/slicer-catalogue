@@ -78,23 +78,29 @@ public class ExpDescriptorCatalogueRestController {
 	@RequestMapping(value = "/expdescriptor", method = RequestMethod.POST)
 	public ResponseEntity<?> createExpDescriptor(@RequestBody OnboardExpDescriptorRequest request, Authentication auth) {
 		log.debug("Received request to create an EXP descriptor.");
-		String user = getUserFromAuth(auth);
-		if (!request.getTenantId().equals(user)) {
+		if(auth!=null){
+			String user = getUserFromAuth(auth);
+			if (!request.getTenantId().equals(user)) {
+				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+			}
+			try {
+				String expDescriptorId = expDescriptorCatalogueService.onboardExpDescriptor(request);
+				return new ResponseEntity<String>(expDescriptorId, HttpStatus.CREATED);
+			} catch (MalformattedElementException e) {
+				log.error("Malformatted request");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			} catch (AlreadyExistingEntityException e) {
+				log.error("EXP Descriptor already existing");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+			} catch (Exception e) {
+				log.error("Internal exception");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}else{
+			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		try {
-			String expDescriptorId = expDescriptorCatalogueService.onboardExpDescriptor(request);
-			return new ResponseEntity<String>(expDescriptorId, HttpStatus.CREATED);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (AlreadyExistingEntityException e) {
-			log.error("EXP Descriptor already existing");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+
 	}
 	
 	
@@ -102,6 +108,10 @@ public class ExpDescriptorCatalogueRestController {
 	@RequestMapping(value = "/expdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllExpDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the EXP descriptors.");
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryExpDescriptorResponse response = expDescriptorCatalogueService.queryExpDescriptor(
@@ -123,6 +133,10 @@ public class ExpDescriptorCatalogueRestController {
 	@RequestMapping(value = "/expdescriptor/{expdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getExpDescriptor(@PathVariable String expdId, Authentication auth) {
 		log.debug("Received request to retrieve EXP descriptor with ID " + expdId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryExpDescriptorResponse response = expDescriptorCatalogueService.queryExpDescriptor(
@@ -147,6 +161,10 @@ public class ExpDescriptorCatalogueRestController {
 	@RequestMapping(value = "/expdescriptor/{expdId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteExpDescriptor(@PathVariable String expdId, Authentication auth) {
 		log.debug("Received request to delete EXP descriptor with ID " + expdId);
+		if(auth==null){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			expDescriptorCatalogueService.deleteExpDescriptor(expdId, user);
