@@ -168,8 +168,12 @@ public class ExpBlueprintCatalogueRestController {
 	})
 	@RequestMapping(value = "/expblueprint/{expbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getExpBlueprint(@PathVariable String expbId, Authentication auth) {
-		if(auth!=null){
+
 			log.debug("Received request to retrieve EXP blueprint with ID " + expbId);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 			try {
 				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(expbId), null));
 				return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
@@ -183,10 +187,7 @@ public class ExpBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 

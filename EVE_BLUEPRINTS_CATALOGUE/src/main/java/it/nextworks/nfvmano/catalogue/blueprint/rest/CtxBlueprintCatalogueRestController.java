@@ -200,8 +200,10 @@ public class CtxBlueprintCatalogueRestController {
 	@RequestMapping(value = "/ctxblueprint/{ctxbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteCtxBlueprint(@PathVariable String ctxbId, Authentication auth) {
 		log.debug("Received request to delete CTX blueprint with ID " + ctxbId);
-		//TODO: To be improved once the final authentication platform is in place.
-		if(auth!=null){
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 			String user = getUserFromAuth(auth);
 			if (!user.equals(adminTenant)) {
 				log.warn("Request refused as tenant {} is not admin.", user);
@@ -220,10 +222,7 @@ public class CtxBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 
