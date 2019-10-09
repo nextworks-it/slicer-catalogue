@@ -27,6 +27,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
 import { AppRoutes } from './app.routes';
 import { SideTopBarComponent } from './side-top-bar/side-top-bar.component';
@@ -46,6 +47,7 @@ import { BlueprintsEDetailsComponent } from './blueprints-e-details/blueprints-e
 import { LoginComponent } from './login/login.component';
 import { BlueprintsVsGraphComponent } from './blueprints-vs-graph/blueprints-vs-graph.component';
 import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
+import { BlueprintsVsService } from './blueprints-vs.service';
 
 @NgModule({
   declarations: [
@@ -95,9 +97,9 @@ import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
     MatRadioModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
-    HttpClientModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [BlueprintsVsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

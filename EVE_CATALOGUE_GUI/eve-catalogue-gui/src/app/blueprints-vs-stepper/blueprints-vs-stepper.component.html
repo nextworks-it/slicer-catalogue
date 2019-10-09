@@ -2,7 +2,7 @@
     <mat-step [stepControl]="firstFormGroup">
         <form [formGroup]="firstFormGroup">
             <ng-template matStepLabel>Upload Blueprint</ng-template>
-            <input type="file" formControlName="firstCtrl" required/>
+            <input #blueprintFile type="file" formControlName="firstCtrl" required/>
             <div class="margin-top">
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
             </div>
@@ -11,7 +11,7 @@
     <mat-step [stepControl]="secondFormGroup">
         <form [formGroup]="secondFormGroup">
             <ng-template matStepLabel>Upload NSDs</ng-template>
-            <input type="file" formControlName="secondCtrl" required/>
+            <input #nsdFiles type="file" formControlName="secondCtrl" required/>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -26,16 +26,16 @@
                     <td>
                         <h4>NSD</h4>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput id="nsdId" placeholder="NSD Id" required>
+                            <input matInput #nsdId placeholder="NSD Id" formControlName="nsdId" required>
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput id="nsdVersion" placeholder="NSD Version" required>
+                            <input matInput #nsdVersion placeholder="NSD Version" formControlName="nsdVersion" required>
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput id="nsFlavourId" placeholder="NS Flavour Id" required>
+                            <input matInput #nsFlavourId placeholder="NS Flavour Id" formControlName="nsFlavourId" required>
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput id="nsInstLevel" placeholder="NS Instantiation Level Id" required>
+                            <input matInput #nsInstLevel placeholder="NS Instantiation Level Id" formControlName="nsInstLevel" required>
                         </mat-form-field>
                     </td>
                     <td></td>
@@ -79,7 +79,7 @@
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button (click)="stepper.reset()" color="accent" class="margin-all">Reset</button>
-                <button mat-raised-button color="warn" class="margin-all">Submit</button>
+                <button mat-raised-button color="warn" class="margin-all" (click)="createOnBoardVsBlueprintRequest(blueprintFile.files,nsdFiles.files);">Submit</button>
             </div>
         </form>
     </mat-step>
