@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
-import { NumberSymbol } from '@angular/common';
+import { NumberSymbol, DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-blueprints-vs-stepper',
@@ -11,26 +11,24 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
   isLinear = false;
   isButtonVisible = false;
-  arrayItems: {
+  /*arrayItems: {
     paramId: string;
     minValId: string;
     maxValId: string;
-  }[];
+  }[];*/
+  items: FormArray;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder) {
-    this.thirdFormGroup = this._formBuilder.group({
+  constructor(@Inject(DOCUMENT) document, private _formBuilder: FormBuilder) {
+    /*this.thirdFormGroup = this._formBuilder.group({
       formArray: this._formBuilder.array([]),
-    });
+    });*/
   }
 
   ngOnInit() {
-
-    this.arrayItems = [
-      { paramId: 'paramId_0', minValId: 'minValId_0', maxValId: 'maxVal_0' }
-    ];
+    //this.arrayItems = [];
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
@@ -42,15 +40,29 @@ export class BlueprintsVsStepperComponent implements OnInit {
       nsdVersion: ['', Validators.required],
       nsFlavourId: ['', Validators.required],
       nsInstLevel: ['', Validators.required],
-      formArray: this._formBuilder.array([])
+      items: this._formBuilder.array([this.createItem()])
+    });
+    //this.addItem({ paramId: 'paramId_0', minValId: 'minValId_0', maxValId: 'maxVal_0' });
+  }
+
+  /*get formArray() {
+    return this.thirdFormGroup.get('formArray') as FormArray;
+  }*/
+
+  createItem(): FormGroup {
+    return this._formBuilder.group({
+      paramId: '', 
+      minValId: '', 
+      maxValId: ''
     });
   }
 
-  get formArray() {
-    return this.thirdFormGroup.get('formArray') as FormArray;
+  addItem(): void {
+    this.items = this.thirdFormGroup.get('items') as FormArray;
+    this.items.push(this.createItem());
   }
 
-  addParamsRow() {
+  /*addParamsRow() {
     console.log("HERE!!!");
     var num = this.formArray.length - 1;
     var item = {
@@ -59,71 +71,78 @@ export class BlueprintsVsStepperComponent implements OnInit {
       maxValId: 'maxVal_' + num
     };
     this.addItem(item);
-  }
+  }*/
 
   removeItem() {
-    this.arrayItems.pop();
-    this.formArray.removeAt(this.formArray.length - 1);
+    //this.arrayItems.pop();
+    this.items.removeAt(this.items.length - 1);
   }
 
-  addItem(item) {
+  /*addItem(item) {
     this.arrayItems.push(item);
     this.formArray.push(this._formBuilder.control(false));
-  }
+  }*/
 
   createOnBoardVsBlueprintRequest(blueprints: File[], nsds: File[]/*, translationRules: Object*/) {
     var onBoardVsRequest = JSON.parse('{}');
     onBoardVsRequest['nsds'] = [];
     onBoardVsRequest['translationRules'] = [];
-    var blueprint = blueprints[0];
-    //console.log(blueprint);
+    if (blueprints.length > 0) {
+      var blueprint = blueprints[0];
+      //console.log(blueprint);
 
-    let promises = [];
-    let blueprintPromise = new Promise(resolve => {
-        let reader = new FileReader();
-        reader.readAsText(blueprint);
-        reader.onload = () => resolve(reader.result);
-    });
-    promises.push(blueprintPromise);
+      let promises = [];
+      let blueprintPromise = new Promise(resolve => {
+          let reader = new FileReader();
+          reader.readAsText(blueprint);
+          reader.onload = () => resolve(reader.result);
+      });
+      promises.push(blueprintPromise);
 
-    for (let nsd of nsds) {
-        let nsdPromise = new Promise(resolve => {
-            let reader = new FileReader();
-            reader.readAsText(nsd);
-            reader.onload = () => resolve(reader.result);
-        });
-        promises.push(nsdPromise);
+      for (let nsd of nsds) {
+          let nsdPromise = new Promise(resolve => {
+              let reader = new FileReader();
+              reader.readAsText(nsd);
+              reader.onload = () => resolve(reader.result);
+          });
+          promises.push(nsdPromise);
+      }
+
+      Promise.all(promises).then(fileContents => {
+          onBoardVsRequest['vsBlueprint'] = JSON.parse(fileContents[0]);
+          for (var i = 1; i < fileContents.length; i++) {
+            onBoardVsRequest['nsds'].push(JSON.parse(fileContents[i]));
+          }
+
+          var translationRule = JSON.parse('{}');
+
+          var blueprintId = onBoardVsRequest.vsBlueprint.blueprintId;
+          var nsdId = this.thirdFormGroup.get('nsdId').value;
+          var nsdVersion = this.thirdFormGroup.get('nsdVersion').value;
+          var nsFlavourId = this.thirdFormGroup.get('nsFlavourId').value;
+          var nsInstLevel = this.thirdFormGroup.get('nsInstLevel').value;
+
+          translationRule['blueprintId'] = blueprintId;
+          translationRule['nsdId'] = nsdId;
+          translationRule['nsdVersion'] = nsdVersion;
+          translationRule['nsFlavourId'] = nsFlavourId;
+          translationRule['nsInstlevel'] = nsInstLevel;
+
+          //var paramId = document.getElementById("paramId_0");
+          var paramsRows = this.thirdFormGroup.controls.items as FormArray;
+          var controls = paramsRows.controls;
+          var paramsObj = [];
+
+          for (var j = 0; j < controls.length; j++) {
+            paramsObj.push(controls[j].value);
+            console.log(paramsObj);
+          }
+          translationRule['input'] = paramsObj;
+          onBoardVsRequest.translationRules.push(translationRule);
+
+          console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
+      });
     }
-
-    Promise.all(promises).then(fileContents => {
-        onBoardVsRequest['vsBlueprint'] = JSON.parse(fileContents[0]);
-        for (var i = 1; i < fileContents.length; i++) {
-          onBoardVsRequest['nsds'].push(JSON.parse(fileContents[i]));
-        }
-
-        var translationRule = JSON.parse('{}');
-
-        var blueprintId = onBoardVsRequest.vsBlueprint.blueprintId;
-        var nsdId = this.thirdFormGroup.get('nsdId').value;
-        var nsdVersion = this.thirdFormGroup.get('nsdVersion').value;
-        var nsFlavourId = this.thirdFormGroup.get('nsFlavourId').value;
-        var nsInstLevel = this.thirdFormGroup.get('nsInstLevel').value;
-
-        translationRule['blueprintId'] = blueprintId;
-        translationRule['nsdId'] = nsdId;
-        translationRule['nsdVersion'] = nsdVersion;
-        translationRule['nsFlavourId'] = nsFlavourId;
-        translationRule['nsInstlevel'] = nsInstLevel;
-        translationRule['input'] = [];
-
-        var arrayControl = this.thirdFormGroup.get('formArray') as FormArray;
-
-        console.log(arrayControl);
-
-        onBoardVsRequest.translationRules.push(translationRule);
-
-        console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
-    });
 
     /*var reader = new FileReader();
      
