@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
-import { NumberSymbol, DOCUMENT } from '@angular/common';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { DOCUMENT } from '@angular/common';
+import { BlueprintsVsService } from '../blueprints-vs.service';
 
 @Component({
   selector: 'app-blueprints-vs-stepper',
@@ -11,24 +12,15 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
   isLinear = false;
   isButtonVisible = false;
-  /*arrayItems: {
-    paramId: string;
-    minValId: string;
-    maxValId: string;
-  }[];*/
   items: FormArray;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
 
-  constructor(@Inject(DOCUMENT) document, private _formBuilder: FormBuilder) {
-    /*this.thirdFormGroup = this._formBuilder.group({
-      formArray: this._formBuilder.array([]),
-    });*/
+  constructor(@Inject(DOCUMENT) document, private _formBuilder: FormBuilder, private blueprintsVsService: BlueprintsVsService) {
   }
 
   ngOnInit() {
-    //this.arrayItems = [];
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
@@ -42,12 +34,7 @@ export class BlueprintsVsStepperComponent implements OnInit {
       nsInstLevel: ['', Validators.required],
       items: this._formBuilder.array([this.createItem()])
     });
-    //this.addItem({ paramId: 'paramId_0', minValId: 'minValId_0', maxValId: 'maxVal_0' });
   }
-
-  /*get formArray() {
-    return this.thirdFormGroup.get('formArray') as FormArray;
-  }*/
 
   createItem(): FormGroup {
     return this._formBuilder.group({
@@ -62,34 +49,17 @@ export class BlueprintsVsStepperComponent implements OnInit {
     this.items.push(this.createItem());
   }
 
-  /*addParamsRow() {
-    console.log("HERE!!!");
-    var num = this.formArray.length - 1;
-    var item = {
-      paramId: 'paramId_' + num, 
-      minValId: 'minValId_' + num, 
-      maxValId: 'maxVal_' + num
-    };
-    this.addItem(item);
-  }*/
-
   removeItem() {
-    //this.arrayItems.pop();
+    this.items = this.thirdFormGroup.get('items') as FormArray;
     this.items.removeAt(this.items.length - 1);
   }
 
-  /*addItem(item) {
-    this.arrayItems.push(item);
-    this.formArray.push(this._formBuilder.control(false));
-  }*/
-
-  createOnBoardVsBlueprintRequest(blueprints: File[], nsds: File[]/*, translationRules: Object*/) {
+  createOnBoardVsBlueprintRequest(blueprints: File[], nsds: File[]) {
     var onBoardVsRequest = JSON.parse('{}');
     onBoardVsRequest['nsds'] = [];
     onBoardVsRequest['translationRules'] = [];
     if (blueprints.length > 0) {
       var blueprint = blueprints[0];
-      //console.log(blueprint);
 
       let promises = [];
       let blueprintPromise = new Promise(resolve => {
@@ -128,7 +98,6 @@ export class BlueprintsVsStepperComponent implements OnInit {
           translationRule['nsFlavourId'] = nsFlavourId;
           translationRule['nsInstlevel'] = nsInstLevel;
 
-          //var paramId = document.getElementById("paramId_0");
           var paramsRows = this.thirdFormGroup.controls.items as FormArray;
           var controls = paramsRows.controls;
           var paramsObj = [];
@@ -141,31 +110,9 @@ export class BlueprintsVsStepperComponent implements OnInit {
           onBoardVsRequest.translationRules.push(translationRule);
 
           console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
+
+          this.blueprintsVsService.postVsBlueprint(onBoardVsRequest);
       });
-    }
-
-    /*var reader = new FileReader();
-     
-    reader.onloadend = function (event) {
-      console.log(event);
-      onBoardVsRequest['vsBlueprint'] = JSON.parse(this.result as string);
-      //console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
-
-    };
-    reader.readAsText(blueprint, "UTF-8");
-    console.log(reader.readyState);
-
-    reader = new FileReader();
-
-    for (var i = 0 ; i < nsds.length; i++) {
-      var tmpFile = nsds[i];
-      reader.onloadend = function (evt) {
-        onBoardVsRequest['nsds'].push(JSON.parse(this.result as string));
-        console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
-      };
-      reader.readAsText(tmpFile, "UTF-8");
-    }*/    
-    
-      
+    }      
   }
 }

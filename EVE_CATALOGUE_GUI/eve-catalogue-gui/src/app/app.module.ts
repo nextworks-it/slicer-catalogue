@@ -25,10 +25,9 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutes } from './app.routes';
 import { SideTopBarComponent } from './side-top-bar/side-top-bar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -48,6 +47,7 @@ import { LoginComponent } from './login/login.component';
 import { BlueprintsVsGraphComponent } from './blueprints-vs-graph/blueprints-vs-graph.component';
 import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
 import { BlueprintsVsService } from './blueprints-vs.service';
+import { MessagesComponent } from './messages/messages.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +68,8 @@ import { BlueprintsVsService } from './blueprints-vs.service';
     BlueprintsEDetailsComponent,
     LoginComponent,
     BlueprintsVsGraphComponent,
-    VsbGraphComponent
+    VsbGraphComponent,
+    MessagesComponent
   ],
   imports: [
     BrowserModule,
@@ -95,6 +96,7 @@ import { BlueprintsVsService } from './blueprints-vs.service';
     MatInputModule,
     MatCheckboxModule,
     MatRadioModule,
+    MatSnackBarModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     HttpClientModule
