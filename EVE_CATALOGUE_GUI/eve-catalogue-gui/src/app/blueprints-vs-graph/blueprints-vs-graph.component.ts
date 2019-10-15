@@ -77,14 +77,14 @@ export class BlueprintsVsGraphComponent implements OnChanges {
 
   ngOnChanges(): any {
     this.render();
-    console.log(this.el.nativeElement);
+    //console.log(this.el.nativeElement);
   }
 
   public render() {
-    let cy_contianer = this.renderer.selectRootElement("#cy");
+    let cy_container = this.renderer.selectRootElement("#cy");
     let localselect = this.select;
     let cy = cytoscape({
-      container : cy_contianer,
+      container : cy_container,
       layout: this.layout,
       minZoom: this.zoom.min,
       maxZoom: this.zoom.max,

@@ -38,9 +38,9 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
   createItem(): FormGroup {
     return this._formBuilder.group({
-      paramId: '', 
-      minValId: '', 
-      maxValId: ''
+      parameterId: '', 
+      minValue: '', 
+      maxValue: ''
     });
   }
 
@@ -92,11 +92,11 @@ export class BlueprintsVsStepperComponent implements OnInit {
           var nsFlavourId = this.thirdFormGroup.get('nsFlavourId').value;
           var nsInstLevel = this.thirdFormGroup.get('nsInstLevel').value;
 
-          translationRule['blueprintId'] = blueprintId;
+          //translationRule['blueprintId'] = blueprintId;
           translationRule['nsdId'] = nsdId;
           translationRule['nsdVersion'] = nsdVersion;
           translationRule['nsFlavourId'] = nsFlavourId;
-          translationRule['nsInstlevel'] = nsInstLevel;
+          translationRule['nsInstantiationLevelId'] = nsInstLevel;
 
           var paramsRows = this.thirdFormGroup.controls.items as FormArray;
           var controls = paramsRows.controls;
@@ -111,7 +111,8 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
           console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
 
-          this.blueprintsVsService.postVsBlueprint(onBoardVsRequest);
+          this.blueprintsVsService.postVsBlueprint(onBoardVsRequest)
+          .subscribe(vsBlueprintId => console.log("Successfully uploaded new VS Blueprint with id " + vsBlueprintId));
       });
     }      
   }

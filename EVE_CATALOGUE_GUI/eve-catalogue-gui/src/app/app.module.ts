@@ -28,6 +28,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { CytoscapeModule } from 'ngx-cytoscape';
 import { AppRoutes } from './app.routes';
 import { SideTopBarComponent } from './side-top-bar/side-top-bar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -99,7 +100,8 @@ import { MessagesComponent } from './messages/messages.component';
     MatSnackBarModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
-    HttpClientModule
+    HttpClientModule,
+    CytoscapeModule
   ],
   providers: [BlueprintsVsService],
   bootstrap: [AppComponent]

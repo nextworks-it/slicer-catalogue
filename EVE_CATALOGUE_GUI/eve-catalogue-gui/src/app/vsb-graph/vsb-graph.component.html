@@ -6,7 +6,7 @@
     <h3 class="mat-h3">{{node_name}}</h3>
 </div>
 <div style="height: 90%; width: 78%; float: left; overflow: auto; overflow-y: hidden; margin: 1%">
-    <app-blueprints-vs-graph [elements]="graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-vs-graph>
+    <app-blueprints-vs-graph [elements]="vsbGraphService.graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-vs-graph>
 </div>
 
 

@@ -28,17 +28,33 @@ export class BlueprintsVsService {
   getVsBlueprints(): Observable<VsBlueprintInfo[]> {
     return this.http.get<VsBlueprintInfo[]>(this.baseUrl + this.vsBlueprintInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsBlueprintInfos')),
+        tap(_ => this.log('fetched vsBlueprintInfos', 'SUCCESS')),
         catchError(this.handleError<VsBlueprintInfo[]>('getVsBlueprints', []))
       );
   }
 
-  postVsBlueprint(onBoardVsRequest: Object): Observable<Object> {
+  getVsBlueprint(): Observable<VsBlueprintInfo> {
+    return this.http.get<VsBlueprintInfo>(this.baseUrl + this.vsBlueprintInfoUrl, this.httpOptions)
+      .pipe(
+        tap(_ => this.log('fetched vsBlueprintInfo', 'SUCCESS')),
+        catchError(this.handleError<VsBlueprintInfo>('getVsBlueprint'))
+      );
+  }
+
+  postVsBlueprint(onBoardVsRequest: Object): Observable<String> {
     return this.http.post(this.baseUrl + this.vsBlueprintInfoUrl, onBoardVsRequest, this.httpOptions)
       .pipe(
-        tap((onBoardVsRequest: Object) => this.log(`added VS Blueprint w/ id=${onBoardVsRequest['vsBlueprint']['blueprintId']}`)),
-        catchError(this.handleError<Object>('postVsBlueprint'))
+        tap((blueprintId: String) => this.log(`added VS Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+        catchError(this.handleError<String>('postVsBlueprint'))
       );
+  }
+
+  deleteVsBlueprint(blueprintId: string): Observable<String> {
+    return this.http.delete(this.baseUrl + this.vsBlueprintInfoUrl + '/' + blueprintId, this.httpOptions)
+    .pipe(
+      tap((result: String) => this.log(`deleted VS Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+      catchError(this.handleError<String>('deleteVsBlueprint'))
+    );
   }
 
   /**
@@ -54,7 +70,7 @@ export class BlueprintsVsService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      this.log(`${operation} failed: ${error.message}`, 'FAILED');
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -62,9 +78,9 @@ export class BlueprintsVsService {
   }
 
   /** Log a BlueprintsVSService message with the MessageService */
-  private log(message: string) {
+  private log(message: string, action: string) {
     this.messageService.add(`BluepritsVSService: ${message}`);
-    this.openSnackBar(`BluepritsVSService: ${message}`, 'SUCCESS');
+    this.openSnackBar(`BluepritsVSService: ${message}`, action);
   }
 
   openSnackBar(message: string, action: string) {
