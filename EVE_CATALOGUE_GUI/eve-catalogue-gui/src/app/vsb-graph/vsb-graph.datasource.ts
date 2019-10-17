@@ -4,12 +4,12 @@ import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 
-export interface BlueprintsEDetailsItemKV {
+export interface BlueprintsVsDetailsItemKV {
   key: string;
   value: string[];
 }
 
-const EXAMPLE_DATAKV: BlueprintsEDetailsItemKV[] = [
+const EXAMPLE_DATAKV: BlueprintsVsDetailsItemKV[] = [
   {key: "Id", value: ["6"]},
   {key: "Name", value: ["Blueprint for AGV experiments in a factory with variable size"]},
   {key: "Version", value: ["1.0"]},
@@ -28,13 +28,14 @@ const EXAMPLE_DATAKV: BlueprintsEDetailsItemKV[] = [
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsItemKV> {
-  data: BlueprintsEDetailsItemKV[] = EXAMPLE_DATAKV;
+export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
+  data: BlueprintsVsDetailsItemKV[] = [] /*EXAMPLE_DATAKV*/;
   paginator: MatPaginator;
   sort: MatSort;
 
-  constructor() {
+  constructor(data: BlueprintsVsDetailsItemKV[]) {
     super();
+    this.data = data;
   }
 
   /**
@@ -42,7 +43,7 @@ export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsI
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<BlueprintsEDetailsItemKV[]> {
+  connect(): Observable<BlueprintsVsDetailsItemKV[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -66,7 +67,7 @@ export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsI
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: BlueprintsEDetailsItemKV[]) {
+  private getPagedData(data: BlueprintsVsDetailsItemKV[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -75,7 +76,7 @@ export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsI
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: BlueprintsEDetailsItemKV[]) {
+  private getSortedData(data: BlueprintsVsDetailsItemKV[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }

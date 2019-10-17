@@ -9,10 +9,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable({
   providedIn: 'root'
 })
-export class BlueprintsVsService {
+export class BlueprintsEcServiceService {
 
   private baseUrl = 'http://localhost:8082/portal/catalogue/';
-  private vsBlueprintInfoUrl = 'vsblueprint';
+  private ctxBlueprintUrl = 'ctxblueprint';
 
   httpOptions = {
     headers: new HttpHeaders(
@@ -21,39 +21,35 @@ export class BlueprintsVsService {
 
   constructor(private http: HttpClient, private messageService: MessageService, private _snackBar: MatSnackBar) { }
 
-  /*getVsBlueprints(): Observable<VsBlueprintInfo[]> {
-    return this.http.get<VsBlueprintInfo[]>(this.baseUrl + this.vsBlueprintInfoUrl);
-  }*/
-
-  getVsBlueprints(): Observable<VsBlueprintInfo[]> {
-    return this.http.get<VsBlueprintInfo[]>(this.baseUrl + this.vsBlueprintInfoUrl, this.httpOptions)
+  getCtxBlueprints(): Observable<Object[]> {
+    return this.http.get<Object[]>(this.baseUrl + this.ctxBlueprintUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsBlueprintInfos', 'SUCCESS')),
-        catchError(this.handleError<VsBlueprintInfo[]>('getVsBlueprints', []))
+        tap(_ => this.log('fetched ctxBlueprints', 'SUCCESS')),
+        catchError(this.handleError<Object[]>('getCtxBlueprints', []))
       );
   }
 
-  getVsBlueprint(vsBlueprintId: string): Observable<VsBlueprintInfo> {
-    return this.http.get<VsBlueprintInfo>(this.baseUrl + this.vsBlueprintInfoUrl + "/" + vsBlueprintId, this.httpOptions)
+  getCtxBlueprint(ctxBlueprintId: string): Observable<Object> {
+    return this.http.get<Object>(this.baseUrl + this.ctxBlueprintUrl + "/" + ctxBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsBlueprintInfo', 'SUCCESS')),
-        catchError(this.handleError<VsBlueprintInfo>('getVsBlueprint'))
+        tap(_ => this.log('fetched ctxBlueprint', 'SUCCESS')),
+        catchError(this.handleError<Object>('getCtxBlueprint'))
       );
   }
 
-  postVsBlueprint(onBoardVsRequest: Object): Observable<String> {
-    return this.http.post(this.baseUrl + this.vsBlueprintInfoUrl, onBoardVsRequest, this.httpOptions)
+  postCtxBlueprint(onboardCtxBlueprintRequest: Object): Observable<String> {
+    return this.http.post(this.baseUrl + this.ctxBlueprintUrl, onboardCtxBlueprintRequest, this.httpOptions)
       .pipe(
-        tap((blueprintId: String) => this.log(`added VS Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
-        catchError(this.handleError<String>('postVsBlueprint'))
+        tap((blueprintId: String) => this.log(`added CTX Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+        catchError(this.handleError<String>('postCtxBlueprint'))
       );
   }
 
-  deleteVsBlueprint(blueprintId: string): Observable<String> {
-    return this.http.delete(this.baseUrl + this.vsBlueprintInfoUrl + '/' + blueprintId, this.httpOptions)
+  deleteCtxBlueprint(blueprintId: string): Observable<String> {
+    return this.http.delete(this.baseUrl + this.ctxBlueprintUrl + '/' + blueprintId, this.httpOptions)
     .pipe(
-      tap((result: String) => this.log(`deleted VS Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
-      catchError(this.handleError<String>('deleteVsBlueprint'))
+      tap((result: String) => this.log(`deleted CTX Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+      catchError(this.handleError<String>('deleteCtxBlueprint'))
     );
   }
 

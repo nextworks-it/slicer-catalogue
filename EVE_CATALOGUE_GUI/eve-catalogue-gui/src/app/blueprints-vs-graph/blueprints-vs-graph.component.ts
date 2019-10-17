@@ -25,9 +25,9 @@ export class BlueprintsVsGraphComponent implements OnChanges {
 
   constructor(private renderer : Renderer, private el: ElementRef) {
     this.layout = this.layout || {
-      name: 'grid',
-      directed: true,
-      padding: 0
+      name: 'cose',
+      //directed: true,
+      padding: 10
     };
 
     this.zoom = this.zoom || {
@@ -37,42 +37,98 @@ export class BlueprintsVsGraphComponent implements OnChanges {
 
     this.style = this.style || cytoscape.stylesheet()
       .selector('node')
-      .css({
-        'shape': 'data(shapeType)',
-        'width': 'mapData(weight, 40, 80, 20, 60)',
-        'content': 'data(name)',
-        'text-valign': 'center',
-        'text-outline-width': 1,
-        'text-outline-color': 'data(colorCode)',
-        'background-color': 'data(colorCode)',
-        'color': '#fff',
-        'font-size': 10
-      })
+        .css({
+          /*'shape': 'data(shapeType)',
+          'width': 'mapData(weight, 40, 80, 20, 60)',
+          'content': 'data(name)',
+          'text-valign': 'center',
+          'text-outline-width': 1,
+          'text-outline-color': 'data(colorCode)',
+          'background-color': 'data(colorCode)',
+          'color': '#fff',
+          'font-size': 10*/
+          'shape': 'data(shapeType)',
+          'content': 'data(name)',
+          'text-valign': 'center',
+          'text-outline-width': 0,
+          'text-width': 2,
+          //'text-outline-color': '#000',
+          'background-color': 'data(colorCode)',
+          'color': '#000',
+          'label': 'data(name)'
+        })
       .selector(':selected')
-      .css({
-        'border-width': 1,
-        'border-color': 'black'
-      })
+        .css({
+          'border-width': 3,
+          'border-color': 'black'
+        })
       .selector('edge')
-      .css({
-        'curve-style': 'bezier',
-        'opacity': 0.666,
-        'width': 'mapData(strength, 70, 100, 2, 6)',
-        'target-arrow-shape': 'triangle',
-        'line-color': 'data(colorCode)',
-        'source-arrow-color': 'data(colorCode)',
-        'target-arrow-color': 'data(colorCode)'
-      })
+        .css({
+          /*'curve-style': 'bezier',
+          'opacity': 0.666,
+          'width': 'mapData(strength, 70, 100, 2, 6)',
+          'target-arrow-shape': 'triangle',
+          'line-color': 'data(colorCode)',
+          'source-arrow-color': 'data(colorCode)',
+          'target-arrow-color': 'data(colorCode)'*/
+          'curve-style': 'bezier',
+          'opacity': 0.666,
+          'width': 'mapData(strength, 70, 100, 2, 6)',
+          'target-arrow-shape': 'circle',
+          'source-arrow-shape': 'circle',
+          'line-color': 'data(colorCode)',
+          'source-arrow-color': 'data(colorCode)',
+          'target-arrow-color': 'data(colorCode)'
+        })
       .selector('edge.questionable')
-      .css({
-        'line-style': 'dotted',
-        'target-arrow-shape': 'diamond'
-      })
+        .css({
+          'line-style': 'dotted',
+          'target-arrow-shape': 'diamond'
+        })
       .selector('.faded')
-      .css({
-        'opacity': 0.25,
-        'text-opacity': 0
-      });
+        .css({
+          'opacity': 0.25,
+          'text-opacity': 0
+        })
+      .selector('.vnf')
+				.css({
+					'background-image': 'assets/images/vnf_icon_80.png',
+					'width': 80,//'mapData(weight, 40, 80, 20, 60)',
+					'height': 80
+				})
+			.selector('.pnf')
+				.css({
+					'background-image': 'assets/images/pnf_icon_80.png',
+					'width': 80,//'mapData(weight, 40, 80, 20, 60)',
+					'height': 80
+				})
+			.selector('.net')
+				.css({
+					'background-image': 'assets/images/net_icon_50.png',
+					'width': 50,//'mapData(weight, 40, 80, 20, 60)',
+					'height': 50
+				})
+			.selector('.sap')
+				.css({
+					'background-image': 'assets/images/sap_icon_grey_50.png',
+					'width': 50,//'mapData(weight, 40, 80, 20, 60)',
+					'height': 50
+				})
+			.selector('.top-left')
+				.css({
+					'text-valign': 'top',
+					'text-halign': 'left'
+				})
+			.selector('.top-right')
+				.css({
+					'text-valign': 'top',
+					'text-halign': 'right'
+				})
+			.selector('.bottom-center')
+				.css({
+					'text-valign': 'bottom',
+					'text-halign': 'center'
+				});
   }
 
   ngOnChanges(): any {

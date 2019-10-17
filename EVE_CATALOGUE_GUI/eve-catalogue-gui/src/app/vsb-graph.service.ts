@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BlueprintsVsDetailsItemKV } from './vsb-graph/vsb-graph.datasource';
 
 @Injectable({
   providedIn: 'root'
@@ -7,10 +8,23 @@ export class VsbGraphService {
   _graphData: any = {
     nodes: [] = [],
     edges: [] = []
+  };
+  _vsBlueprintDetailsItems: BlueprintsVsDetailsItemKV[] = [];
+
+  _vsBlueprintId: string = "";
+
+  public updateVSBGraph(data: any) {
+    this._graphData = data;
   }
 
-  processVSB(data: any) {
-    this._graphData = data;
+  public updateVSBTable(data: BlueprintsVsDetailsItemKV[]) {
+    console.log(data);
+    this._vsBlueprintDetailsItems = data;
+  }
+
+  public updateVSBId(data: string) {
+    this._vsBlueprintId = data;
+    localStorage.setItem('vsbId', data);
   }
 
   private addNode(node: any) {
@@ -21,7 +35,15 @@ export class VsbGraphService {
     this._graphData.edges.push(edge);
   }
 
-  get graphData() {
+  public get graphData() {
     return this._graphData;
+  }
+
+  public get VsBlueprintDetailsItems() {
+    return this._vsBlueprintDetailsItems;
+  }
+
+  public get VsBlueprintId() {
+    return this._vsBlueprintId;
   }
 }
