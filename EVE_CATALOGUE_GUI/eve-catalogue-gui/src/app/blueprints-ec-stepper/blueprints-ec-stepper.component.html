@@ -76,12 +76,12 @@
                             <button mat-fab (click)="addItem();" color="primary"><mat-icon>add</mat-icon></button>
                         </div>
                     </td>
-            </tr>
+                </tr>
             </table>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button (click)="stepper.reset()" color="accent" class="margin-all">Reset</button>
-                <button mat-raised-button color="warn" class="margin-all" (click)="createOnBoardVsBlueprintRequest(blueprintFile.files,nsdFiles.files);">Submit</button>
+                <button mat-raised-button color="warn" class="margin-all" (click)="createOnBoardCtxBlueprintRequest(blueprintFile.files,nsdFiles.files);">Submit</button>
             </div>
         </form>
     </mat-step>

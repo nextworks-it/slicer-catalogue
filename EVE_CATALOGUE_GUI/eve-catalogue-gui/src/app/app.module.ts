@@ -50,6 +50,9 @@ import { BlueprintsVsGraphComponent } from './blueprints-vs-graph/blueprints-vs-
 import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
 import { BlueprintsVsService } from './blueprints-vs.service';
 import { MessagesComponent } from './messages/messages.component';
+import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints-ec-details.component';
+import { BlueprintsEcStepperComponent } from './blueprints-ec-stepper/blueprints-ec-stepper.component';
+import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +74,10 @@ import { MessagesComponent } from './messages/messages.component';
     LoginComponent,
     BlueprintsVsGraphComponent,
     VsbGraphComponent,
-    MessagesComponent
+    MessagesComponent,
+    BlueprintsEcDetailsComponent,
+    BlueprintsEcStepperComponent,
+    BlueprintsTcComponent
   ],
   imports: [
     BrowserModule,

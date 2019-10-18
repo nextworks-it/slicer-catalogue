@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { VsBlueprintInfo } from './blueprints-vs/vs-blueprint-info';
 import { MessageService } from './message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TcBlueprintInfo } from './blueprints-tc/tc-blueprint-info';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BlueprintsEcServiceService {
+export class BlueprintsTcService {
 
   private baseUrl = 'http://localhost:8082/portal/catalogue/';
-  private ctxBlueprintUrl = 'ctxblueprint';
+  private tcBlueprintInfoUrl = 'testcaseblueprint';
 
   httpOptions = {
     headers: new HttpHeaders(
@@ -21,35 +21,35 @@ export class BlueprintsEcServiceService {
 
   constructor(private http: HttpClient, private messageService: MessageService, private _snackBar: MatSnackBar) { }
 
-  getCtxBlueprints(): Observable<Object[]> {
-    return this.http.get<Object[]>(this.baseUrl + this.ctxBlueprintUrl, this.httpOptions)
+  getTcBlueprints(): Observable<TcBlueprintInfo[]> {
+    return this.http.get<TcBlueprintInfo[]>(this.baseUrl + this.tcBlueprintInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ctxBlueprints', 'SUCCESS')),
-        catchError(this.handleError<Object[]>('getCtxBlueprints', []))
+        tap(_ => this.log('fetched tcBlueprintInfos', 'SUCCESS')),
+        catchError(this.handleError<TcBlueprintInfo[]>('getTcBlueprints', []))
       );
   }
 
-  getCtxBlueprint(ctxBlueprintId: string): Observable<Object> {
-    return this.http.get<Object>(this.baseUrl + this.ctxBlueprintUrl + "/" + ctxBlueprintId, this.httpOptions)
+  getTcBlueprint(tcBlueprintId: string): Observable<TcBlueprintInfo> {
+    return this.http.get<TcBlueprintInfo>(this.baseUrl + this.tcBlueprintInfoUrl + "/" + tcBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ctxBlueprint', 'SUCCESS')),
-        catchError(this.handleError<Object>('getCtxBlueprint'))
+        tap(_ => this.log('fetched tcBlueprintInfo', 'SUCCESS')),
+        catchError(this.handleError<TcBlueprintInfo>('getTcBlueprint'))
       );
   }
 
-  postCtxBlueprint(onboardCtxBlueprintRequest: Object): Observable<String> {
-    return this.http.post(this.baseUrl + this.ctxBlueprintUrl, onboardCtxBlueprintRequest, this.httpOptions)
+  postTcBlueprint(onBoardVsRequest: Object): Observable<String> {
+    return this.http.post(this.baseUrl + this.tcBlueprintInfoUrl, onBoardVsRequest, this.httpOptions)
       .pipe(
-        tap((blueprintId: String) => this.log(`added CTX Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
-        catchError(this.handleError<String>('postCtxBlueprint'))
+        tap((blueprintId: String) => this.log(`added TC Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+        catchError(this.handleError<String>('postTcBlueprint'))
       );
   }
 
-  deleteCtxBlueprint(blueprintId: string): Observable<String> {
-    return this.http.delete(this.baseUrl + this.ctxBlueprintUrl + '/' + blueprintId, this.httpOptions)
+  deleteTcBlueprint(blueprintId: string): Observable<String> {
+    return this.http.delete(this.baseUrl + this.tcBlueprintInfoUrl + '/' + blueprintId, this.httpOptions)
     .pipe(
-      tap((result: String) => this.log(`deleted CTX Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
-      catchError(this.handleError<String>('deleteCtxBlueprint'))
+      tap((result: String) => this.log(`deleted TC Blueprint w/ id=${blueprintId}`, 'SUCCESS')),
+      catchError(this.handleError<String>('deleteTcBlueprint'))
     );
   }
 
@@ -75,8 +75,8 @@ export class BlueprintsEcServiceService {
 
   /** Log a BlueprintsVSService message with the MessageService */
   private log(message: string, action: string) {
-    this.messageService.add(`BluepritsVSService: ${message}`);
-    this.openSnackBar(`BluepritsVSService: ${message}`, action);
+    this.messageService.add(`BluepritsTcService: ${message}`);
+    this.openSnackBar(`BluepritsTcService: ${message}`, action);
   }
 
   openSnackBar(message: string, action: string) {

@@ -3,21 +3,21 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import { CtxBlueprintInfo } from './ctx-blueprint-info';
+import { TcBlueprintInfo } from './tc-blueprint-info';
 
 /**
- * Data source for the BlueprintsEc view. This class should
+ * Data source for the BlueprintsVs view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class BlueprintsEcDataSource extends DataSource<CtxBlueprintInfo> {
-  data: CtxBlueprintInfo[] = [];
+export class BlueprintsTcDataSource extends DataSource<TcBlueprintInfo> {
+  data: TcBlueprintInfo[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
-  constructor(data: CtxBlueprintInfo[]) {
+  constructor(tcBlueprintInfos: TcBlueprintInfo[]) {
     super();
-    this.data = data;
+    this.data = tcBlueprintInfos;
   }
 
   /**
@@ -25,7 +25,7 @@ export class BlueprintsEcDataSource extends DataSource<CtxBlueprintInfo> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<CtxBlueprintInfo[]> {
+  connect(): Observable<TcBlueprintInfo[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -49,7 +49,7 @@ export class BlueprintsEcDataSource extends DataSource<CtxBlueprintInfo> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: CtxBlueprintInfo[]) {
+  private getPagedData(data: TcBlueprintInfo[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -58,7 +58,7 @@ export class BlueprintsEcDataSource extends DataSource<CtxBlueprintInfo> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: CtxBlueprintInfo[]) {
+  private getSortedData(data: TcBlueprintInfo[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -67,7 +67,7 @@ export class BlueprintsEcDataSource extends DataSource<CtxBlueprintInfo> {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
         case 'name': return compare(a.name, b.name, isAsc);
-        case 'id': return compare(+a.ctxBlueprintId, +b.ctxBlueprintId, isAsc);
+        case 'id': return compare(+a.testCaseBlueprintId, +b.testCaseBlueprintId, isAsc);
         default: return 0;
       }
     });

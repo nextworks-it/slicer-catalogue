@@ -5,55 +5,6 @@ import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 import { VsBlueprintInfo } from './vs-blueprint-info';
 
-// TODO: replace this with real data from your application
-/*const EXAMPLE_DATA: VsBlueprintInfo[] = [
-  {
-    vsBlueprintId: '5',
-    vsBlueprintVersion: '1.0',
-    name: 'ASTI AGV control and automation',
-    description: 'AGVs using 5G network for Automation and Control purposes',
-    vsBlueprint: {
-      configurableParameters: ['max_AGVs', 'max_control_servers', 'avg_data_rate_per_AGV'],
-      compatibleSites: [],
-      compatibleContextBlueprint: []
-    },
-    activeVsdId: ['AGV_small_factory', 'AGV_medium_factory', 'AGV_large_factory'],
-    onBoardedNsdInfoId: [],
-    onBoardedVnfPackageInfoId: [],
-    onBoardedMecAppPackageInfoId: []
-  },
-  {
-    vsBlueprintId: '20',
-    vsBlueprintVersion: '1.0',
-    name: 'TRENITALIA Smart Transport with on-board media services',
-    description: 'Delivery of high-quality media contents on high-speed trains',
-    vsBlueprint: {
-      configurableParameters: ['max_users', 'video_quality'],
-      compatibleSites: [],
-      compatibleContextBlueprint: []
-    },
-    activeVsdId: ['UHD_100_users', 'UHD_50_users', 'HD_500_users'],
-    onBoardedNsdInfoId: [],
-    onBoardedVnfPackageInfoId: [],
-    onBoardedMecAppPackageInfoId: []
-  },
-  {
-    vsBlueprintId: '34',
-    vsBlueprintVersion: '1.0',
-    name: 'Smart Turin: safety and environment monitoring for mobility service',
-    description: 'Safety and environment monitoring with 5G for smart mobility service (people counting and mobility policies)',
-    vsBlueprint: {
-      configurableParameters: ['max_sensors', 'coverage_area', 'max_latency_per_sensor', 'avg_polling_frequency'],
-      compatibleSites: [],
-      compatibleContextBlueprint: []
-    },
-    activeVsdId: ['High_density_district', 'Medium_density_district', 'Low_density_district'],
-    onBoardedNsdInfoId: [],
-    onBoardedVnfPackageInfoId: [],
-    onBoardedMecAppPackageInfoId: []
-  }
-];*/
-
 /**
  * Data source for the BlueprintsVs view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
