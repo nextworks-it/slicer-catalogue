@@ -3,7 +3,7 @@
 </mat-toolbar>
 <div style="float: left; width: 48%; margin: 1%">
     <mat-card>
-        <table mat-table matSort aria-label="Elements" class="full-width-table" width="100%">
+        <table mat-table matSort aria-label="Elements" width="100%">
             <!-- KEY Column -->
             <ng-container matColumnDef="key">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Field</th>
@@ -13,7 +13,7 @@
             <!-- ExpD Column -->
             <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef>Value</th>
-                <td mat-cell *matCellDef="let row" ><tr *ngFor="let param of row.value"><td class="margin-all">{{param}}</td></tr></td>
+                <td mat-cell *matCellDef="let row" ><tr *ngFor="let param of row.value"><td>{{param}}</td></tr></td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

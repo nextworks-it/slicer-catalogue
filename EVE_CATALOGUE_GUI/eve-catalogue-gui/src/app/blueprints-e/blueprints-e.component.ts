@@ -56,6 +56,7 @@ export class BlueprintsEComponent implements /*AfterViewInit,*/ OnInit {
   viewEBlueprintGraph(expBlueprintId: string) {
     console.log(expBlueprintId);
     //this.expbDetailsService.updateExpBId(expBlueprintId);
+    localStorage.setItem('expbId', expBlueprintId);
 
     this.router.navigate(["/blueprints_e_details"]);
   }
