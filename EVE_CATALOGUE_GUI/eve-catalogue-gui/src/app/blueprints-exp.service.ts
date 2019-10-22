@@ -75,8 +75,8 @@ export class BlueprintsExpService {
 
   /** Log a BlueprintsVSService message with the MessageService */
   private log(message: string, action: string) {
-    this.messageService.add(`BluepritsTcService: ${message}`);
-    this.openSnackBar(`BluepritsTcService: ${message}`, action);
+    this.messageService.add(`BluepritsExpService: ${message}`);
+    this.openSnackBar(`BluepritsExpService: ${message}`, action);
   }
 
   openSnackBar(message: string, action: string) {
