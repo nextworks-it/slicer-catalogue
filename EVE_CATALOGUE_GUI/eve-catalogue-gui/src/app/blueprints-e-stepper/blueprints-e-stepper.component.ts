@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
-import { NumberSymbol } from '@angular/common';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { VsBlueprintInfo } from '../blueprints-vs/vs-blueprint-info';
 import { BlueprintsVsService } from '../blueprints-vs.service';
 import { BlueprintsEcService } from '../blueprints-ec.service';
@@ -35,8 +34,8 @@ export class BlueprintsEStepperComponent implements OnInit {
   expBlueprintName: string;
   selectedCbs: string[] = [];
   uploadedNsdName: string;
-  uploadedMetricsName: string;
-  uploadedKPIsName: string;
+  metricNames: string[] = [];
+  kpiNames: string[] = [];
   selectedTcbs: string[] = [];
 
   sites: Site[] = [
@@ -46,13 +45,33 @@ export class BlueprintsEStepperComponent implements OnInit {
     {value: 'FRANCE_PARIS', viewValue: 'Paris, France'},
     {value: 'FRANCE_RENNES', viewValue: 'Rennes, France'},
     {value: 'FRANCE_NICE', viewValue: 'Nice, France'}
-  ]; 
+  ];
+  
+  metricTypes: String[] = [
+    "LOST_PKT",
+    "RECEIVED_PKT",
+    "SENT_PKT",
+    "BANDWIDTH",
+    "LATENCY",
+    "JITTER",
+    "CPU_CONSUMPTION",
+    "MEMORY_CONSUMPTION",
+    "OTHER"
+  ];
+
+  collectionTypes: String[] = [
+    "CUMULATIVE",
+    "DELTA",
+    "GAUGE"
+  ];
 
   vsbs: Blueprint[] = [];
   ctxbs: Blueprint[] = [];
   tcbs: Blueprint[] = [];
 
   items: FormArray;
+  metric_items: FormArray;
+  kpi_items: FormArray;
   zeroFormGroup: FormGroup;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -93,13 +112,13 @@ export class BlueprintsEStepperComponent implements OnInit {
     this.fourthFormGroup = this._formBuilder.group({
       nsdIdCtrl: ['', Validators.required],
       nsdVersionCtrl: ['', Validators.required],
-      nsdFlavourIdCtrl: ['', Validators.required],
-      nsdInstLevelIdCtrl: ['', Validators.required],
+      nsFlavourIdCtrl: ['', Validators.required],
+      nsInstLevelIdCtrl: ['', Validators.required],
       items: this._formBuilder.array([this.createItem()])
     });
     this.fifthFormGroup = this._formBuilder.group({
-      uploadMetricsCtrl: ['', Validators.required],
-      uploadKPIsCtrl: ['', Validators.required]
+      metric_items: this._formBuilder.array([this.createMetricItem()]),
+      kpi_items: this._formBuilder.array([this.createKPIItem()])
     });
     this.sixthFormGroup = this._formBuilder.group({
       selectTcbsCtrl: ['', Validators.required]
@@ -109,8 +128,30 @@ export class BlueprintsEStepperComponent implements OnInit {
   createItem(): FormGroup {
     return this._formBuilder.group({
       parameterId: '', 
-      minValue: '', 
-      maxValue: ''
+      minValue: 0, 
+      maxValue: 0
+    });
+  }
+
+  createMetricItem(): FormGroup {
+    return this._formBuilder.group({
+      iMetricType: '', 
+      interval: '', 
+      metricCollectionType: '',
+      metricId: '',
+      name: '',
+      unit: ''
+    });
+  }
+
+  createKPIItem(): FormGroup {
+    return this._formBuilder.group({
+      formula: '', 
+      interval: '', 
+      metricIds: '',
+      kpiId: '',
+      name: '',
+      unit: ''
     });
   }
 
@@ -122,6 +163,26 @@ export class BlueprintsEStepperComponent implements OnInit {
   removeItem() {
     this.items = this.fourthFormGroup.get('items') as FormArray;
     this.items.removeAt(this.items.length - 1);
+  }
+
+  addMetricItem(): void {
+    this.metric_items = this.fifthFormGroup.get('metric_items') as FormArray;
+    this.metric_items.push(this.createMetricItem());
+  }
+
+  removeMetricItem() {
+    this.metric_items = this.fifthFormGroup.get('metric_items') as FormArray;
+    this.metric_items.removeAt(this.metric_items.length - 1);
+  }
+
+  addKPIItem(): void {
+    this.kpi_items = this.fifthFormGroup.get('kpi_items') as FormArray;
+    this.kpi_items.push(this.createKPIItem());
+  }
+
+  removeKPIItem() {
+    this.kpi_items = this.fifthFormGroup.get('kpi_items') as FormArray;
+    this.kpi_items.removeAt(this.kpi_items.length - 1);
   }
 
   onSiteSelected(event: any) {
@@ -145,19 +206,39 @@ export class BlueprintsEStepperComponent implements OnInit {
     console.log(this.selectedCbs);
   }
 
-  onUploadedNsd(event: any) {
+  onUploadedNsd(event: any, nsds: File[]) {
     console.log(event);
     this.uploadedNsdName = event.target.files[0].name;
+
+    let promises = [];
+
+    for (let nsd of nsds) {
+        let nsdPromise = new Promise(resolve => {
+            let reader = new FileReader();
+            reader.readAsText(nsd);
+            reader.onload = () => resolve(reader.result);
+        });
+        promises.push(nsdPromise);
+    }
+
+    Promise.all(promises).then(fileContents => {
+        var nsdObj = JSON.parse(fileContents[0]);
+
+        this.fourthFormGroup.get('nsdIdCtrl').setValue(nsdObj['nsdIdentifier']);
+        this.fourthFormGroup.get('nsdVersionCtrl').setValue(nsdObj['version']);
+        this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
+        this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
+    });
   }
 
-  onUploadedMetrics(event: any) {
+  onMetricGiven(event: any) {
     console.log(event);
-    this.uploadedMetricsName = event.target.files[0].name;
+    this.metricNames.push(event.target.value);
   }
 
-  onUploadedKPIs(event: any) {
+  onKPIGiven(event: any) {
     console.log(event);
-    this.uploadedKPIsName = event.target.files[0].name;
+    this.kpiNames.push(event.target.value);
   }
 
   onSelectedTcbs(event: any) {
@@ -223,7 +304,7 @@ export class BlueprintsEStepperComponent implements OnInit {
     }
 
     Promise.all(promises).then(fileContents => {
-        for (var i = 1; i < fileContents.length; i++) {
+        for (var i = 0; i < fileContents.length; i++) {
           onBoardExpRequest['nsds'].push(JSON.parse(fileContents[i]));
         }
 
@@ -233,13 +314,13 @@ export class BlueprintsEStepperComponent implements OnInit {
         var blueprintName = this.zeroFormGroup.get('bpNameCtrl').value;
         var bluepritnVersion = this.zeroFormGroup.get('bpVersionCtrl').value;
         var blueprintDesc = this.zeroFormGroup.get('bpDescriptionCtrl').value;
-        var nsdId = this.thirdFormGroup.get('nsdIdCtrl').value;
-        var nsdVersion = this.thirdFormGroup.get('nsdVersionCtrl').value;
-        var nsFlavourId = this.thirdFormGroup.get('nsFlavourIdCtrl').value;
-        var nsInstLevel = this.thirdFormGroup.get('nsInstLevelCtrl').value;
+        var nsdId = this.fourthFormGroup.get('nsdIdCtrl').value;
+        var nsdVersion = this.fourthFormGroup.get('nsdVersionCtrl').value;
+        var nsFlavourId = this.fourthFormGroup.get('nsFlavourIdCtrl').value;
+        var nsInstLevel = this.fourthFormGroup.get('nsInstLevelIdCtrl').value;
 
 
-        expBlueprint['expBlueprintId'] = blueprintId;
+        //expBlueprint['expBlueprintId'] = blueprintId;
         expBlueprint['description'] = blueprintDesc;
         expBlueprint['name'] = blueprintName;
         expBlueprint['version'] = bluepritnVersion;
@@ -255,7 +336,7 @@ export class BlueprintsEStepperComponent implements OnInit {
         translationRule['nsFlavourId'] = nsFlavourId;
         translationRule['nsInstantiationLevelId'] = nsInstLevel;
 
-        var paramsRows = this.thirdFormGroup.controls.items as FormArray;
+        var paramsRows = this.fourthFormGroup.controls.items as FormArray;
         var controls = paramsRows.controls;
         var paramsObj = [];
 
@@ -265,6 +346,40 @@ export class BlueprintsEStepperComponent implements OnInit {
         }
         translationRule['input'] = paramsObj;
         onBoardExpRequest.translationRules.push(translationRule);
+
+        var metrics = this.fifthFormGroup.controls.metric_items as FormArray;
+        var metric_controls = metrics.controls;
+        var metricsObj = [];
+
+        for (var j = 0; j < metric_controls.length; j++) {
+          metricsObj.push(metric_controls[j].value);
+          console.log(metricsObj);
+        }
+
+        var kpis = this.fifthFormGroup.controls.kpi_items as FormArray;
+        var kpi_controls = kpis.controls;
+        var kpisObj = [];
+
+        for (var j = 0; j < kpi_controls.length; j++) {
+          var temp = kpi_controls[j].value;
+          var mIds = temp['metricIds'].split(',');
+
+          var newKpiObj = JSON.parse('{}');
+          newKpiObj['formula'] = temp['formula'];
+          newKpiObj['interval'] = temp['interval'];
+          newKpiObj['name'] = temp['name'];
+          newKpiObj['kpiId'] = temp['kpiId'];
+          newKpiObj['unit'] = temp['unit'];
+          newKpiObj['metricIds'] = [];
+          for (var h = 0; h < mIds.length; h++) {
+            newKpiObj['metricIds'].push(mIds[h].trim());
+          }
+          kpisObj.push(newKpiObj);
+          console.log(kpisObj);
+        }
+
+        expBlueprint['metrics'] = metricsObj;
+        expBlueprint['kpis'] = kpisObj;
 
         onBoardExpRequest['expBlueprint'] = expBlueprint;
 

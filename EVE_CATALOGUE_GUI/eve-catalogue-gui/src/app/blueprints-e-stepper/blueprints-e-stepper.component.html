@@ -73,7 +73,7 @@
         <form [formGroup]="thirdFormGroup">
             <ng-template matStepLabel>NSD Onboarding</ng-template>
             <label for="nsd" class="input-label">NSD  </label>
-            <input type="file" id ="nsd" formControlName="uploadNsdCtrl" required (change)="onUploadedNsd($event)"/>
+            <input type="file" #nsdFiles formControlName="uploadNsdCtrl" required (change)="onUploadedNsd($event,nsdFiles.files)"/>
             <div class="margin-top"></div>
             <p> Blueprint Name: {{expBlueprintName}}</p>
             <p> Selected Site: {{selectedSite}}</p>
@@ -100,10 +100,10 @@
                             <input matInput id="nsdVersion" placeholder="NSD Version" required formControlName="nsdVersionCtrl">
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="data-full-width">
-                            <input matInput id="nsFlavourId" placeholder="NS Flavour Id" required formControlName="nsdFlavourIdCtrl">
+                            <input matInput id="nsFlavourId" placeholder="NS Flavour Id" required formControlName="nsFlavourIdCtrl">
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="data-full-width">
-                            <input matInput id="nsInstLevel" placeholder="NS Instantiation Level Id" required formControlName="nsdInstLevelIdCtrl">
+                            <input matInput id="nsInstLevel" placeholder="NS Instantiation Level Id" required formControlName="nsInstLevelIdCtrl">
                         </mat-form-field>
                     </td>
                     <td></td>
@@ -159,21 +159,142 @@
         </form>
     </mat-step>
     <mat-step [stepControl]="fifthFormGroup">
-        <form [formGroup]="fifthFormGroup">
+        <form [formGroup]="fifthFormGroup" class="data-form">
             <ng-template matStepLabel>Metrics & KPIs</ng-template>
-            <label for="metrics" class="input-label">Metrics  </label> 
-            <input type="file" id="metrics" formControlName="uploadMetricsCtrl" required (change)="onUploadedMetrics($event)"/>
-            <div class="margin-top"></div>
-            <label for="kpis" class="input-label">KPIs  </label> 
-            <input type="file" id="kpis" formControlName="uploadKPIsCtrl" required (change)="onUploadedKPIs($event)"/>
+            <table class="data-full-width" cellspacing="0">
+                <h4>Metrics</h4>
+                <div formArrayName="metric_items" *ngFor="let item of fifthFormGroup.get('metric_items').controls; let i=index">
+                    <div [formGroupName]="i">
+                        <h5>Metric {{i + 1}}</h5>
+                        <tr>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <!--input matInput placeholder="Metric Type" required formControlName="iMetricType"-->
+                                    <mat-label>Metric Type</mat-label>
+                                    <mat-select formControlName="iMetricType" name="metricType">
+                                        <mat-option *ngFor="let type of metricTypes" [value]="type">
+                                            {{type}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Interval" required formControlName="interval">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <!--input matInput placeholder="Collection Type" required formControlName="metricCollectionType"-->
+                                    <mat-label>Collection Type</mat-label>
+                                    <mat-select formControlName="metricCollectionType" name="collectionType">
+                                        <mat-option *ngFor="let type of collectionTypes" [value]="type">
+                                            {{type}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Metric Id" required formControlName="metricId">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Name" required formControlName="name">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Unit" required formControlName="unit">
+                                </mat-form-field>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </div>
+                </div>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div>
+                            <button mat-fab (click)="removeMetricItem();" *ngIf="metric_items?.length > 1" color="primary"><mat-icon>remove</mat-icon></button>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <button mat-fab (click)="addMetricItem();" color="primary"><mat-icon>add</mat-icon></button>
+                        </div>
+                    </td>
+                </tr>
+                <h4>KPIs</h4>
+                <div formArrayName="kpi_items" *ngFor="let item of fifthFormGroup.get('kpi_items').controls; let i=index">
+                    <div [formGroupName]="i">
+                        <h5>KPI {{i + 1}}</h5>
+                        <tr>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Formula" required formControlName="formula">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Interval" required formControlName="interval">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="KPI Id" required formControlName="kpiId">
+                                </mat-form-field>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Name" required formControlName="name">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <input matInput placeholder="Unit" required formControlName="unit">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" color=primary class="data-full-width">
+                                    <textarea matInput placeholder="Metric Ids (comma separated)" required formControlName="metricIds"></textarea>
+                                </mat-form-field>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </div>
+                </div>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div>
+                            <button mat-fab (click)="removeKPIItem();" *ngIf="kpi_items?.length > 1" color="primary"><mat-icon>remove</mat-icon></button>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <button mat-fab (click)="addKPIItem();" color="primary"><mat-icon>add</mat-icon></button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
             <div class="margin-top"></div>
             <p> Blueprint Name: {{expBlueprintName}}</p>
             <p> Selected Site: {{selectedSite}}</p>
             <p> Selected VSB: {{selectedVsb}}</p>
             <p> Selected CBs: {{selectedCbs.join(', ')}}</p>
             <p> Uploaded NSD: {{uploadedNsdName}}</p>
-            <p> Uploaded Metrics: {{uploadedMetricsName}}</p>
-            <p> Uploaded KPIs: {{uploadedKPIsName}}</p>
+            <p> Metrics: {{metricNames.join(', ')}}</p>
+            <p> KPIs: {{kpiNames.join(', ')}}</p>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -192,8 +313,8 @@
             <p> Selected VSB: {{selectedVsb}}</p>
             <p> Selected CBs: {{selectedCbs.join(', ')}}</p>
             <p> Uploaded NSD: {{uploadedNsdName}}</p>
-            <p> Uploaded Metrics: {{uploadedMetricsName}}</p>
-            <p> Uploaded KPIs: {{uploadedKPIsName}}</p>
+            <p> Metrics: {{metricNames.join(', ')}}</p>
+            <p> KPIs: {{kpiNames.join(', ')}}</p>
             <p> Selected TCs: {{selectedTcbs.join(', ')}}</p>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
