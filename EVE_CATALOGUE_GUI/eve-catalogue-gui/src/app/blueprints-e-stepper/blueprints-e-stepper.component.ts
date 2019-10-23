@@ -128,8 +128,8 @@ export class BlueprintsEStepperComponent implements OnInit {
   createItem(): FormGroup {
     return this._formBuilder.group({
       parameterId: '', 
-      minValue: 0, 
-      maxValue: 0
+      minValue: '', 
+      maxValue: ''
     });
   }
 

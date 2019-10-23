@@ -27,6 +27,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CytoscapeModule } from 'ngx-cytoscape';
@@ -108,6 +109,7 @@ import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptor
     MatCheckboxModule,
     MatRadioModule,
     MatSnackBarModule,
+    MatExpansionModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     HttpClientModule,
