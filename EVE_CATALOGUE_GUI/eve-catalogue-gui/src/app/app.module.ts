@@ -53,6 +53,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints-ec-details.component';
 import { BlueprintsEcStepperComponent } from './blueprints-ec-stepper/blueprints-ec-stepper.component';
 import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
+import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptors-e-stepper.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
     MessagesComponent,
     BlueprintsEcDetailsComponent,
     BlueprintsEcStepperComponent,
-    BlueprintsTcComponent
+    BlueprintsTcComponent,
+    DescriptorsEStepperComponent
   ],
   imports: [
     BrowserModule,

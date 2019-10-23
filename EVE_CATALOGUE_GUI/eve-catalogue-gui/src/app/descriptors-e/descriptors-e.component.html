@@ -1,18 +1,49 @@
-<div>
-  <mat-card>
-    <mat-card-title><h1 class="mat-h1">Experiment Descriptors</h1></mat-card-title>
-    <div class="mat-elevation-z8">
+<mat-toolbar>
+  <h1 class="mat-h1">Experiment Descriptors</h1>
+</mat-toolbar>
+<mat-tab-group>
+  <mat-tab label="View">
+    <mat-card>
       <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-          <td mat-cell *matCellDef="let row">{{row.id}}</td>
+          <td mat-cell *matCellDef="let row"><b>{{row.expDescriptorId}}</b></td>
         </ng-container>
 
         <!-- Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-          <td mat-cell *matCellDef="let row">{{row.name}}</td>
+          <td mat-cell *matCellDef="let row"><b>{{row.name}}</b></td>
+        </ng-container>
+
+        <!-- Exp Blueprint Column -->
+        <ng-container matColumnDef="expElueprintId">
+          <th mat-header-cell *matHeaderCellDef>Experiment Blueprint Id</th>
+          <td mat-cell *matCellDef="let row">{{row.expBlueprintId}}</td>
+        </ng-container>
+
+        <!-- VS Descriptor Column -->
+        <ng-container matColumnDef="vsDescriptorId">
+          <th mat-header-cell *matHeaderCellDef>VS Descriptor Id</th>
+          <td mat-cell *matCellDef="let row">{{row.vsDescriptorId}}</td>
+        </ng-container>
+
+        <!-- Configurable Parameters Column -->
+        <ng-container matColumnDef="kpi">
+          <th mat-header-cell *matHeaderCellDef>KPI Thresholds</th>
+          <td mat-cell *matCellDef="let row"><tr *ngFor="let param of row.kpiThresholds | keyvalue"><td> - {{param.key}}: {{param.value}}</td></tr></td>
+        </ng-container>
+
+        <!-- Button Column -->
+        <ng-container matColumnDef="buttons">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
+              <!--mat-button-toggle value="view_descriptor" (click)="viewExpDescriptor(row.expDescriptorId)"><mat-icon color="primary">remove_red_eye</mat-icon></mat-button-toggle-->
+              <mat-button-toggle value="delete" (click)="deleteExpDescriptor(row.expDescriptorId)"><mat-icon color="primary">delete_forever</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -25,7 +56,13 @@
           [pageSize]="50"
           [pageSizeOptions]="[25, 50, 100, 250]">
       </mat-paginator>
-    </div>
-  </mat-card>
-</div>
-    
+      <app-messages></app-messages>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Onboard">
+    <mat-card>
+      <app-descriptors-e-stepper></app-descriptors-e-stepper>
+      <app-messages></app-messages>
+    </mat-card>
+  </mat-tab>
+</mat-tab-group>
