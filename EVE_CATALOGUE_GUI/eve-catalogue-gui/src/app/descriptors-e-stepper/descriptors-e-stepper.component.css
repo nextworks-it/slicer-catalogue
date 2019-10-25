@@ -4,6 +4,13 @@
     width: 100%;
     align-self: center;
 }
+
+.testCase-form {
+    min-width: 150px;
+    max-width: 700px;
+    width: 100%;
+    align-self: center;
+}
   
 .rules-full-width {
     width: 100%;
@@ -19,4 +26,12 @@ td {
 
 .margin-all {
     margin: 10px;
+}
+
+.input-label {
+    font-style: oblique;
+    font-weight: bold; 
+    display: block; 
+    width: 100px; 
+    float: left;
 }

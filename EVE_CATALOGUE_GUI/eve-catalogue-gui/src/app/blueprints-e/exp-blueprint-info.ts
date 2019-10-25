@@ -1,8 +1,8 @@
 export class ExpBlueprintInfo {
-    expBlueprintId: String;
-    expBlueprintVersion: String;
-    name: String;
+    expBlueprintId: string;
+    expBlueprintVersion: string;
+    name: string;
     expBlueprint: Object;
-    activeExpdId: String[];
-    onBoardedNsdInfoId: String[];
+    activeExpdId: string[];
+    onBoardedNsdInfoId: string[];
 }

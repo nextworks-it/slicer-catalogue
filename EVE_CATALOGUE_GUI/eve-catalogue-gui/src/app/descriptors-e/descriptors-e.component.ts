@@ -41,7 +41,7 @@ export class DescriptorsEComponent implements OnInit {
       });
   }
 
-  deleteVsBlueprint(expDescriptorId: string) {
+  deleteExpDescriptor(expDescriptorId: string) {
     //console.log(expDescriptorId);
     this.descriptorsExpService.deleteExpDescriptor(expDescriptorId).subscribe();
   }

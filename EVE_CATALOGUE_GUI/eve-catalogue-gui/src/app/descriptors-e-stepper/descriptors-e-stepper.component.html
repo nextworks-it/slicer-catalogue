@@ -39,9 +39,20 @@
                 <div formArrayName="params" *ngFor="let param of secondFormGroup.get('params').controls; let i=index">
                     <div [formGroupName]="i">                        
                         <h5>Param {{i}}</h5>
-                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput placeholder="Parameter Value" required formControlName="parameterId">
-                        </mat-form-field>
+                        <table>
+                            <tr>
+                                <td>
+                                    <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                                        <input matInput placeholder="Parameter Name" required formControlName="parameterName">
+                                    </mat-form-field>
+                                </td>
+                                <td>
+                                    <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                                        <input matInput placeholder="Parameter Value" required formControlName="parameterId">
+                                    </mat-form-field>
+                                </td>
+                            </tr>
+                        </table>                     
                     </div>
                 </div>
             </mat-expansion-panel>
@@ -170,9 +181,19 @@
     <mat-step [stepControl]="fourthFormGroup">
         <form [formGroup]="fourthFormGroup" class="rules-form">
             <ng-template matStepLabel>Context Details</ng-template>
-            <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                <input matInput placeholder="Name" formControlName="vsDescName" required>
-            </mat-form-field>
+            <div *ngFor="let ctx of ctxBlueprints">
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>{{ctx.viewValue}}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div *ngFor="let param of ctx.item['parameters']; let i=index">                        
+                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                            <mat-label>{{param.parameterId}}</mat-label>
+                            <input matInput id={{param.parameterId}} required>
+                        </mat-form-field>                      
+                    </div>
+                </mat-expansion-panel>
+            </div>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -180,15 +201,51 @@
         </form>
     </mat-step>
     <mat-step [stepControl]="fifthFormGroup">
-        <form [formGroup]="fifthFormGroup">
-            <ng-template matStepLabel>Test Case Configuration</ng-template>
-            <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                <input matInput placeholder="Name" formControlName="vsDescName" required>
-            </mat-form-field>
+        <form [formGroup]="fifthFormGroup" class="testCase-form">
+            <ng-template matStepLabel>Test Cases Configuration</ng-template>
+            <div *ngFor="let tc of tcBlueprints; let i=index">
+                <mat-expansion-panel width="100%">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>{{tc.viewValue}}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <table class="rules-full-width">
+                        <tr>
+                            <h4>Additional Properties</h4>
+                            <div [formArrayName]="tcbIdsToArraysMap.get(tc.value)" *ngFor="let prop of fifthFormGroup.get(tcbIdsToArraysMap.get(tc.value)).controls; let j=index">
+                                <div [formGroupName]="j">                        
+                                    <h5>Property {{j + 1}}</h5>
+                                    <td>
+                                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                                            <input matInput placeholder="Property" required formControlName="propertyName">
+                                        </mat-form-field>
+                                    </td>
+                                    <td>
+                                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                                            <input matInput placeholder="Value" required formControlName="propertyValue">
+                                        </mat-form-field>
+                                    </td>
+                                </div>
+                            </div>
+                        </tr>
+                        <!--tr>
+                            <td>
+                                <div>
+                                    <button mat-fab (click)="removeProperty(tc.value);" *ngIf="getPropertyArrayLength(tc.value) > 1" color="primary"><mat-icon>remove</mat-icon></button>
+                                </div>                             
+                            </td>
+                            <td>
+                                <div>
+                                    <button mat-fab (click)="addProperty(tc.value);" color="primary"><mat-icon>add</mat-icon></button>
+                                </div>
+                            </td>
+                        </tr-->
+                    </table>
+                </mat-expansion-panel>
+            </div>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
-                <button mat-raised-button (click)="stepper.reset()" color="accent" class="margin-all">Reset</button>
-                <button mat-raised-button color="warn" class="margin-all">Submit</button>
+                <button mat-raised-button (click)="stepper.reset()" color="warn" class="margin-all">Reset</button>
+                <button mat-raised-button color="accent" class="margin-all" (click)="createOnBoardExpDescriptorRequest();">Submit</button>
             </div>
         </form>
     </mat-step>
