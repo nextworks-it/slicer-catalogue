@@ -1,3 +1,7 @@
 .full-width-table {
   width: 100%;
 }
+
+.margin-all {
+  margin: 5px;
+}

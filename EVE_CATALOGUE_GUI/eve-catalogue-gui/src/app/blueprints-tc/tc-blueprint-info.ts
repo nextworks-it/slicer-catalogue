@@ -1,15 +1,15 @@
 export class TcBlueprintInfo {
-    testCaseBlueprintId: String;
-    version: String;
-    name: String;
+    testCaseBlueprintId: string;
+    version: string;
+    name: string;
     testCaseBlueprint: {
-        version: String,
-        name: String;
-        description: String;
-        testcaseBlueprintId: String;
-        script: String;
-        userParameters: Map<String, String>;
-        infrastructureParameters: Map<String, String>;
+        version: string,
+        name: string;
+        description: string;
+        testcaseBlueprintId: string;
+        script: string;
+        userParameters: Map<string, string>;
+        infrastructureParameters: Map<string, string>;
     };
-    activeTcdId: String[]
+    activeTcdId: string[]
 }

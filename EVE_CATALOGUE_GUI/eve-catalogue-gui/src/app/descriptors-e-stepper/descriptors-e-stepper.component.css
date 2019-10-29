@@ -1,16 +1,19 @@
-.data-form {
+.rules-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+    align-self: center;
+}
+
+.testCase-form {
     min-width: 150px;
     max-width: 700px;
     width: 100%;
+    align-self: center;
 }
   
-.data-full-width {
+.rules-full-width {
     width: 100%;
-}
-
-.flex-column {
-    display: flex;
-    flex-direction: column;
 }
 
 td {
@@ -31,8 +34,4 @@ td {
     display: block; 
     width: 100px; 
     float: left;
-}
-
-p {
-    font-size: 12px;
 }

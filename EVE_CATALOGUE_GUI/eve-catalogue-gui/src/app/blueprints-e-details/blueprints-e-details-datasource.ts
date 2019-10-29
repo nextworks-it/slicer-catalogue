@@ -9,32 +9,19 @@ export interface BlueprintsEDetailsItemKV {
   value: string[];
 }
 
-const EXAMPLE_DATAKV: BlueprintsEDetailsItemKV[] = [
-  {key: "Id", value: ["6"]},
-  {key: "Name", value: ["Blueprint for AGV experiments in a factory with variable size"]},
-  {key: "Version", value: ["1.0"]},
-  {key: "Description", value: ["Blueprint for AGV experiments in a factory with variable size"]},
-  {key: "Sites", value: ['5Tonic/Madrid']},
-  {key: "KPIs", value: ['Navigation Level', 'Consumption', 'Time to loose guide', 'Delay']},
-  {key: "Infrastructure Metrics", value: ['Latency', 'Downlink Bandwidth', 'Uplink Bandwidth']},
-  {key: "VS Blueprint Name", value: ["ASTI AGV control and automation"]},
-  {key: "Context Blueprint Name", value: ["Delay configurator", "Traffic generator"]},
-  {key: "Test Case Blueprint Name", value: ["AGV Navigation at different latencies", "Time to loose guide at different latencies"]},
-  {key: "Linked Experiment Descriptors", value: ['ASTI_3AGV_5TONIC_small_factory', 'ASTI_10AGV_medium_factory']}
-];
-
 /**
  * Data source for the BlueprintsE view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
 export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsItemKV> {
-  data: BlueprintsEDetailsItemKV[] = EXAMPLE_DATAKV;
+  data: BlueprintsEDetailsItemKV[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
-  constructor() {
+  constructor(data: BlueprintsEDetailsItemKV[]) {
     super();
+    this.data = data;
   }
 
   /**

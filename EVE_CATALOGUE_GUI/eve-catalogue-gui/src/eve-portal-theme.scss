@@ -7,8 +7,8 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
 $eve-portal-theme-primary: mat-palette($mat-gray, 900);
-$eve-portal-theme-accent:  mat-palette($mat-deep-orange);
-$eve-portal-theme-warn:    mat-palette($mat-cyan);
+$eve-portal-theme-accent:  mat-palette($mat-cyan);
+$eve-portal-theme-warn:    mat-palette($mat-deep-orange);
 // Create the theme object (a Sass map containing all of the palettes).
 $eve-portal-theme: mat-light-theme($eve-portal-theme-primary, $eve-portal-theme-accent, $eve-portal-theme-warn);
 // Include theme styles for core and each component used in your app.
