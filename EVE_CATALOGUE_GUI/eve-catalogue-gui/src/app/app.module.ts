@@ -56,6 +56,7 @@ import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints
 import { BlueprintsEcStepperComponent } from './blueprints-ec-stepper/blueprints-ec-stepper.component';
 import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
 import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptors-e-stepper.component';
+import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptor
     BlueprintsEcDetailsComponent,
     BlueprintsEcStepperComponent,
     BlueprintsTcComponent,
-    DescriptorsEStepperComponent
+    DescriptorsEStepperComponent,
+    DescriptorsTcComponent
   ],
   imports: [
     BrowserModule,

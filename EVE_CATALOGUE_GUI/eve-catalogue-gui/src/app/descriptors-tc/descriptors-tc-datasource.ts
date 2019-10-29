@@ -3,19 +3,19 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import { EcDescriptorInfo } from './ec-descriptor-info';
+import { TcDescriptorInfo } from './tc-descriptor-info';
 
 /**
  * Data source for the DescriptorsEc view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class DescriptorsEcDataSource extends DataSource<EcDescriptorInfo> {
-  data: EcDescriptorInfo[] = [];
+export class DescriptorsTcDataSource extends DataSource<TcDescriptorInfo> {
+  data: TcDescriptorInfo[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
-  constructor(data: EcDescriptorInfo[]) {
+  constructor(data: TcDescriptorInfo[]) {
     super();
     this.data = data;
   }
@@ -25,7 +25,7 @@ export class DescriptorsEcDataSource extends DataSource<EcDescriptorInfo> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<EcDescriptorInfo[]> {
+  connect(): Observable<TcDescriptorInfo[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -49,7 +49,7 @@ export class DescriptorsEcDataSource extends DataSource<EcDescriptorInfo> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: EcDescriptorInfo[]) {
+  private getPagedData(data: TcDescriptorInfo[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -58,7 +58,7 @@ export class DescriptorsEcDataSource extends DataSource<EcDescriptorInfo> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: EcDescriptorInfo[]) {
+  private getSortedData(data: TcDescriptorInfo[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -67,7 +67,7 @@ export class DescriptorsEcDataSource extends DataSource<EcDescriptorInfo> {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
         case 'name': return compare(a.name, b.name, isAsc);
-        case 'id': return compare(+a.ctxDescriptorId, +b.ctxDescriptorId, isAsc);
+        case 'id': return compare(+a.testCaseDescriptorId, +b.testCaseDescriptorId, isAsc);
         default: return 0;
       }
     });

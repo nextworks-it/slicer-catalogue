@@ -17,7 +17,7 @@ export class DescriptorsEComponent implements OnInit {
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<ExpDescriptorInfo>;
   dataSource: DescriptorsEDataSource;
-  tableData: ExpDescriptorInfo[] = []
+  tableData: ExpDescriptorInfo[] = [];
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'name', 'expElueprintId', 'vsDescriptorId', 'kpi', 'buttons'];

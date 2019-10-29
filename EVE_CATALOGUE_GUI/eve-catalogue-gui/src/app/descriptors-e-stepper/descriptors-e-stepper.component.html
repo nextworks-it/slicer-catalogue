@@ -36,24 +36,11 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title>QoS Parameters</mat-panel-title>
                 </mat-expansion-panel-header>
-                <div formArrayName="params" *ngFor="let param of secondFormGroup.get('params').controls; let i=index">
-                    <div [formGroupName]="i">                        
-                        <h5>Param {{i}}</h5>
-                        <table>
-                            <tr>
-                                <td>
-                                    <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Parameter Name" required formControlName="parameterName">
-                                    </mat-form-field>
-                                </td>
-                                <td>
-                                    <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Parameter Value" required formControlName="parameterId">
-                                    </mat-form-field>
-                                </td>
-                            </tr>
-                        </table>                     
-                    </div>
+                <div *ngFor="let param of vsBlueprint['parameters']; let i=index">                        
+                    <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                        <mat-label>{{param.parameterId}}</mat-label>
+                        <input matInput [id]="'qos_' + param.parameterId" required>
+                    </mat-form-field>                      
                 </div>
             </mat-expansion-panel>
             <div class="margin-top"></div>
@@ -136,42 +123,12 @@
     <mat-step [stepControl]="thirdFormGroup">
         <form [formGroup]="thirdFormGroup" class="rules-form">
             <ng-template matStepLabel>KPIs</ng-template>
-            <table class="rules-full-width">
-                <tr>
-                    <h4>Additional Properties</h4>
-                    <div formArrayName="kpis" *ngFor="let kpi of thirdFormGroup.get('kpis').controls; let i=index">
-                        <div [formGroupName]="i">                        
-                            <h5>KPI {{i + 1}}</h5>
-                            <td>
-                                <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                    <input matInput placeholder="KPI" required formControlName="kpiId">
-                                </mat-form-field>
-                            </td>
-                            <td>
-                                <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                    <input matInput placeholder="Threshold" required formControlName="threshold">
-                                </mat-form-field>
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </div>
-                    </div>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <div>
-                            <button mat-fab (click)="removeKPI();" *ngIf="kpis?.length > 1" color="primary"><mat-icon>remove</mat-icon></button>
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <button mat-fab (click)="addKPI();" color="primary"><mat-icon>add</mat-icon></button>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div *ngFor="let metric of expBlueprint['kpis']; let i=index">                        
+                <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                    <mat-label>{{metric.kpiId}}</mat-label>
+                    <input matInput [id]="'metric_' + metric.kpiId" required>
+                </mat-form-field>                      
+            </div>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -201,45 +158,27 @@
         </form>
     </mat-step>
     <mat-step [stepControl]="fifthFormGroup">
-        <form [formGroup]="fifthFormGroup" class="testCase-form">
+        <form [formGroup]="fifthFormGroup" class="rules-form">
             <ng-template matStepLabel>Test Cases Configuration</ng-template>
             <div *ngFor="let tc of tcBlueprints; let i=index">
                 <mat-expansion-panel width="100%">
                     <mat-expansion-panel-header>
                         <mat-panel-title>{{tc.viewValue}}</mat-panel-title>
                     </mat-expansion-panel-header>
-                    <table class="rules-full-width">
-                        <tr>
-                            <h4>Additional Properties</h4>
-                            <div [formArrayName]="tcbIdsToArraysMap.get(tc.value)" *ngFor="let prop of fifthFormGroup.get(tcbIdsToArraysMap.get(tc.value)).controls; let j=index">
-                                <div [formGroupName]="j">                        
-                                    <h5>Property {{j + 1}}</h5>
-                                    <td>
-                                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                            <input matInput placeholder="Property" required formControlName="propertyName">
-                                        </mat-form-field>
-                                    </td>
-                                    <td>
-                                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                            <input matInput placeholder="Value" required formControlName="propertyValue">
-                                        </mat-form-field>
-                                    </td>
-                                </div>
-                            </div>
-                        </tr>
-                        <!--tr>
-                            <td>
-                                <div>
-                                    <button mat-fab (click)="removeProperty(tc.value);" *ngIf="getPropertyArrayLength(tc.value) > 1" color="primary"><mat-icon>remove</mat-icon></button>
-                                </div>                             
-                            </td>
-                            <td>
-                                <div>
-                                    <button mat-fab (click)="addProperty(tc.value);" color="primary"><mat-icon>add</mat-icon></button>
-                                </div>
-                            </td>
-                        </tr-->
-                    </table>
+                    <h4>User Parameters</h4>
+                    <div *ngFor="let param of tc.item['userParameters'] | keyvalue">                        
+                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                            <mat-label>{{param.key}}</mat-label>
+                            <input matInput [id]="'user_' + param.key" required>
+                        </mat-form-field>                      
+                    </div>
+                    <h4>Infrastructure Parameters</h4>
+                    <div *ngFor="let param of tc.item['infrastructureParameters'] | keyvalue">                        
+                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                            <mat-label>{{param.key}}</mat-label>
+                            <input matInput [id]="'infra_' + param.key" required>
+                        </mat-form-field>                      
+                    </div>
                 </mat-expansion-panel>
             </div>
             <div class="margin-top">

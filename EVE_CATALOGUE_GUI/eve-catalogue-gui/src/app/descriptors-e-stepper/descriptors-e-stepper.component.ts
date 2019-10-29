@@ -25,10 +25,7 @@ export interface ViewValue {
 })
 export class DescriptorsEStepperComponent implements OnInit {
 
-  isLinear = false;
-  isButtonVisible = false;
-  params: FormArray;
-  kpis: FormArray;
+  isLinear = true;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
@@ -36,33 +33,10 @@ export class DescriptorsEStepperComponent implements OnInit {
   fifthFormGroup: FormGroup;
 
   expBlueprints: ViewValue[] = [];
-  vsBlueprint: VsBlueprint;
+  expBlueprint = {};
+  vsBlueprint: VsBlueprint = new VsBlueprint();
   ctxBlueprints: ViewValue[] = [];
   tcBlueprints: ViewValue[] = [];
-
-  tcbIdsToArraysMap: Map<string, string> = new Map();
-  usedArrays: number = 0;
-
-  array_1: FormArray;
-  array_2: FormArray;
-  array_3: FormArray;
-  array_4: FormArray;
-  array_5: FormArray;
-  array_6: FormArray;
-  array_7: FormArray;
-  array_8: FormArray;
-  array_9: FormArray;
-  array_10: FormArray;
-  array_11: FormArray;
-  array_12: FormArray;
-  array_13: FormArray;
-  array_14: FormArray;
-  array_15: FormArray;
-  array_16: FormArray;
-  array_17: FormArray;
-  array_18: FormArray;
-  array_19: FormArray;
-  array_20: FormArray;
 
   managementTypes: String[] = [
     "PROVIDER_MANAGED",
@@ -127,119 +101,14 @@ export class DescriptorsEStepperComponent implements OnInit {
       prohibitedProviders: ['', Validators.required],
       timeType: ['', Validators.required],
       coverageType: ['', Validators.required],
-      isLowCost: [false],
-      params: this._formBuilder.array([])
+      isLowCost: [false]
     });
     this.thirdFormGroup = this._formBuilder.group({
-      kpis: this._formBuilder.array([this.createKPI()])
     });
     this.fourthFormGroup = this._formBuilder.group({
     });
     this.fifthFormGroup = this._formBuilder.group({
-      array_1: this._formBuilder.array([this.createProperty()]),
-      array_2: this._formBuilder.array([this.createProperty()]),
-      array_3: this._formBuilder.array([this.createProperty()]),
-      array_4: this._formBuilder.array([this.createProperty()]),
-      array_5: this._formBuilder.array([this.createProperty()]),
-      array_6: this._formBuilder.array([this.createProperty()]),
-      array_7: this._formBuilder.array([this.createProperty()]),
-      array_8: this._formBuilder.array([this.createProperty()]),
-      array_9: this._formBuilder.array([this.createProperty()]),
-      array_10: this._formBuilder.array([this.createProperty()]),
-      array_11: this._formBuilder.array([this.createProperty()]),
-      array_12: this._formBuilder.array([this.createProperty()]),
-      array_13: this._formBuilder.array([this.createProperty()]),
-      array_14: this._formBuilder.array([this.createProperty()]),
-      array_15: this._formBuilder.array([this.createProperty()]),
-      array_16: this._formBuilder.array([this.createProperty()]),
-      array_17: this._formBuilder.array([this.createProperty()]),
-      array_18: this._formBuilder.array([this.createProperty()]),
-      array_19: this._formBuilder.array([this.createProperty()]),
-      array_20: this._formBuilder.array([this.createProperty()])
     });
-  }
-
-  createParam(value: string) {
-    return this._formBuilder.group({
-      parameterName: value,
-      parameterId: ''
-    });
-  }
-
-  addParam(value: string): void {
-    this.params = this.secondFormGroup.get('params') as FormArray;
-    this.params.push(this.createParam(value));
-  }
-
-  removeItem() {
-    this.params = this.secondFormGroup.get('params') as FormArray;
-    this.params.removeAt(this.params.length - 1);
-  }
-
-  createKPI() {
-    return this._formBuilder.group({
-      kpiId: '',
-      threshold: ''
-    });
-  }
-
-  addKPI(): void {
-    this.kpis = this.thirdFormGroup.get('kpis') as FormArray;
-    this.kpis.push(this.createKPI());
-  }
-
-  removeKPI() {
-    this.kpis = this.thirdFormGroup.get('kpis') as FormArray;
-    this.kpis.removeAt(this.kpis.length - 1);
-  }
-
-  createProperty() {
-    return this._formBuilder.group({
-      propertyName: '',
-      propertyValue: ''
-    });
-  }
-
-  addProperty(tcbId: string): void {
-    var arrayName = this.tcbIdsToArraysMap.get(tcbId);
-    if (arrayName == "array_1") {
-      this.array_1 = this.fifthFormGroup.get('array_1') as FormArray;
-      this.array_1.push(this.createProperty());
-    }
-
-    if (arrayName == "array_2") {
-      this.array_2 = this.fifthFormGroup.get('array_2') as FormArray;
-      this.array_2.push(this.createProperty());
-    }
-    
-  }
-
-  removeProperty(tcbId: string) {
-    var arrayName = this.tcbIdsToArraysMap.get(tcbId);
-    if (arrayName == "array_1") {
-      this.array_1 = this.fifthFormGroup.get('array_1') as FormArray;
-      this.array_1.removeAt(this.array_1.length - 1);
-    }
-    
-    if (arrayName == "array_2") {
-      this.array_2 = this.fifthFormGroup.get('array_2') as FormArray;
-      this.array_2.removeAt(this.array_2.length - 1);
-    }
-  }
-
-  getPropertyArrayLength(tcbId: string): number {
-    var arrayName = this.tcbIdsToArraysMap.get(tcbId);
-    var length;
-    if (arrayName == "array_1") {
-      this.array_1 = this.fifthFormGroup.get('array_1') as FormArray;
-      length = this.array_1.length;
-    }
-    
-    if (arrayName == "array_2") {
-      this.array_2 = this.fifthFormGroup.get('array_2') as FormArray;
-      length = this.array_2.length;
-    }
-    return length;
   }
 
   getExpBlueprints() {
@@ -248,22 +117,20 @@ export class DescriptorsEStepperComponent implements OnInit {
         for (var i = 0; i < expBlueprintInfos.length; i++) {
           this.expBlueprints.push({value: expBlueprintInfos[i]['expBlueprintId'], viewValue: expBlueprintInfos[i]['expBlueprint']['description'], item: expBlueprintInfos[i]['expBlueprint']});
         }
-
       });
   }
 
   onExpBSelected(event: any) {
     var selectedBlueprint = event.value;
     var vsbId;
-    var expBlueprint;
     for (var i = 0; i < this.expBlueprints.length; i ++) {
       if (this.expBlueprints[i]['value'] == selectedBlueprint) {
-        expBlueprint = this.expBlueprints[i]['item'];
+        this.expBlueprint = this.expBlueprints[i]['item'];
         vsbId = this.expBlueprints[i]['item']['vsBlueprintId'];
       }
     }
-    var ctxBlueprintIds = expBlueprint['ctxBlueprintIds'];
-    var tcBlueprintIds = expBlueprint['tcBlueprintIds'];
+    var ctxBlueprintIds = this.expBlueprint['ctxBlueprintIds'];
+    var tcBlueprintIds = this.expBlueprint['tcBlueprintIds'];
     console.log(ctxBlueprintIds);
     console.log(tcBlueprintIds);
     for (var i = 0; i < ctxBlueprintIds.length; i++) {
@@ -280,11 +147,6 @@ export class DescriptorsEStepperComponent implements OnInit {
     this.blueprintsVsService.getVsBlueprint(vsBlueprintId).subscribe((vsBlueprintInfo: VsBlueprintInfo) => 
       {
         this.vsBlueprint = vsBlueprintInfo['vsBlueprint'];
-        
-        var vsBlueprintParameters = this.vsBlueprint['parameters'];
-        for (var i = 0; i < vsBlueprintParameters.length; i++) {
-          this.addParam(vsBlueprintParameters[i]['parameterName']);
-        }
         console.log(this.vsBlueprint);
       });
   }
@@ -302,9 +164,6 @@ export class DescriptorsEStepperComponent implements OnInit {
       { 
         this.tcBlueprints.push({value: tcBlueprintInfo['testCaseBlueprintId'], viewValue: tcBlueprintInfo['testCaseBlueprint']['description'], item: tcBlueprintInfo['testCaseBlueprint']});
         console.log(this.tcBlueprints);
-        this.tcbIdsToArraysMap.set(tcBlueprintInfo['testCaseBlueprintId'], "array_" + (this.usedArrays + 1).toString());
-        this.usedArrays = this.usedArrays + 1;
-        
       });
   }
 
@@ -320,11 +179,9 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['tenantId'] = "admin";
     onBoardExpRequest['kpiThresholds'] = {};
 
-    var kpiRows = this.thirdFormGroup.controls.kpis as FormArray;
-    var controls = kpiRows.controls;
-
-    for (var j = 0; j < controls.length; j++) {
-      onBoardExpRequest['kpiThresholds'][(controls[j].value)['kpiId']] = (controls[j].value)['threshold'];
+    for (var j = 0; j < this.expBlueprint['kpis'].length; j++) {
+      onBoardExpRequest['kpiThresholds'][this.expBlueprint['kpis'][j]['kpiId']] =
+        this.document.getElementById('metric_' + this.expBlueprint['kpis'][j]['kpiId']).value;
     }
 
     for (var i = 0; i < this.ctxBlueprints.length; i++) {
@@ -344,12 +201,11 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['vsDescriptor']['sst'] = this.secondFormGroup.get('ssType').value;
     onBoardExpRequest['vsDescriptor']['managementType'] = this.secondFormGroup.get('managementType').value;
 
-    var qosParameters = {}
-    var paramsRows = this.secondFormGroup.controls.params as FormArray;
-    var pControls = paramsRows.controls;
+    var qosParameters = {};
 
-    for (var i = 0; i < pControls.length; i++) {
-      qosParameters[(pControls[i].value)['parameterName']] = (pControls[i].value)['parameterId'];
+    for (var i = 0; i < this.vsBlueprint['parameters'].length; i++) {
+      qosParameters[this.vsBlueprint['parameters'][i]['parameterId']] = 
+        this.document.getElementById('qos_' + this.vsBlueprint['parameters'][i]['parameterId']).value;
     }
 
     onBoardExpRequest['vsDescriptor']['qosParameters'] = qosParameters;
@@ -374,19 +230,19 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['vsDescriptor']['isPublic'] = this.secondFormGroup.get('isPublic').value;
 
     for (var i = 0; i < this.tcBlueprints.length; i++) {
-      var tempConf = {
-        "blueprintId": this.tcBlueprints[i]['value'],
-        "parameters": {}
-      };
-      var arrayName = this.tcbIdsToArraysMap.get(this.tcBlueprints[i]['value']);
-      var propArray = this.fifthFormGroup.get(arrayName) as FormArray;
-      var propControls = propArray.controls;
+      var tempTc = {};
+      tempTc['blueprintId'] = this.tcBlueprints[i].value;
+      tempTc['parameters'] = {}
+      let userParams = new Map(Object.entries(this.tcBlueprints[i]['item']['userParameters']));
+      let infraParams = new Map(Object.entries(this.tcBlueprints[i]['item']['infrastructureParameters']));
 
-      for (var i = 0; i < propControls.length; i++) {
-        //console.log(propControls[i]);
-        tempConf.parameters[(propControls[i].value)['propertyName']] = (propControls[i].value)['propertyValue'];
+      for (let key of userParams.keys()) {
+        tempTc['parameters'][key] = this.document.getElementById("user_" + key).value;
       }
-      onBoardExpRequest['testCaseConfiguration'].push(tempConf);
+      for (let key of infraParams.keys()) {
+        tempTc['parameters'][key] = this.document.getElementById("infra_" + key).value;
+      }
+      onBoardExpRequest['testCaseConfiguration'].push(tempTc);
     }
 
 

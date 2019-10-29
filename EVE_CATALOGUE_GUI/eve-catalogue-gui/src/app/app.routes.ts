@@ -5,6 +5,7 @@ import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
 import { BlueprintsEcComponent } from './blueprints-ec/blueprints-ec.component';
 import { BlueprintsEComponent } from './blueprints-e/blueprints-e.component';
 import { DescriptorsVsComponent } from './descriptors-vs/descriptors-vs.component';
+import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.component';
 import { DescriptorsEcComponent } from './descriptors-ec/descriptors-ec.component';
 import { DescriptorsEComponent } from './descriptors-e/descriptors-e.component';
 import { NfvNsComponent } from './nfv-ns/nfv-ns.component';
@@ -24,6 +25,7 @@ export const AppRoutes: Routes = [
     { path: 'blueprints_ec', component: BlueprintsEcComponent},
     { path: 'blueprints_exp', component: BlueprintsEComponent},
     { path: 'descriptors_vs', component: DescriptorsVsComponent},
+    { path: 'descriptors_tc', component: DescriptorsTcComponent},
     { path: 'descriptors_ec', component: DescriptorsEcComponent},
     { path: 'descriptors_exp', component: DescriptorsEComponent},
     { path: 'nfv_ns', component: NfvNsComponent},
