@@ -200,5 +200,23 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 
         return tcbIdString;
 	}
+	
+	public synchronized void addTcdInBlueprint(String tcBlueprintId, String tcdId)
+			throws NotExistingEntityException {
+		log.debug("Adding TCD " + tcdId + " to blueprint " + tcBlueprintId);
+		TestCaseBlueprintInfo tcbi = getTestCaseBlueprintInfo(tcBlueprintId);
+		tcbi.addTcd(tcdId);
+		testCaseBlueprintInfoRepository.saveAndFlush(tcbi);
+		log.debug("Added TCD " + tcdId + " to blueprint " + tcBlueprintId);
+	}
+	
+	public synchronized void removeTcdInBlueprint(String tcBlueprintId, String tcdId)
+			throws NotExistingEntityException {
+		log.debug("Removing TCD " + tcdId + " from blueprint " + tcBlueprintId);
+		TestCaseBlueprintInfo tcbi = getTestCaseBlueprintInfo(tcBlueprintId);
+		tcbi.removeTcd(tcdId);
+		testCaseBlueprintInfoRepository.saveAndFlush(tcbi);
+		log.debug("Removed TCD " + tcdId + " to blueprint " + tcBlueprintId);
+	}
 
 }
