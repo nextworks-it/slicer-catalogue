@@ -1,9 +1,9 @@
 <mat-toolbar>
-    <h1 class="mat-h1">Execution Context Blueprint Details</h1>
+    <h1 class="mat-h1">Vertical Service Blueprint Details</h1>
 </mat-toolbar>
 <div style="float: left; width: 48%; margin: 1%">
     <mat-card>
-        <table mat-table matSort aria-label="Elements" width="100%">
+        <table mat-table matSort aria-label="Elements" class="full-width-table" width="100%">
             <!-- KEY Column -->
             <ng-container matColumnDef="key">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Field</th>
@@ -13,7 +13,7 @@
             <!-- ExpD Column -->
             <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef>Value</th>
-                <td mat-cell *matCellDef="let row" ><tr *ngFor="let param of row.value"><td>{{param}}</td></tr></td>
+                <td mat-cell *matCellDef="let row" ><tr *ngFor="let param of row.value"><td class="margin-all">{{param}}</td></tr></td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -30,7 +30,7 @@
 </div>
 <mat-divider [vertical]="true"></mat-divider>
 <div style="float: left; width: 48%; margin: 1%">
-    <app-blueprints-graph [elements]="ecbDetailsService.graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-graph>
+    <app-blueprints-graph [elements]="vsbGraphService.graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-graph>
     <p><b>Selected Node: </b>{{node_name}}</p>
 </div>
 

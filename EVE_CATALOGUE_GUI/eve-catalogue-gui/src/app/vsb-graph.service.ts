@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BlueprintsVsDetailsItemKV } from './vsb-graph/vsb-graph.datasource';
+import { BlueprintsVsDetailsItemKV } from './blueprints-vs-details/blueprints-vs-details.datasource';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class VsbGraphService {
   }
 
   public updateVSBTable(data: BlueprintsVsDetailsItemKV[]) {
-    console.log(data);
+    //console.log(data);
     this._vsBlueprintDetailsItems = data;
   }
 

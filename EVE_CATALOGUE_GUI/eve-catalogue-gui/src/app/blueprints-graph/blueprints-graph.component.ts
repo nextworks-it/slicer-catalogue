@@ -3,7 +3,7 @@ import {Component, OnChanges, Renderer, ElementRef, Input, Output, EventEmitter}
 declare var cytoscape: any;
 
 @Component({
-  selector: 'app-blueprints-vs-graph',
+  selector: 'app-blueprints-graph',
   template: '<div id="cy"></div>',
     styles: [`#cy {
         height: 100%;
@@ -14,7 +14,7 @@ declare var cytoscape: any;
     }`]
 })
 
-export class BlueprintsVsGraphComponent implements OnChanges {
+export class BlueprintsGraphComponent implements OnChanges {
 
   @Input() public elements: any;
   @Input() public style: any;
@@ -38,15 +38,6 @@ export class BlueprintsVsGraphComponent implements OnChanges {
     this.style = this.style || cytoscape.stylesheet()
       .selector('node')
         .css({
-          /*'shape': 'data(shapeType)',
-          'width': 'mapData(weight, 40, 80, 20, 60)',
-          'content': 'data(name)',
-          'text-valign': 'center',
-          'text-outline-width': 1,
-          'text-outline-color': 'data(colorCode)',
-          'background-color': 'data(colorCode)',
-          'color': '#fff',
-          'font-size': 10*/
           'shape': 'data(shapeType)',
           'content': 'data(name)',
           'text-valign': 'center',
@@ -64,13 +55,6 @@ export class BlueprintsVsGraphComponent implements OnChanges {
         })
       .selector('edge')
         .css({
-          /*'curve-style': 'bezier',
-          'opacity': 0.666,
-          'width': 'mapData(strength, 70, 100, 2, 6)',
-          'target-arrow-shape': 'triangle',
-          'line-color': 'data(colorCode)',
-          'source-arrow-color': 'data(colorCode)',
-          'target-arrow-color': 'data(colorCode)'*/
           'curve-style': 'bezier',
           'opacity': 0.666,
           'width': 'mapData(strength, 70, 100, 2, 6)',

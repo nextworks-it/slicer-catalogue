@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -27,7 +27,7 @@ export class BlueprintsTcComponent implements OnInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'name', 'version', 'description', 'script', 'user_params', 'infra_params', 'tcds', 'buttons'];
 
-  constructor(private _formBuilder: FormBuilder, private blueprintsTcService: BlueprintsTcService) { }
+  constructor(private _formBuilder: FormBuilder, private blueprintsTcService: BlueprintsTcService, private router: Router) { }
 
   ngOnInit() {
     this.tcFormGroup = this._formBuilder.group({
@@ -112,7 +112,7 @@ export class BlueprintsTcComponent implements OnInit {
     var userParamsMap = JSON.parse('{}');
 
     for (var j = 0; j < user_controls.length; j++) {
-      console.log(user_controls[j].value);
+      //console.log(user_controls[j].value);
       userParamsMap[(user_controls[j].value)['userParamName']] = (user_controls[j].value)['userParamValue'];
     }
 
@@ -123,7 +123,7 @@ export class BlueprintsTcComponent implements OnInit {
     var infraParamsMap = JSON.parse('{}');
 
     for (var j = 0; j < infra_controls.length; j++) {
-      console.log(infra_controls[j].value);
+      //console.log(infra_controls[j].value);
       infraParamsMap[(infra_controls[j].value)['infraParamName']] = (infra_controls[j].value)['infraParamValue'];
     }
 
@@ -131,9 +131,9 @@ export class BlueprintsTcComponent implements OnInit {
 
     onBoardTcRequest['testCaseBlueprint'] = testCaseBlueprint;
 
-    console.log(onBoardTcRequest);
+    console.log("OnboardTcRequest:" + JSON.stringify(onBoardTcRequest, null, 4));
 
     this.blueprintsTcService.postTcBlueprint(onBoardTcRequest)
-    .subscribe(tcBlueprintId => console.log("Successfully uploaded new TC Blueprint with id " + tcBlueprintId));
+    .subscribe(tcBlueprintId => console.log("TC Blueprint with id " + tcBlueprintId));
   }
 }

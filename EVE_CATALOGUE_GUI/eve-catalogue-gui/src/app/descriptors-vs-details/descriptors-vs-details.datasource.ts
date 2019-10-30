@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 
-export interface BlueprintsVsDetailsItemKV {
+export interface DescriptorsVsDetailsItemKV {
   key: string;
   value: string[];
 }
@@ -14,12 +14,12 @@ export interface BlueprintsVsDetailsItemKV {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
-  data: BlueprintsVsDetailsItemKV[] = []
+export class DescriptorsVsDetailsDataSource extends DataSource<DescriptorsVsDetailsItemKV> {
+  data: DescriptorsVsDetailsItemKV[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
-  constructor(data: BlueprintsVsDetailsItemKV[]) {
+  constructor(data: DescriptorsVsDetailsItemKV[]) {
     super();
     this.data = data;
   }
@@ -29,7 +29,7 @@ export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<BlueprintsVsDetailsItemKV[]> {
+  connect(): Observable<DescriptorsVsDetailsItemKV[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -53,7 +53,7 @@ export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: BlueprintsVsDetailsItemKV[]) {
+  private getPagedData(data: DescriptorsVsDetailsItemKV[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -62,7 +62,7 @@ export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: BlueprintsVsDetailsItemKV[]) {
+  private getSortedData(data: DescriptorsVsDetailsItemKV[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -71,9 +71,6 @@ export class VsbGraphDataSource extends DataSource<BlueprintsVsDetailsItemKV> {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
           case 'key':  return compare(a.key, b.key, isAsc);
-        /*case 'name': return compare(a.name, b.name, isAsc);
-          case 'id': return compare(+a.expBlueprintId, +b.expBlueprintId, isAsc);
-        */
 	default: return 0;
       }
     });

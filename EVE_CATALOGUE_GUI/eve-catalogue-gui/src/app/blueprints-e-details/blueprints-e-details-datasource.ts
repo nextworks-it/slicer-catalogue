@@ -71,9 +71,6 @@ export class BlueprintsEDetailsDataSource extends DataSource<BlueprintsEDetailsI
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
           case 'key':  return compare(a.key, b.key, isAsc);
-        /*case 'name': return compare(a.name, b.name, isAsc);
-          case 'id': return compare(+a.expBlueprintId, +b.expBlueprintId, isAsc);
-        */
 	default: return 0;
       }
     });

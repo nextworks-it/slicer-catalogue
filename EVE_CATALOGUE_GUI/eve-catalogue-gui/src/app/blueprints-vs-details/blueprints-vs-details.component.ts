@@ -1,29 +1,29 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VsbGraphService } from '../vsb-graph.service';
 import { MatPaginator, MatSort, MatTable } from '@angular/material';
-import { BlueprintsVsDetailsItemKV, VsbGraphDataSource } from './vsb-graph.datasource';
+import { BlueprintsVsDetailsItemKV, BlueprintsVsDetailsDataSource } from './blueprints-vs-details.datasource';
 import { VsBlueprintInfo } from '../blueprints-vs/vs-blueprint-info';
 import { BlueprintsVsService } from '../blueprints-vs.service';
 
 @Component({
-  selector: 'app-vsb-graph',
-  templateUrl: './vsb-graph.component.html',
+  selector: 'app-blueprints-vs-details',
+  templateUrl: './blueprints-vs-details.component.html',
   styles: [`
-    app-blueprints-vs-graph {
+    app-blueprints-graph {
       height: 100vh;
       float: left;
       width: 100%;
       position: relative;
     }`]
 })
-export class VsbGraphComponent implements /*AfterViewInit,*/ OnInit {
+export class BlueprintsVsDetailsComponent implements OnInit {
 
   node_name: string;
 
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<BlueprintsVsDetailsItemKV>;
-  dataSource: VsbGraphDataSource;
+  dataSource: BlueprintsVsDetailsDataSource;
 
   graphData = {
     nodes: [],
@@ -39,13 +39,9 @@ export class VsbGraphComponent implements /*AfterViewInit,*/ OnInit {
 
   ngOnInit() {
     var vsbId = localStorage.getItem('vsbId');
-    this.dataSource = new VsbGraphDataSource(this.vsbGraphService._vsBlueprintDetailsItems);
+    this.dataSource = new BlueprintsVsDetailsDataSource(this.vsbGraphService._vsBlueprintDetailsItems);
     this.getVsBlueprint(vsbId);
   }
-
-  /*ngAfterViewInit(): void {
-    console.log(this.vsbGraphService._vsBlueprintDetailsItems);
-  }*/
 
   nodeChange(event: any) {
       this.node_name = event;
@@ -136,7 +132,7 @@ export class VsbGraphComponent implements /*AfterViewInit,*/ OnInit {
         //console.log(this.graphData);
         this.vsbGraphService.updateVSBTable(this.tableData);
         this.vsbGraphService.updateVSBGraph(this.graphData);
-        this.dataSource = new VsbGraphDataSource(this.tableData);
+        this.dataSource = new BlueprintsVsDetailsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.table.dataSource = this.dataSource;

@@ -27,13 +27,14 @@ export interface Blueprint {
 
 export class BlueprintsEStepperComponent implements OnInit {
 
-  isLinear = false;
+  isLinear = true;
 
   selectedSite: string;
   selectedVsb: string;
   expBlueprintName: string;
   selectedCbs: string[] = [];
   uploadedNsdName: string;
+  parameterNames: string[] = [];
   metricNames: string[] = [];
   kpiNames: string[] = [];
   selectedTcbs: string[] = [];
@@ -186,28 +187,27 @@ export class BlueprintsEStepperComponent implements OnInit {
   }
 
   onSiteSelected(event: any) {
-    console.log(event);
+    //console.log(event);
     this.selectedSite = event.value;
   }
 
   onVsbSelected(event: any) {
-    console.log(event);
+    //console.log(event);
     this.selectedVsb = event.value;
   }
 
   onNameGiven(event: any) {
-    console.log(event);
+    //console.log(event);
     this.expBlueprintName = event.target.value;
   }
 
   onSelectedCb(event: any) {
-    console.log(event);
+    //console.log(event);
     this.selectedCbs.push(event.value);
-    console.log(this.selectedCbs);
   }
 
   onUploadedNsd(event: any, nsds: File[]) {
-    console.log(event);
+    //console.log(event);
     this.uploadedNsdName = event.target.files[0].name;
 
     let promises = [];
@@ -231,18 +231,23 @@ export class BlueprintsEStepperComponent implements OnInit {
     });
   }
 
+  onParameterGiven(event: any) {
+    //console.log(event);
+    this.parameterNames.push(event.target.value);
+  }
+
   onMetricGiven(event: any) {
-    console.log(event);
+    //console.log(event);
     this.metricNames.push(event.target.value);
   }
 
   onKPIGiven(event: any) {
-    console.log(event);
+    //console.log(event);
     this.kpiNames.push(event.target.value);
   }
 
   onSelectedTcbs(event: any) {
-    console.log(event);
+    //console.log(event);
     this.selectedTcbs.push(event.value);
   }
 
@@ -319,7 +324,6 @@ export class BlueprintsEStepperComponent implements OnInit {
         var nsFlavourId = this.fourthFormGroup.get('nsFlavourIdCtrl').value;
         var nsInstLevel = this.fourthFormGroup.get('nsInstLevelIdCtrl').value;
 
-
         //expBlueprint['expBlueprintId'] = blueprintId;
         expBlueprint['description'] = blueprintDesc;
         expBlueprint['name'] = blueprintName;
@@ -342,7 +346,7 @@ export class BlueprintsEStepperComponent implements OnInit {
 
         for (var j = 0; j < controls.length; j++) {
           paramsObj.push(controls[j].value);
-          console.log(paramsObj);
+          //console.log(paramsObj);
         }
         translationRule['input'] = paramsObj;
         onBoardExpRequest.translationRules.push(translationRule);
@@ -353,7 +357,7 @@ export class BlueprintsEStepperComponent implements OnInit {
 
         for (var j = 0; j < metric_controls.length; j++) {
           metricsObj.push(metric_controls[j].value);
-          console.log(metricsObj);
+          //console.log(metricsObj);
         }
 
         var kpis = this.fifthFormGroup.controls.kpi_items as FormArray;
@@ -375,7 +379,7 @@ export class BlueprintsEStepperComponent implements OnInit {
             newKpiObj['metricIds'].push(mIds[h].trim());
           }
           kpisObj.push(newKpiObj);
-          console.log(kpisObj);
+          //console.log(kpisObj);
         }
 
         expBlueprint['metrics'] = metricsObj;
@@ -386,7 +390,7 @@ export class BlueprintsEStepperComponent implements OnInit {
         console.log('onBoardVsRequest: ' + JSON.stringify(onBoardExpRequest, null, 4));
 
         this.blueprintsExpService.postExpBlueprint(onBoardExpRequest)
-        .subscribe(expBlueprintId => console.log("Successfully uploaded new EXP Blueprint with id " + expBlueprintId));
+        .subscribe(expBlueprintId => console.log("EXP Blueprint with id " + expBlueprintId));
     });   
   }
 }

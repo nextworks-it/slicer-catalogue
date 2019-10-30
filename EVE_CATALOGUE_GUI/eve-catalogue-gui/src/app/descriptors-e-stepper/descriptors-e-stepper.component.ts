@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { DescriptorsExpService } from '../descriptors-exp.service';
 import { BlueprintsVsService } from '../blueprints-vs.service';
 import { BlueprintsExpService } from '../blueprints-exp.service';
@@ -131,8 +131,8 @@ export class DescriptorsEStepperComponent implements OnInit {
     }
     var ctxBlueprintIds = this.expBlueprint['ctxBlueprintIds'];
     var tcBlueprintIds = this.expBlueprint['tcBlueprintIds'];
-    console.log(ctxBlueprintIds);
-    console.log(tcBlueprintIds);
+    //console.log(ctxBlueprintIds);
+    //console.log(tcBlueprintIds);
     for (var i = 0; i < ctxBlueprintIds.length; i++) {
       this.getCtxBlueprint(ctxBlueprintIds[i]);
     }
@@ -147,7 +147,7 @@ export class DescriptorsEStepperComponent implements OnInit {
     this.blueprintsVsService.getVsBlueprint(vsBlueprintId).subscribe((vsBlueprintInfo: VsBlueprintInfo) => 
       {
         this.vsBlueprint = vsBlueprintInfo['vsBlueprint'];
-        console.log(this.vsBlueprint);
+        //console.log(this.vsBlueprint);
       });
   }
 
@@ -155,7 +155,7 @@ export class DescriptorsEStepperComponent implements OnInit {
     this.blueprintsCtxService.getCtxBlueprint(ctxBlueprintId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) => 
       { 
         this.ctxBlueprints.push({value: ctxBlueprintInfo['ctxBlueprintId'], viewValue: ctxBlueprintInfo['ctxBlueprint']['description'], item: ctxBlueprintInfo['ctxBlueprint']});
-        console.log(this.ctxBlueprints);
+        //console.log(this.ctxBlueprints);
       });
   }
 
@@ -163,7 +163,7 @@ export class DescriptorsEStepperComponent implements OnInit {
     this.blueprintsTcService.getTcBlueprint(tcBlueprintId).subscribe((tcBlueprintInfo: TcBlueprintInfo) => 
       { 
         this.tcBlueprints.push({value: tcBlueprintInfo['testCaseBlueprintId'], viewValue: tcBlueprintInfo['testCaseBlueprint']['description'], item: tcBlueprintInfo['testCaseBlueprint']});
-        console.log(this.tcBlueprints);
+        //console.log(this.tcBlueprints);
       });
   }
 

@@ -48,8 +48,8 @@ import { BlueprintsVsStepperComponent } from './blueprints-vs-stepper/blueprints
 import { BlueprintsEStepperComponent } from './blueprints-e-stepper/blueprints-e-stepper.component';
 import { BlueprintsEDetailsComponent } from './blueprints-e-details/blueprints-e-details.component';
 import { LoginComponent } from './login/login.component';
-import { BlueprintsVsGraphComponent } from './blueprints-vs-graph/blueprints-vs-graph.component';
-import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
+import { BlueprintsGraphComponent } from './blueprints-graph/blueprints-graph.component';
+import { BlueprintsVsDetailsComponent } from './blueprints-vs-details/blueprints-vs-details.component';
 import { BlueprintsVsService } from './blueprints-vs.service';
 import { MessagesComponent } from './messages/messages.component';
 import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints-ec-details.component';
@@ -57,6 +57,8 @@ import { BlueprintsEcStepperComponent } from './blueprints-ec-stepper/blueprints
 import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
 import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptors-e-stepper.component';
 import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.component';
+import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
+import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
 
 @NgModule({
   declarations: [
@@ -76,14 +78,16 @@ import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.componen
     BlueprintsEStepperComponent,
     BlueprintsEDetailsComponent,
     LoginComponent,
-    BlueprintsVsGraphComponent,
-    VsbGraphComponent,
+    BlueprintsGraphComponent,
+    BlueprintsVsDetailsComponent,
     MessagesComponent,
     BlueprintsEcDetailsComponent,
     BlueprintsEcStepperComponent,
     BlueprintsTcComponent,
     DescriptorsEStepperComponent,
-    DescriptorsTcComponent
+    DescriptorsTcComponent,
+    DescriptorsVsDetailsComponent,
+    DescriptorsEDetailsComponent
   ],
   imports: [
     BrowserModule,

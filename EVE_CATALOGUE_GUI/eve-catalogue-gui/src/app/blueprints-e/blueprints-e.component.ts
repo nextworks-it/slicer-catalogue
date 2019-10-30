@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
@@ -21,20 +21,14 @@ export class BlueprintsEComponent implements /*AfterViewInit,*/ OnInit {
   
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['expBlueprintId', 'name', 'expBlueprintVersion'/*, 'verticalService'*/, 'sites', 'buttons'];
+  displayedColumns = ['expBlueprintId', 'name', 'expBlueprintVersion', 'vsBlueprintId', 'sites', 'buttons'];
 
-  constructor(private blueprintsExpService: BlueprintsExpService/*, private expbDetailsService: ExpbDetailsService*/, private router: Router) { }
+  constructor(private blueprintsExpService: BlueprintsExpService, private router: Router) { }
 
   ngOnInit() {
     this.dataSource = new BlueprintsEDataSource(this.expBlueprintInfos);
     this.getEBlueprints();
   }
-
-  /*ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
-  }*/
 
   getEBlueprints(): void {
     this.blueprintsExpService.getExpBlueprints().subscribe((expBlueprintInfos: ExpBlueprintInfo[]) => 
@@ -54,8 +48,7 @@ export class BlueprintsEComponent implements /*AfterViewInit,*/ OnInit {
   }
 
   viewEBlueprintGraph(expBlueprintId: string) {
-    console.log(expBlueprintId);
-    //this.expbDetailsService.updateExpBId(expBlueprintId);
+    //console.log(expBlueprintId);
     localStorage.setItem('expbId', expBlueprintId);
 
     this.router.navigate(["/blueprints_e_details"]);

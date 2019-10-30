@@ -13,7 +13,9 @@ import { NfvPnfComponent } from './nfv-pnf/nfv-pnf.component';
 import { NfvVnfComponent } from './nfv-vnf/nfv-vnf.component';
 import { BlueprintsEDetailsComponent } from './blueprints-e-details/blueprints-e-details.component';
 import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints-ec-details.component';
-import { VsbGraphComponent } from './vsb-graph/vsb-graph.component';
+import { BlueprintsVsDetailsComponent } from './blueprints-vs-details/blueprints-vs-details.component';
+import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
+import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
 import { LoginComponent } from './login/login.component';
 
 
@@ -33,7 +35,9 @@ export const AppRoutes: Routes = [
     { path: 'nfv_vnf', component: NfvVnfComponent},
     { path: 'blueprints_e_details', component: BlueprintsEDetailsComponent},
     { path: 'blueprints_ec_details', component: BlueprintsEcDetailsComponent},
-    { path: 'blueprints_vs_graph', component: VsbGraphComponent },
+    { path: 'blueprints_vs_graph', component: BlueprintsVsDetailsComponent },
+    { path: 'descriptors_e_details', component: DescriptorsEDetailsComponent },
+    { path: 'descriptors_vs_details', component: DescriptorsVsDetailsComponent },
     { path: 'login', component: LoginComponent},
 
     // otherwise redirect to home

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VsbGraphComponent } from './vsb-graph.component';
+import { BlueprintsGraphComponent } from './blueprints-graph.component';
 
-describe('VsbGraphComponent', () => {
-  let component: VsbGraphComponent;
-  let fixture: ComponentFixture<VsbGraphComponent>;
+describe('BlueprintsGraphComponent', () => {
+  let component: BlueprintsGraphComponent;
+  let fixture: ComponentFixture<BlueprintsGraphComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VsbGraphComponent ]
+      declarations: [ BlueprintsGraphComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VsbGraphComponent);
+    fixture = TestBed.createComponent(BlueprintsGraphComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

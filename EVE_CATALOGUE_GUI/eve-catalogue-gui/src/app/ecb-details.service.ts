@@ -19,7 +19,7 @@ export class EcbDetailsService {
   }
 
   public updateCTXBTable(data: BlueprintsCtxDetailsItemKV[]) {
-    console.log(data);
+    //console.log(data);
     this._ctxBlueprintDetailsItems = data;
   }
 

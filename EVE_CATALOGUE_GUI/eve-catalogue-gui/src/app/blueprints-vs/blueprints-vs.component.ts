@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,7 +13,7 @@ import { VsbGraphService } from  '../vsb-graph.service';
   templateUrl: './blueprints-vs.component.html',
   styleUrls: ['./blueprints-vs.component.css']
 })
-export class BlueprintsVsComponent implements /*AfterViewInit,*/ OnInit {
+export class BlueprintsVsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<VsBlueprintInfo>;

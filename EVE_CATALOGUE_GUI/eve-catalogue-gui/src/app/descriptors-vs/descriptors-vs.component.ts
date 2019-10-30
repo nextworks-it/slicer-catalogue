@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
@@ -20,7 +20,7 @@ export class DescriptorsVsComponent implements OnInit {
   tableData: VsDescriptorInfo[] = []
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name', 'vsBlueprintId', 'sst', 'managementType'];
+  displayedColumns = ['id', 'name', 'vsBlueprintId', 'sst', 'managementType', 'buttons'];
 
   constructor(private descriptorsVsService: DescriptorsVsService, private router: Router) {}
 
@@ -39,5 +39,12 @@ export class DescriptorsVsComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.table.dataSource = this.dataSource;
       });
+  }
+
+  viewVsDescriptor(vsDescriptorId: string) {
+    //console.log(vsDescriptorId);
+    localStorage.setItem('vsdId', vsDescriptorId);
+
+    this.router.navigate(["/descriptors_vs_details"]);
   }
 }

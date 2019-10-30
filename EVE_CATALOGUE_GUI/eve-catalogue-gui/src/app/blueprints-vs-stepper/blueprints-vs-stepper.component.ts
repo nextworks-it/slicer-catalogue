@@ -10,8 +10,7 @@ import { BlueprintsVsService } from '../blueprints-vs.service';
 })
 export class BlueprintsVsStepperComponent implements OnInit {
 
-  isLinear = false;
-  isButtonVisible = false;
+  isLinear = true;
   items: FormArray;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -104,7 +103,7 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
           for (var j = 0; j < controls.length; j++) {
             paramsObj.push(controls[j].value);
-            console.log(paramsObj);
+            //console.log(paramsObj);
           }
           translationRule['input'] = paramsObj;
           onBoardVsRequest.translationRules.push(translationRule);
@@ -112,7 +111,7 @@ export class BlueprintsVsStepperComponent implements OnInit {
           console.log('onBoardVsRequest: ' + JSON.stringify(onBoardVsRequest, null, 4));
 
           this.blueprintsVsService.postVsBlueprint(onBoardVsRequest)
-          .subscribe(vsBlueprintId => console.log("Successfully uploaded new VS Blueprint with id " + vsBlueprintId));
+          .subscribe(vsBlueprintId => console.log("VS Blueprint with id " + vsBlueprintId));
       });
     }      
   }

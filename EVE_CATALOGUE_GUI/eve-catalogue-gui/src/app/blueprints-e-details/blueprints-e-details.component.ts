@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
@@ -20,7 +20,6 @@ export class BlueprintsEDetailsComponent implements OnInit {
   tableData: BlueprintsEDetailsItemKV[] = [];
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  /**displayedColumns = ['expBlueprintId', 'name', 'activeExpdId', 'onBoardedNsdInfoId']; */
   displayedColumns = ['key', 'value'];
 
   constructor(private  blueprintsExpService: BlueprintsExpService) {}
@@ -34,7 +33,7 @@ export class BlueprintsEDetailsComponent implements OnInit {
   getExpBlueprint(expbId: string) {
     this.blueprintsExpService.getExpBlueprint(expbId).subscribe((expBlueprintInfo: ExpBlueprintInfo) => 
       {
-        //console.log(vsBlueprintInfo);
+        //console.log(expBlueprintInfo);
         var expBlueprint = expBlueprintInfo['expBlueprint'];
 
         this.tableData.push({key: "Id", value: [expBlueprint['expBlueprintId']]});

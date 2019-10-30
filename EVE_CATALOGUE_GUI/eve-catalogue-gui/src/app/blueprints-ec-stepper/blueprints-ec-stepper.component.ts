@@ -103,7 +103,7 @@ export class BlueprintsEcStepperComponent implements OnInit {
 
           for (var j = 0; j < controls.length; j++) {
             paramsObj.push(controls[j].value);
-            console.log(paramsObj);
+            //console.log(paramsObj);
           }
           translationRule['input'] = paramsObj;
           onBoardCtxRequest.translationRules.push(translationRule);
@@ -111,7 +111,7 @@ export class BlueprintsEcStepperComponent implements OnInit {
           console.log('onBoardCtxRequest: ' + JSON.stringify(onBoardCtxRequest, null, 4));
 
           this.blueprintsEcService.postCtxBlueprint(onBoardCtxRequest)
-          .subscribe(ctxBlueprintId => console.log("Successfully uploaded new Ctx Blueprint with id " + ctxBlueprintId));
+          .subscribe(ctxBlueprintId => console.log("Ctx Blueprint with id " + ctxBlueprintId));
       });
     }      
   }

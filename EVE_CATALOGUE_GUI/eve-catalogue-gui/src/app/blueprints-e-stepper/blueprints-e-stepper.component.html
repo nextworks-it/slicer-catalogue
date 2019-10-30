@@ -116,7 +116,7 @@
                             <h5>Param {{i + 1}}</h5>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                    <input matInput placeholder="Parameter Id" required formControlName="parameterId">
+                                    <input matInput placeholder="Parameter Id" required formControlName="parameterId" (change)="onParameterGiven($event)">
                                 </mat-form-field>
                             </td>
                             <td>
@@ -152,6 +152,7 @@
             <p> Selected VSB: {{selectedVsb}}</p>
             <p> Selected CBs: {{selectedCbs.join(', ')}}</p>
             <p> Uploaded NSD: {{uploadedNsdName}}</p>
+            <p> Parameters: {{parameterNames.join(', ')}}</p>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -169,7 +170,6 @@
                         <tr>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="data-full-width">
-                                    <!--input matInput placeholder="Metric Type" required formControlName="iMetricType"-->
                                     <mat-label>Metric Type</mat-label>
                                     <mat-select formControlName="iMetricType" name="metricType">
                                         <mat-option *ngFor="let type of metricTypes" [value]="type">
@@ -185,7 +185,6 @@
                             </td>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="data-full-width">
-                                    <!--input matInput placeholder="Collection Type" required formControlName="metricCollectionType"-->
                                     <mat-label>Collection Type</mat-label>
                                     <mat-select formControlName="metricCollectionType" name="collectionType">
                                         <mat-option *ngFor="let type of collectionTypes" [value]="type">
@@ -204,7 +203,7 @@
                             </td>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="data-full-width">
-                                    <input matInput placeholder="Name" required formControlName="name">
+                                    <input matInput placeholder="Name" required formControlName="name" (change)="onMetricGiven($event)">
                                 </mat-form-field>
                             </td>
                             <td>
@@ -255,7 +254,7 @@
                         <tr>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="data-full-width">
-                                    <input matInput placeholder="Name" required formControlName="name">
+                                    <input matInput placeholder="Name" required formControlName="name" (change)="onKPIGiven($event)">
                                 </mat-form-field>
                             </td>
                             <td>
@@ -293,6 +292,7 @@
             <p> Selected VSB: {{selectedVsb}}</p>
             <p> Selected CBs: {{selectedCbs.join(', ')}}</p>
             <p> Uploaded NSD: {{uploadedNsdName}}</p>
+            <p> Parameters: {{parameterNames.join(', ')}}</p>
             <p> Metrics: {{metricNames.join(', ')}}</p>
             <p> KPIs: {{kpiNames.join(', ')}}</p>
             <div class="margin-top">

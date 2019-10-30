@@ -39,11 +39,7 @@
         <ng-container matColumnDef="vsds">
           <th mat-header-cell *matHeaderCellDef>VSDs</th>
           <td mat-cell *matCellDef="let row">
-            <tr *ngFor="let name of row.activeVsdId">
-              <td>
-		            <a href="https://www.5g-eve.eu">{{name}}</a>
-              </td>
-            </tr>
+            <tr *ngFor="let name of row.activeVsdId"><td> - {{name}}</td></tr>
           </td>
         </ng-container>
 

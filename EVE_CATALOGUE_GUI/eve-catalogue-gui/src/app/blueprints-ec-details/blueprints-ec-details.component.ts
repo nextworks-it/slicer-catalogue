@@ -9,7 +9,7 @@ import { CtxBlueprintInfo } from '../blueprints-ec/ctx-blueprint-info';
   selector: 'app-blueprints-ec-details',
   templateUrl: './blueprints-ec-details.component.html',
   styles: [`
-    app-blueprints-vs-graph {
+    app-blueprints-graph {
       height: 100vh;
       float: left;
       width: 100%;

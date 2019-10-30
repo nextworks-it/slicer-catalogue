@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
@@ -13,7 +13,7 @@ import { EcbDetailsService } from '../ecb-details.service';
   templateUrl: './blueprints-ec.component.html',
   styleUrls: ['./blueprints-ec.component.css']
 })
-export class BlueprintsEcComponent implements /*AfterViewInit,*/ OnInit {
+export class BlueprintsEcComponent implements OnInit {
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<CtxBlueprintInfo>;
@@ -29,12 +29,6 @@ export class BlueprintsEcComponent implements /*AfterViewInit,*/ OnInit {
     this.dataSource = new BlueprintsEcDataSource(this.ctxBlueprintInfos);
     this.getEcBlueprints();
   }
-
-  /*ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
-  }*/
 
   getEcBlueprints(): void {
     this.blueprintsEcService.getCtxBlueprints().subscribe((ctxBlueprintInfos: CtxBlueprintInfo[]) => 
@@ -54,7 +48,7 @@ export class BlueprintsEcComponent implements /*AfterViewInit,*/ OnInit {
   }
 
   viewEcBlueprintGraph(ctxBlueprintId: string) {
-    console.log(ctxBlueprintId);
+    //console.log(ctxBlueprintId);
     this.ecbDetailsService.updateCTXBId(ctxBlueprintId);
 
     this.router.navigate(["/blueprints_ec_details"]);
