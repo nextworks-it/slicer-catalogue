@@ -43,6 +43,10 @@ export class BlueprintsEcDetailsComponent implements OnInit {
     this.getCtxBlueprint(ctxbId);
   }
 
+  nodeChange(event: any) {
+    this.node_name = event;
+  }
+
   getCtxBlueprint(ctxbId: string) {
     this.blueprintsEcService.getCtxBlueprint(ctxbId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) => 
       {
@@ -127,5 +131,4 @@ export class BlueprintsEcDetailsComponent implements OnInit {
         this.table.dataSource = this.dataSource;
       });
   }
-
 }

@@ -26,7 +26,10 @@
         <!-- VS Blueprint Column -->
         <ng-container matColumnDef="vsBlueprintId">
           <th mat-header-cell *matHeaderCellDef>Vertical Service</th>
-          <td mat-cell *matCellDef="let row">{{row.expBlueprint.vsBlueprintId}}</td>
+          <!--td mat-cell *matCellDef="let row">{{row.expBlueprint.vsBlueprintId}}</td-->
+          <td mat-cell *matCellDef="let row">
+            <tr *ngFor="let name of idToVsbId.get(row.expBlueprintId) | keyvalue"><td><a (click)="viewVsBlueprint(name.key)">{{name.value}}</a></td></tr>
+          </td>
         </ng-container>
 
         <!-- Sites Column -->

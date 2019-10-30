@@ -25,3 +25,7 @@ td {
   margin-top: 30px;
 }
   
+a {
+  text-decoration: blue;
+  text-decoration-line: underline;
+}

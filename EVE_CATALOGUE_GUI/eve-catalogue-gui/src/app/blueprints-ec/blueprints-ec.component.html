@@ -41,7 +41,8 @@
         <ng-container matColumnDef="ctxds">
           <th mat-header-cell *matHeaderCellDef>CTXDs</th>
           <td mat-cell *matCellDef="let row">
-            <tr *ngFor="let name of row.activeCtxdId"><td> - {{name}}</td></tr>
+            <!--tr *ngFor="let name of row.activeCtxdId"><td> - {{name}}</td></tr-->
+            <tr *ngFor="let name of idToCtxdIds.get(row.ctxBlueprintId) | keyvalue"><td><a (click)="viewCtxDescriptor(name.key)">{{name.value}}</a></td></tr>
           </td>
         </ng-container>
 

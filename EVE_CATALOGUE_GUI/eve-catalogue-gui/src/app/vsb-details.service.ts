@@ -4,7 +4,7 @@ import { BlueprintsVsDetailsItemKV } from './blueprints-vs-details/blueprints-vs
 @Injectable({
   providedIn: 'root'
 })
-export class VsbGraphService {
+export class VsbDetailsService {
   _graphData: any = {
     nodes: [] = [],
     edges: [] = []

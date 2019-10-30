@@ -5,13 +5,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from './message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExpBlueprintInfo } from './blueprints-e/exp-blueprint-info';
+import { environment } from './environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlueprintsExpService {
 
-  private baseUrl = 'http://localhost:8082/portal/catalogue/';
+  private baseUrl = environment.portalBaseUrl;
   private expBlueprintInfoUrl = 'expblueprint';
 
   httpOptions = {

@@ -5,13 +5,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { VsBlueprintInfo } from './blueprints-vs/vs-blueprint-info';
 import { MessageService } from './message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from './environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlueprintsVsService {
 
-  private baseUrl = 'http://localhost:8082/portal/catalogue/';
+  private baseUrl = environment.portalBaseUrl;
   private vsBlueprintInfoUrl = 'vsblueprint';
 
   httpOptions = {

@@ -5,13 +5,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from './message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TcBlueprintInfo } from './blueprints-tc/tc-blueprint-info';
+import { environment } from './environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlueprintsTcService {
 
-  private baseUrl = 'http://localhost:8082/portal/catalogue/';
+  private baseUrl = environment.portalBaseUrl;
   private tcBlueprintInfoUrl = 'testcaseblueprint';
 
   httpOptions = {

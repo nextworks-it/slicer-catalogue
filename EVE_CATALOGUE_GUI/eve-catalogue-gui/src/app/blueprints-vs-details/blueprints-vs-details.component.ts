@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { VsbGraphService } from '../vsb-graph.service';
+import { VsbDetailsService } from '../vsb-details.service';
 import { MatPaginator, MatSort, MatTable } from '@angular/material';
 import { BlueprintsVsDetailsItemKV, BlueprintsVsDetailsDataSource } from './blueprints-vs-details.datasource';
 import { VsBlueprintInfo } from '../blueprints-vs/vs-blueprint-info';
@@ -35,11 +35,11 @@ export class BlueprintsVsDetailsComponent implements OnInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['key', 'value'];
 
-  constructor(private vsbGraphService: VsbGraphService, private  blueprintsVsService: BlueprintsVsService) {}
+  constructor(private vsbDetailservice: VsbDetailsService, private  blueprintsVsService: BlueprintsVsService) {}
 
   ngOnInit() {
     var vsbId = localStorage.getItem('vsbId');
-    this.dataSource = new BlueprintsVsDetailsDataSource(this.vsbGraphService._vsBlueprintDetailsItems);
+    this.dataSource = new BlueprintsVsDetailsDataSource(this.vsbDetailservice._vsBlueprintDetailsItems);
     this.getVsBlueprint(vsbId);
   }
 
@@ -130,8 +130,8 @@ export class BlueprintsVsDetailsComponent implements OnInit {
 
         //console.log(this.tableData);
         //console.log(this.graphData);
-        this.vsbGraphService.updateVSBTable(this.tableData);
-        this.vsbGraphService.updateVSBGraph(this.graphData);
+        this.vsbDetailservice.updateVSBTable(this.tableData);
+        this.vsbDetailservice.updateVSBGraph(this.graphData);
         this.dataSource = new BlueprintsVsDetailsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

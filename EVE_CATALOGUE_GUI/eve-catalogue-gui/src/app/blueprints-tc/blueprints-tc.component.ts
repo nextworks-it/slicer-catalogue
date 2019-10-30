@@ -7,6 +7,7 @@ import { TcBlueprintInfo } from './tc-blueprint-info';
 import { BlueprintsTcDataSource } from './blueprints-tc-datasource';
 import { BlueprintsTcService } from '../blueprints-tc.service';
 import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { DescriptorsTcService } from '../descriptors-tc.service';
 
 @Component({
   selector: 'app-blueprints-tc',
@@ -19,6 +20,7 @@ export class BlueprintsTcComponent implements OnInit {
   @ViewChild(MatTable, {static: false}) table: MatTable<TcBlueprintInfo>;
   dataSource: BlueprintsTcDataSource;
   tcBlueprintInfos: TcBlueprintInfo[] = [];
+  idToTcdIds: Map<string, Map<string, string>> = new Map();
 
   user_items: FormArray;
   infra_items: FormArray;
@@ -27,7 +29,10 @@ export class BlueprintsTcComponent implements OnInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'name', 'version', 'description', 'script', 'user_params', 'infra_params', 'tcds', 'buttons'];
 
-  constructor(private _formBuilder: FormBuilder, private blueprintsTcService: BlueprintsTcService, private router: Router) { }
+  constructor(private _formBuilder: FormBuilder, 
+    private blueprintsTcService: BlueprintsTcService,
+    private descriptorsTcService: DescriptorsTcService, 
+    private router: Router) { }
 
   ngOnInit() {
     this.tcFormGroup = this._formBuilder.group({
@@ -81,11 +86,32 @@ export class BlueprintsTcComponent implements OnInit {
       {
         //console.log(tcBlueprintInfos);
         this.tcBlueprintInfos = tcBlueprintInfos;
+
+        for (var i = 0; i < tcBlueprintInfos.length; i++) {
+          this.idToTcdIds.set(tcBlueprintInfos[i]['testCaseBlueprintId'], new Map());
+          for (var j = 0; j < tcBlueprintInfos[i]['activeTcdId'].length; j++) {
+            this.getTcDescriptor(tcBlueprintInfos[i]['testCaseBlueprintId'], tcBlueprintInfos[i]['activeTcdId'][j]);
+          }
+        }
         this.dataSource = new BlueprintsTcDataSource(this.tcBlueprintInfos);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.table.dataSource = this.dataSource;
       });
+  }
+
+  getTcDescriptor(tcbId: string, tcdId: string) {
+    this.descriptorsTcService.getTcDescriptor(tcdId).subscribe(tcDescriptorInfo => {
+      var names = this.idToTcdIds.get(tcbId);
+      names.set(tcdId, tcDescriptorInfo['name']);
+    })
+  }
+
+  viewTcDescriptor(tcdId: string) {
+    //console.log(tcdId);
+    localStorage.setItem('tcdId', tcdId);
+
+    this.router.navigate(["/descriptors_tc"]);
   }
 
   deleteTcBlueprint(tcBlueprintId: string) {

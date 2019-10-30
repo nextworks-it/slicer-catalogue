@@ -5,13 +5,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MessageService } from './message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TcDescriptorInfo} from './descriptors-tc/tc-descriptor-info';
+import { environment } from './environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DescriptorsTcService {
 
-  private baseUrl = 'http://localhost:8082/portal/catalogue/';
+  private baseUrl = environment.portalBaseUrl;
   private tcDescriptorInfoUrl = 'testcasedescriptor';
 
   httpOptions = {

@@ -35,7 +35,7 @@ export const AppRoutes: Routes = [
     { path: 'nfv_vnf', component: NfvVnfComponent},
     { path: 'blueprints_e_details', component: BlueprintsEDetailsComponent},
     { path: 'blueprints_ec_details', component: BlueprintsEcDetailsComponent},
-    { path: 'blueprints_vs_graph', component: BlueprintsVsDetailsComponent },
+    { path: 'blueprints_vs_details', component: BlueprintsVsDetailsComponent },
     { path: 'descriptors_e_details', component: DescriptorsEDetailsComponent },
     { path: 'descriptors_vs_details', component: DescriptorsVsDetailsComponent },
     { path: 'login', component: LoginComponent},
