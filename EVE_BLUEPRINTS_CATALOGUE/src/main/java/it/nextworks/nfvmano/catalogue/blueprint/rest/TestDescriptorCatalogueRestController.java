@@ -58,12 +58,23 @@ public class TestDescriptorCatalogueRestController {
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 	
 	public TestDescriptorCatalogueRestController() { }
@@ -77,12 +88,13 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllTestCaseDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the TC descriptors.");
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+		String user = getUserFromAuth(auth);
 		try {
-			String user = getUserFromAuth(auth);
+
 			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
 					new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
 			);
@@ -106,12 +118,13 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor/{tcdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getTcDescriptor(@PathVariable String tcdId, Authentication auth) {
 		log.debug("Received request to retrieve Test case descriptor with ID " + tcdId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+		String user = getUserFromAuth(auth);
 		try {
-			String user = getUserFromAuth(auth);
+
 			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
 					new GeneralizedQueryRequest(
 							EveportalCatalogueUtilities.buildTestCaseDescriptorFilterFromId(tcdId, user),

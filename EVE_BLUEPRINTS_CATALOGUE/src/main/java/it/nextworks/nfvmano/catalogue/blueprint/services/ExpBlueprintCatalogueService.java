@@ -281,7 +281,12 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	}
 	
 	private List<ExpBlueprintInfo> getAllExpBlueprintInfos() throws NotExistingEntityException {
-		return expBlueprintInfoRepository.findAll();
+		List<ExpBlueprintInfo> expBInfos = expBlueprintInfoRepository.findAll();
+		for (ExpBlueprintInfo ebi : expBInfos) {
+			ExpBlueprint eb = getExpBlueprint(ebi.getExpBlueprintId());
+			ebi.setExpBlueprint(eb);
+		}
+		return expBInfos;
 	}
 
 	private String storeExpBlueprint(ExpBlueprint expBlueprint) throws AlreadyExistingEntityException {

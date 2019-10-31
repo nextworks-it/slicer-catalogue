@@ -60,16 +60,26 @@ public class TestBlueprintCatalogueRestController {
 	private String adminTenant;
 	
 	@Autowired
-	private TcBlueprintCatalogueService tcBlueprintCatalogueService; 
+	private TcBlueprintCatalogueService tcBlueprintCatalogueService;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
 	}
 
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
+	}
 	public TestBlueprintCatalogueRestController() {	}
 	
 	@ApiOperation(value = "Onboard a new Test Case Blueprint.")
@@ -80,7 +90,7 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createTestCaseBlueprint(@RequestBody OnboardTestCaseBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a Test case blueprint.");
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -111,10 +121,11 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllTestCaseBlueprints(Authentication auth) {
 		log.debug("Received request to retrieve all the Test case blueprints.");
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+
 		try {
 			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
 			return new ResponseEntity<List<TestCaseBlueprintInfo>>(response.getTestCaseBlueprints(), HttpStatus.OK);
@@ -137,10 +148,11 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getTcBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to retrieve test case blueprint with ID " + tcbId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+
 		try {
 			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTestCaseBlueprintFilterFromId(tcbId), null));
 			return new ResponseEntity<TestCaseBlueprintInfo>(response.getTestCaseBlueprints().get(0), HttpStatus.OK);
@@ -163,7 +175,7 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteTestCaseBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to delete Test case blueprint with ID " + tcbId);
-		if(auth==null){
+		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}

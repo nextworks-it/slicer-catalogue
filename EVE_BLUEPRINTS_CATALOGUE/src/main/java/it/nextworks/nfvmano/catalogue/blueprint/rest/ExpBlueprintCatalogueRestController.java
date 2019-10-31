@@ -58,12 +58,23 @@ public class ExpBlueprintCatalogueRestController {
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 
 	public ExpBlueprintCatalogueRestController() { }
@@ -80,8 +91,11 @@ public class ExpBlueprintCatalogueRestController {
 	@RequestMapping(value = "/expblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createExpBlueprint(@RequestBody OnboardExpBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a EXP blueprint.");
-		if(auth!=null){
-			String user = getUserFromAuth(auth);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = getUserFromAuth(auth);
 			if (!user.equals(adminTenant)) {
 				log.warn("Request refused as tenant {} is not admin.", user);
 				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -99,10 +113,6 @@ public class ExpBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
 
 	}
 
@@ -118,7 +128,11 @@ public class ExpBlueprintCatalogueRestController {
 	@RequestMapping(value = "/expblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllExpBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String vsbId, Authentication auth) {
 		log.debug("Received request to retrieve all the EXP blueprints.");
-		if(auth!=null){
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+
 			try {
 				if ((id == null) && (vsbId == null)) {
 					QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(new Filter(), null));
@@ -140,10 +154,7 @@ public class ExpBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 
@@ -157,8 +168,12 @@ public class ExpBlueprintCatalogueRestController {
 	})
 	@RequestMapping(value = "/expblueprint/{expbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getExpBlueprint(@PathVariable String expbId, Authentication auth) {
-		if(auth!=null){
+
 			log.debug("Received request to retrieve EXP blueprint with ID " + expbId);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 			try {
 				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(expbId), null));
 				return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
@@ -172,10 +187,7 @@ public class ExpBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 
@@ -188,9 +200,11 @@ public class ExpBlueprintCatalogueRestController {
 	})
 	@RequestMapping(value = "/expblueprint/{expbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteExpBlueprint(@PathVariable String expbId, Authentication auth) {
-		log.debug("Received request to delete EXP blueprint with ID " + expbId);
-		if(auth!=null){
-			String user = getUserFromAuth(auth);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = getUserFromAuth(auth);
 			if (!user.equals(adminTenant)) {
 				log.warn("Request refused as tenant {} is not admin.", user);
 				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -208,10 +222,7 @@ public class ExpBlueprintCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 

@@ -51,6 +51,9 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
 	@Autowired
 	private TestCaseBlueprintRepository testCaseBlueprintRepository;
 	
+	@Autowired
+	private TcBlueprintCatalogueService tcBlueprintCatalogueService;
+	
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 	
@@ -79,6 +82,12 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
 				request.getTenantId());
 		
 		String tcdId = storeTcd(tcd);
+		
+		try {
+			tcBlueprintCatalogueService.addTcdInBlueprint(request.getTestCaseDescriptor().getTestCaseBlueprintId(), tcdId);
+		} catch (NotExistingEntityException e) {
+			throw new FailedOperationException(e.getMessage());
+		}
 		
 		return tcdId;
 	}
@@ -148,8 +157,14 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
 		
 		Optional<TestCaseDescriptor> tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorId(testcaseDescriptorId);
 		if (tcdOpt.isPresent()) {
+			String tcBlueprintId = tcdOpt.get().getTestCaseBlueprintId();
 			testCaseDescriptorRepository.delete(tcdOpt.get());
 			log.debug("TCD " + testcaseDescriptorId + " removed from the internal DB.");
+			try {
+				tcBlueprintCatalogueService.removeTcdInBlueprint(tcBlueprintId, testcaseDescriptorId);
+			} catch (NotExistingEntityException e) {
+				throw new FailedOperationException(e.getMessage());
+			}
 		} else {
 			log.error("TCD " + testcaseDescriptorId + " not found");
 			throw new NotExistingEntityException("TCD " + testcaseDescriptorId + " not found");

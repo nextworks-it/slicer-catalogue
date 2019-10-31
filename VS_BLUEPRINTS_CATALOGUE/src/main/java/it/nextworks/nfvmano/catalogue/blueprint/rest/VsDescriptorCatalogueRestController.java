@@ -64,16 +64,30 @@ public class VsDescriptorCatalogueRestController {
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 	
-	public VsDescriptorCatalogueRestController() { } 
-	
+	public VsDescriptorCatalogueRestController() { }
+
+
+	//Commented this since the VSDs of the Experiments are created from the ExpDs
+	/*
 	@ApiOperation(value = "Onboard a new Vertical Service Descriptor")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "The ID of the created Vertical Service Descriptor.", response = String.class),
@@ -82,6 +96,8 @@ public class VsDescriptorCatalogueRestController {
 			//@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
 
 	})
+
+
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsDescriptor(@RequestBody OnboardVsDescriptorRequest request, Authentication auth) {
@@ -104,7 +120,8 @@ public class VsDescriptorCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+	*/
+
 	@ApiOperation(value = "Query ALL the Vertical Service Descriptor")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "List of all the Vertical Service Descriptor of the user.", response = VsDescriptor.class, responseContainer = "Set"),
@@ -112,6 +129,10 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the VS descriptors.");
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
@@ -140,6 +161,10 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor/{vsdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsDescriptor(@PathVariable String vsdId, Authentication auth) {
 		log.debug("Received request to retrieve VS descriptor with ID " + vsdId);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String user = getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
@@ -161,6 +186,9 @@ public class VsDescriptorCatalogueRestController {
 		}
 	}
 	
+
+	//Commented this since the VSDs of the Experiments are created from the ExpDs
+	/*
 	@ApiOperation(value = "Delete a Vertical Service Descriptor with the given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
@@ -186,6 +214,8 @@ public class VsDescriptorCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	 */
 
 	
 }

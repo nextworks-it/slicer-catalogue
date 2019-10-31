@@ -47,16 +47,30 @@ public class CtxDescriptorCatalogueRestController {
 	
 	@Autowired
 	private CtxDescriptorCatalogueService ctxDescriptorCatalogueService;
-	
+
+
+
+
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private static String getUserFromAuth(Authentication auth) {
-		Object principal = auth.getPrincipal();
-		if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-			throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-		}
-		return ((UserDetails) principal).getUsername();
+	@Value("${authentication.enable}")
+	private boolean authenticationEnable;
+
+	private  String getUserFromAuth(Authentication auth) {
+		if(authenticationEnable){
+			Object principal = auth.getPrincipal();
+			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
+				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
+			}
+			return ((UserDetails) principal).getUsername();
+		}else return adminTenant;
+
+	}
+
+	private  boolean validateAuthentication(Authentication auth){
+		return !authenticationEnable || auth!=null;
+
 	}
 	
 	public CtxDescriptorCatalogueRestController() { } 
@@ -88,7 +102,10 @@ public class CtxDescriptorCatalogueRestController {
 	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllCtxDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the CTX descriptors.");
-		if(auth!=null){
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
 			try {
 				String user = getUserFromAuth(auth);
 				QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
@@ -105,19 +122,22 @@ public class CtxDescriptorCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 	}
 	
 	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getCtxDescriptor(@PathVariable String ctxdId, Authentication auth) {
 		log.debug("Received request to retrieve CTX descriptor with ID " + ctxdId);
-		if(auth!=null){
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = getUserFromAuth(auth);
+
+
 			try {
-				String user = getUserFromAuth(auth);
+
 				QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
 						new GeneralizedQueryRequest(
 								EveportalCatalogueUtilities.buildCtxDescriptorFilter(ctxdId, user),
@@ -135,10 +155,7 @@ public class CtxDescriptorCatalogueRestController {
 				log.error("Internal exception");
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}else{
-			log.warn("Unable to retrieve request authentication information");
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+
 
 
 	}

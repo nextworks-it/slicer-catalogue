@@ -1,0 +1,22 @@
+<div class="grid-container">
+  <mat-grid-list cols="2" rowHeight="100px">
+    <mat-grid-tile *ngFor="let card of cards" [colspan]="card.cols" [rowspan]="card.rows">
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <div mat-card-avatar style="background-image: url('assets/images/sap_icon_grey.png'); background-size: cover;" ></div>
+          <mat-card-title>
+            <span>{{card.title}}</span>
+            <button mat-icon-button class="more-button" routerLink="/blueprints_vs" color="primary">
+              <mat-icon matBadge={{card.counter}} matBadgeSize="medium" matBadgeOverlap="true" matBadgePosition="above after" matBadgeColor="accent">library_books</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-subtitle>
+            <span>{{card.subtitle}} </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
