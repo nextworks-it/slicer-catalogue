@@ -5,3 +5,8 @@
 .margin-all {
   margin: 5px;
 }
+
+a {
+  text-decoration: blue;
+  text-decoration-line: underline;
+}

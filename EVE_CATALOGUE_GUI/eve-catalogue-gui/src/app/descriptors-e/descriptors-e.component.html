@@ -19,14 +19,20 @@
 
         <!-- Exp Blueprint Column -->
         <ng-container matColumnDef="expElueprintId">
-          <th mat-header-cell *matHeaderCellDef>Experiment Blueprint Id</th>
-          <td mat-cell *matCellDef="let row">{{row.expBlueprintId}}</td>
+          <th mat-header-cell *matHeaderCellDef>Experiment</th>
+          <!--td mat-cell *matCellDef="let row">{{row.expBlueprintId}}</td-->
+          <td mat-cell *matCellDef="let row">
+            <tr *ngFor="let name of idToExpbId.get(row.expDescriptorId) | keyvalue"><td><a (click)="viewExpBlueprint(name.key)">{{name.value}}</a></td></tr>
+          </td>
         </ng-container>
 
         <!-- VS Descriptor Column -->
         <ng-container matColumnDef="vsDescriptorId">
-          <th mat-header-cell *matHeaderCellDef>VS Descriptor Id</th>
-          <td mat-cell *matCellDef="let row">{{row.vsDescriptorId}}</td>
+          <th mat-header-cell *matHeaderCellDef>VS Descriptor</th>
+          <!--td mat-cell *matCellDef="let row">{{row.vsDescriptorId}}</td-->
+          <td mat-cell *matCellDef="let row">
+            <tr *ngFor="let name of idToVsdId.get(row.expDescriptorId) | keyvalue"><td><a (click)="viewVsDescriptor(name.key)">{{name.value}}</a></td></tr>
+          </td>
         </ng-container>
 
         <!-- Configurable Parameters Column -->

@@ -23,8 +23,11 @@
 
     <!-- Blueprint Id Column -->
     <ng-container matColumnDef="ctxBlueprintId">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Execution Context Blueprint Id</th>
-      <td mat-cell *matCellDef="let row">{{row.ctxBlueprintId}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Execution Context</th>
+      <!--td mat-cell *matCellDef="let row">{{row.ctxBlueprintId}}</td-->
+      <td mat-cell *matCellDef="let row">
+        <tr *ngFor="let name of idToCtxbId.get(row.ctxDescriptorId) | keyvalue"><td><a (click)="viewCtxBlueprint(name.key)">{{name.value}}</a></td></tr>
+      </td>
     </ng-container>
 
     <!-- Parameters Column -->

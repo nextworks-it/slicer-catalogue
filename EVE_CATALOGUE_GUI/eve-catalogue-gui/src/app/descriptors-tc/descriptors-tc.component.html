@@ -23,8 +23,11 @@
   
       <!-- Blueprint Id Column -->
       <ng-container matColumnDef="testCaseBlueprintId">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Blueprint Id</th>
-        <td mat-cell *matCellDef="let row">{{row.testCaseBlueprintId}}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Case</th>
+        <!--td mat-cell *matCellDef="let row">{{row.testCaseBlueprintId}}</td-->
+        <td mat-cell *matCellDef="let row">
+          <tr *ngFor="let name of idToTcbId.get(row.testCaseDescriptorId) | keyvalue"><td><a (click)="viewTcBlueprint(name.key)">{{name.value}}</a></td></tr>
+        </td>
       </ng-container>
   
       <!-- Parameters Column -->
