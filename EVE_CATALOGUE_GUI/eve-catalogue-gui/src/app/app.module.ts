@@ -59,6 +59,7 @@ import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptor
 import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.component';
 import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
 import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
+import { PortalHomeComponent } from './portal-home/portal-home.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptor
     DescriptorsEStepperComponent,
     DescriptorsTcComponent,
     DescriptorsVsDetailsComponent,
-    DescriptorsEDetailsComponent
+    DescriptorsEDetailsComponent,
+    PortalHomeComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { PortalHomeComponent } from './portal-home/portal-home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { BlueprintsVsComponent } from './blueprints-vs/blueprints-vs.component';
 import { BlueprintsTcComponent } from './blueprints-tc/blueprints-tc.component';
@@ -20,7 +21,8 @@ import { LoginComponent } from './login/login.component';
 
 
 export const AppRoutes: Routes = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: '', redirectTo: '/portal_home', pathMatch: 'full' },
+    { path: 'portal_home', component: PortalHomeComponent},
     { path: 'dashboard', component: DashboardComponent },
     { path: 'blueprints_vs', component: BlueprintsVsComponent },
     { path: 'blueprints_tc', component: BlueprintsTcComponent},
@@ -41,5 +43,5 @@ export const AppRoutes: Routes = [
     { path: 'login', component: LoginComponent},
 
     // otherwise redirect to home
-    { path: '**', redirectTo: '/dashboard' }
+    { path: '**', redirectTo: '/portal_home' }
 ];
