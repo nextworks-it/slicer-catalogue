@@ -13,16 +13,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package it.nextworks.nfvmano.sebastian.translator;
+package it.nextworks.nfvmano.catalogue.translator;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
-import it.nextworks.nfvmano.catalogue.blueprint.services.VsDescriptorCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 
 /**
@@ -48,7 +51,13 @@ public class TranslatorService implements TranslatorInterface {
 	private String translatorType;
 	
 	@Autowired
-	private VsDescriptorCatalogueService vsDescriptorCatalogueService;
+	private VsDescriptorRepository vsDescriptorRepository;
+	
+	@Autowired
+	private CtxDescriptorRepository ctxDescriptorRepository;
+	
+	@Autowired
+	private ExpDescriptorRepository expDescriptorRepository;
 	
 	@Autowired
 	private TranslationRuleRepository translationRuleRepository;
@@ -62,7 +71,7 @@ public class TranslatorService implements TranslatorInterface {
 		log.debug("Initializing translator");
 		if (translatorType.equals("BASIC")) {
 			log.debug("The Vertical Slicer is configured to operate with a basic translator.");
-			translator = new BasicTranslator(vsDescriptorCatalogueService, translationRuleRepository);
+			translator = new BasicTranslator(vsDescriptorRepository, expDescriptorRepository, ctxDescriptorRepository, translationRuleRepository);
 		} else {
 			log.error("Translator not configured!");
 		}
@@ -72,5 +81,11 @@ public class TranslatorService implements TranslatorInterface {
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
 			throws FailedOperationException, NotExistingEntityException {
 		return translator.translateVsd(vsdIds);
+	}
+	
+	@Override
+	public NfvNsInstantiationInfo translateExpd(String expdId)
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException {
+		return translator.translateExpd(expdId);
 	}
 }

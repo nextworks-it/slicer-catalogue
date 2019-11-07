@@ -13,12 +13,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package it.nextworks.nfvmano.sebastian.translator;
+package it.nextworks.nfvmano.catalogue.translator;
 
 import java.util.List;
 import java.util.Map;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 
 public interface TranslatorInterface {
@@ -36,5 +37,8 @@ public interface TranslatorInterface {
 	 */
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
 		throws FailedOperationException, NotExistingEntityException;
+	
+	public NfvNsInstantiationInfo translateExpd(String expdId)
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException;
 	
 }

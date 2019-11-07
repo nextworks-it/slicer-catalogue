@@ -13,14 +13,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package it.nextworks.nfvmano.sebastian.translator;
+package it.nextworks.nfvmano.catalogue.translator;
 
-import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsDescriptorCatalogueInterface;
+
+import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
 public abstract class AbstractTranslator implements TranslatorInterface {
 
 	TranslatorType type;
-	VsDescriptorCatalogueInterface vsdRepo;
+	VsDescriptorRepository vsdRepo;
+	ExpDescriptorRepository expDescriptorRepository;
+	CtxDescriptorRepository ctxDescriptorRepository;
 	
 	
 	/**
@@ -31,9 +36,13 @@ public abstract class AbstractTranslator implements TranslatorInterface {
 	 * 
 	 */
 	public AbstractTranslator(TranslatorType type,
-			VsDescriptorCatalogueInterface vsdRepo) {
+			VsDescriptorRepository vsdRepo,
+			ExpDescriptorRepository expDescriptorRepository,
+			CtxDescriptorRepository ctxDescriptorRepository) {
 		this.type = type;
 		this.vsdRepo = vsdRepo;
+		this.expDescriptorRepository = expDescriptorRepository;
+		this.ctxDescriptorRepository = ctxDescriptorRepository;
 	}
 
 	/**
@@ -46,7 +55,7 @@ public abstract class AbstractTranslator implements TranslatorInterface {
 	/**
 	 * @return the vsdRepo
 	 */
-	public VsDescriptorCatalogueInterface getVsdRepo() {
+	public VsDescriptorRepository getVsdRepo() {
 		return vsdRepo;
 	}
 	
