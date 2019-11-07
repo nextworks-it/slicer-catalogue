@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.nextworks.nfvmano</groupId>
-    <artifactId>TranslatorService</artifactId>
+    <artifactId>TranslatorServiceInterface</artifactId>
     <version>0.0.2-EVE-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -31,7 +31,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <name>TranslatorService</name>
+    <name>TranslatorServiceInterface</name>
 
 
     <properties>
@@ -41,24 +41,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>VsBlueprintsCatalogue</artifactId>
-            <version>0.0.2-EVE-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>EveBlueprintsCatalogue</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>TranslatorServiceInterface</artifactId>
-            <version>0.0.2-EVE-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>NfvManoLibsCommon</artifactId>
