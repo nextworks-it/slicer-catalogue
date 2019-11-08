@@ -5,7 +5,7 @@
             <mat-form-field appearance="outline" class="rules-full-width">
                 <mat-label>Experiment Blueprint</mat-label>
                 <mat-select formControlName="expBlueprintId" name="expBId" (selectionChange)="onExpBSelected($event);">
-                    <mat-option *ngFor="let expB of expBlueprints" [value]="expB.value" #siteSelected>
+                    <mat-option *ngFor="let expB of expBlueprints" [value]="expB.value">
                         {{expB.viewValue}}
                     </mat-option>
                 </mat-select>

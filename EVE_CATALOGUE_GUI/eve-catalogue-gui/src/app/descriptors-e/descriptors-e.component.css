@@ -7,6 +7,11 @@
 }
 
 a {
-  text-decoration: blue;
-  text-decoration-line: underline;
+  font-weight: bold;
+  color: #00ACC1;
+}
+
+a:hover {
+  color: white;
+  cursor: pointer;
 }

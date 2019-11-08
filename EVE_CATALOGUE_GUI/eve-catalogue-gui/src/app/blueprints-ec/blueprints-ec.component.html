@@ -1,9 +1,10 @@
-<mat-toolbar>
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
   <h1 class="mat-h1">Execution Context Blueprints</h1>
 </mat-toolbar>
 <mat-tab-group>
   <mat-tab label="View">
-    <mat-card>
+    <div style="background: transparent; padding: 30px;">
       <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
@@ -65,13 +66,14 @@
           [length]="dataSource?.data.length"
           [pageIndex]="0"
           [pageSize]="50"
-          [pageSizeOptions]="[25, 50, 100, 250]">
+          [pageSizeOptions]="[25, 50, 100, 250]"
+          style="background: transparent;">
       </mat-paginator>
-    </mat-card>
+    </div>
   </mat-tab>
   <mat-tab label="Onboard">
-    <mat-card>
+    <div style="background: transparent; padding: 30px;">
       <app-blueprints-ec-stepper></app-blueprints-ec-stepper>
-    </mat-card>
+    </div>
   </mat-tab>
 </mat-tab-group>

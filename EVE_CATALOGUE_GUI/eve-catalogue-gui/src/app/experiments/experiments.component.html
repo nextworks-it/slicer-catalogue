@@ -1,0 +1,60 @@
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
+  <h1 class="mat-h1">Experiments</h1>
+</mat-toolbar>
+<div style="background: transparent; padding: 30px;">
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <td mat-cell *matCellDef="let row"><b>{{row.experimentId}}</b></td>
+    </ng-container>
+
+    <!-- ExpD Id Column -->
+    <ng-container matColumnDef="expDId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Descriptor Id</th>
+      <td mat-cell *matCellDef="let row"><b>{{row.experimentDescriptorId}}</b></td>
+    </ng-container>
+
+    <!-- Sites Column -->
+    <ng-container matColumnDef="sites">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Sites</th>
+      <td mat-cell *matCellDef="let row">{{row.targetSites}}</td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let row">{{row.status}}</td>
+    </ng-container>
+
+     <!-- Execution Status Column -->
+     <ng-container matColumnDef="execStatus">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Execution Status</th>
+        <td mat-cell *matCellDef="let row">{{row.executionStatus}}</td>
+    </ng-container>
+
+    <!-- Button Column -->
+    <ng-container matColumnDef="buttons">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+            <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
+            <mat-button-toggle value="view_descriptor" (click)="viewExperiment(row.experimentId)"><mat-icon color="primary">remove_red_eye</mat-icon></mat-button-toggle>
+            <mat-button-toggle value="delete" (click)="deleteExperiment(row.experimentId)"><mat-icon color="primary">delete_forever</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]"
+      style="background: transparent;"S>
+  </mat-paginator>
+</div>
+    

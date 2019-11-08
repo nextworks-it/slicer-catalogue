@@ -1,7 +1,8 @@
-<mat-toolbar>
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
   <h1 class="mat-h1">Vertical Service Descriptors</h1>
 </mat-toolbar>
-<mat-card height="100%">
+<div height="100%" style="background: transparent; padding: 30px;">
   <table mat-table class="full-width-table" matSort aria-label="Elements" height="100%">
     <!-- Id Column -->
     <ng-container matColumnDef="id">
@@ -54,6 +55,7 @@
       [length]="dataSource?.data.length"
       [pageIndex]="0"
       [pageSize]="50"
-      [pageSizeOptions]="[25, 50, 100, 250]">
+      [pageSizeOptions]="[25, 50, 100, 250]"
+      style="background: transparent;">
   </mat-paginator>
-</mat-card>
+</div>

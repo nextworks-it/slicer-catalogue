@@ -46,51 +46,49 @@ export class DashboardComponent implements OnInit {
 
     getEcBlueprints() {
       this.blueprintsEcService.getCtxBlueprints().subscribe(ctxBlueprints => {
-        this.cards.push({ title: 'Execution Context Blueprints', subtitle: '', counter: ctxBlueprints.length, cols: 1, rows: 1 })
+        this.cards.push({ title: 'Execution Context Blueprints', subtitle: '', counter: ctxBlueprints.length, cols: 1, rows: 1, path: '/blueprints_ec' })
       });
     }
 
     getExpBlueprints() {
       this.blueprintsExpService.getExpBlueprints().subscribe(expBlueprints => {
-        this.cards.push({ title: 'Experiments Blueprints', subtitle: '', counter: expBlueprints.length, cols: 1, rows: 1 });
+        this.cards.push({ title: 'Experiments Blueprints', subtitle: '', counter: expBlueprints.length, cols: 1, rows: 1, path: '/blueprints_exp' });
       });
     }
 
     getTcBlueprints() {
       this.bluepritnsTcService.getTcBlueprints().subscribe(tcBlueprints => {
-        this.cards.push({ title: 'Test Case Blueprints', subtitle: '', counter: tcBlueprints.length, cols: 1, rows: 1 });
+        this.cards.push({ title: 'Test Case Blueprints', subtitle: '', counter: tcBlueprints.length, cols: 1, rows: 1, path: '/blueprints_tc' });
       });
     }
 
     getVsBlueprints() {
       this.blueprintsVsService.getVsBlueprints().subscribe(vsBlueprints => {
-        this.cards.push({ title: 'Vertical Service Blueprints', subtitle: '', counter: vsBlueprints.length, cols: 1, rows: 1 });
+        this.cards.push({ title: 'Vertical Service Blueprints', subtitle: '', counter: vsBlueprints.length, cols: 1, rows: 1, path: '/blueprints_vs' });
       });
     }
 
     getEcDescriptors(){
       this.descriptorsEcService.getCtxDescriptors().subscribe(ctxDescriptors => {
-        this.cards.push({ title: 'Execution Context Descriptors', subtitle: '', counter: ctxDescriptors.length, cols: 1, rows: 1 })
+        this.cards.push({ title: 'Execution Context Descriptors', subtitle: '', counter: ctxDescriptors.length, cols: 1, rows: 1, path: '/descriptors_ec' })
       });
     }
 
     getExpDescriptors() {
       this.descriptorsExpService.getExpDescriptors().subscribe(expDescriptors => {
-        this.cards.push({ title: 'Experiments Descriptors', subtitle: '', counter: expDescriptors.length, cols: 1, rows: 1 })
+        this.cards.push({ title: 'Experiments Descriptors', subtitle: '', counter: expDescriptors.length, cols: 1, rows: 1, path: '/descriptors_exp' })
       });
     }
 
     getTcDescriptors() {
       this.descriptorsTcService.getTcDescriptors().subscribe(tcDescriptors => {
-        this.cards.push({ title: 'Test Case Descriptors', subtitle: '', counter: tcDescriptors.length, cols: 1, rows: 1 })
+        this.cards.push({ title: 'Test Case Descriptors', subtitle: '', counter: tcDescriptors.length, cols: 1, rows: 1, path: '/descriptors_tc' })
       });
     }
 
     getVsDescriptors() {
       this.descriptorsVsService.getVsDescriptors().subscribe(vsDescriptors => {
-        this.cards.push({ title: 'Vertical Service Descriptors', subtitle: '', counter: vsDescriptors.length, cols: 1, rows: 1 })
+        this.cards.push({ title: 'Vertical Service Descriptors', subtitle: '', counter: vsDescriptors.length, cols: 1, rows: 1, path: '/descriptors_vs' })
       });
     }
-
-
 }

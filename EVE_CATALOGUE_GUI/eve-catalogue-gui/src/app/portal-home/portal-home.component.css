@@ -28,6 +28,6 @@
     text-decoration: none;
 }
 
-mat-grid-tile {
-    background: lightblue;
-}
+/*mat-grid-tile {
+    background-image: linear-gradient(grey, #00ACC1);
+}*/

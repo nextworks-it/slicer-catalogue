@@ -1,9 +1,10 @@
-<mat-toolbar>
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
     <h1 class="mat-h1">Test Case Blueprints</h1>
 </mat-toolbar>
 <mat-tab-group>
     <mat-tab label="View">
-        <mat-card>
+        <div style="background: transparent; padding: 30px;">
             <table mat-table class="full-width-table" matSort aria-label="Elements">
                 <!-- Id Column -->
                 <ng-container matColumnDef="id">
@@ -77,12 +78,14 @@
                 [length]="dataSource?.data.length"
                 [pageIndex]="0"
                 [pageSize]="50"
-                [pageSizeOptions]="[25, 50, 100, 250]">
+                [pageSizeOptions]="[25, 50, 100, 250]"
+                style="background: transparent;">
             </mat-paginator>
-        </mat-card>
+        </div>
     </mat-tab>
     <mat-tab label="Onboard">
-        <mat-card>
+        <div style="background: transparent; padding: 30px;">
+            <div style="background: #424242; padding: 30px;">
             <form [formGroup]="tcFormGroup" class="rules-form">
                 <h3>Create Test Case</h3>
                 <table class="rules-full-width">
@@ -168,10 +171,11 @@
                     </tr>
                 </table>
                 <div class="margin-top">
-                    <button mat-raised-button color="warn" class="margin-all" (click)="createOnBoardTcBlueprintRequest();">Submit</button>
+                    <button mat-raised-button color="accent" class="margin-all" (click)="createOnBoardTcBlueprintRequest();">Submit</button>
                 </div>
             </form>
-        </mat-card>
+            </div>
+        </div>
     </mat-tab>
 </mat-tab-group>
   

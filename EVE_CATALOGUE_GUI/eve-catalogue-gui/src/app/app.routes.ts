@@ -17,31 +17,40 @@ import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints
 import { BlueprintsVsDetailsComponent } from './blueprints-vs-details/blueprints-vs-details.component';
 import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
 import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
+import { DesignSwitchComponent } from './design-switch/design-switch.component';
+import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch.component';
+import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
+import { ExperimentsComponent } from './experiments/experiments.component';
 import { LoginComponent } from './login/login.component';
 
 
 export const AppRoutes: Routes = [
     { path: '', redirectTo: '/portal_home', pathMatch: 'full' },
-    { path: 'portal_home', component: PortalHomeComponent},
+    { path: 'portal_home', component: PortalHomeComponent },
+    { path: 'design_experiment', component: DesignSwitchComponent },
+    { path: 'request_experiment', component: ExperimentSwitchComponent },
+    { path: 'schedule_experiment', component: DescriptorsESchedulerComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'blueprints_vs', component: BlueprintsVsComponent },
-    { path: 'blueprints_tc', component: BlueprintsTcComponent},
-    { path: 'blueprints_ec', component: BlueprintsEcComponent},
-    { path: 'blueprints_exp', component: BlueprintsEComponent},
-    { path: 'descriptors_vs', component: DescriptorsVsComponent},
-    { path: 'descriptors_tc', component: DescriptorsTcComponent},
-    { path: 'descriptors_ec', component: DescriptorsEcComponent},
-    { path: 'descriptors_exp', component: DescriptorsEComponent},
-    { path: 'nfv_ns', component: NfvNsComponent},
-    { path: 'nfv_pnf', component: NfvPnfComponent},
-    { path: 'nfv_vnf', component: NfvVnfComponent},
-    { path: 'blueprints_e_details', component: BlueprintsEDetailsComponent},
-    { path: 'blueprints_ec_details', component: BlueprintsEcDetailsComponent},
+    { path: 'blueprints_tc', component: BlueprintsTcComponent },
+    { path: 'blueprints_ec', component: BlueprintsEcComponent },
+    { path: 'blueprints_exp', component: BlueprintsEComponent },
+    { path: 'descriptors_vs', component: DescriptorsVsComponent },
+    { path: 'descriptors_tc', component: DescriptorsTcComponent },
+    { path: 'descriptors_ec', component: DescriptorsEcComponent },
+    { path: 'descriptors_exp', component: DescriptorsEComponent },
+    { path: 'nfv_ns', component: NfvNsComponent },
+    { path: 'nfv_pnf', component: NfvPnfComponent },
+    { path: 'nfv_vnf', component: NfvVnfComponent },
+    { path: 'blueprints_e_details', component: BlueprintsEDetailsComponent },
+    { path: 'blueprints_ec_details', component: BlueprintsEcDetailsComponent },
     { path: 'blueprints_vs_details', component: BlueprintsVsDetailsComponent },
     { path: 'descriptors_e_details', component: DescriptorsEDetailsComponent },
     { path: 'descriptors_vs_details', component: DescriptorsVsDetailsComponent },
+    { path: 'experiments', component: ExperimentsComponent },
     { path: 'login', component: LoginComponent},
 
+    
     // otherwise redirect to home
     { path: '**', redirectTo: '/portal_home' }
 ];

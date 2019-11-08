@@ -1,5 +1,5 @@
 .grid-container {
-  margin: 20px;
+  margin: 100px;
 }
 
 .dashboard-card {
@@ -8,6 +8,8 @@
   left: 15px;
   right: 15px;
   bottom: 15px;
+  /*background-color: #212121;
+  color: white;*/
 }
 
 .more-button {
@@ -18,4 +20,10 @@
 
 .dashboard-card-content {
   text-align: center;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox. 
+      Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
 }

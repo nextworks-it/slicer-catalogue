@@ -29,6 +29,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CytoscapeModule } from 'ngx-cytoscape';
@@ -60,6 +63,12 @@ import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.componen
 import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
 import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
 import { PortalHomeComponent } from './portal-home/portal-home.component';
+import { CatalogueSubToolbarComponent } from './catalogue-sub-toolbar/catalogue-sub-toolbar.component';
+import { DesignSwitchComponent } from './design-switch/design-switch.component';
+import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch.component';
+import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
+import { ExperimentsComponent } from './experiments/experiments.component';
+import { ExperimentsDetailsComponent } from './experiments-details/experiments-details.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +98,13 @@ import { PortalHomeComponent } from './portal-home/portal-home.component';
     DescriptorsTcComponent,
     DescriptorsVsDetailsComponent,
     DescriptorsEDetailsComponent,
-    PortalHomeComponent
+    PortalHomeComponent,
+    CatalogueSubToolbarComponent,
+    DesignSwitchComponent,
+    ExperimentSwitchComponent,
+    DescriptorsESchedulerComponent,
+    ExperimentsComponent,
+    ExperimentsDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -120,6 +135,10 @@ import { PortalHomeComponent } from './portal-home/portal-home.component';
     MatSnackBarModule,
     MatExpansionModule,
     MatDialogModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRippleModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     HttpClientModule,
