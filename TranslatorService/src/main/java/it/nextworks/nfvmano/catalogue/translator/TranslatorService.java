@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 
 /**
@@ -79,13 +80,13 @@ public class TranslatorService implements TranslatorInterface {
 	
 	@Override
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
-			throws FailedOperationException, NotExistingEntityException {
+			throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
 		return translator.translateVsd(vsdIds);
 	}
 	
 	@Override
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException {
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
 		return translator.translateExpd(expdId);
 	}
 }

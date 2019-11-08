@@ -20,6 +20,7 @@ import java.util.Map;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 
 public interface TranslatorInterface {
@@ -34,11 +35,12 @@ public interface TranslatorInterface {
 	 * @return A map with key VSD ID and value the NFV NS to be instantiated to meet the VSD requirements.
 	 * @throws FailedOperationException if the operation fails.
 	 * @throws NotExistingEntityException if the VSD is not available in the DB.
+	 * @throws MethodNotImplementedException if the method is not implemented
 	 */
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
-		throws FailedOperationException, NotExistingEntityException;
+		throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
 	
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException;
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
 	
 }

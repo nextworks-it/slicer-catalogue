@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
@@ -52,7 +53,7 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	@Override
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
-			throws FailedOperationException, NotExistingEntityException {
+			throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
 		log.debug("VSD->NSD translation at basic translator.");
 		if (vsdIds.size() > 1) throw new FailedOperationException("Processing of multiple VSDs not supported by the basic translator");
 		Map<String, NfvNsInstantiationInfo> nfvNsInfo = new HashMap<>();
@@ -61,7 +62,7 @@ public class BasicTranslator extends AbstractTranslator {
 			String vsdId = entry.getKey();
 			VsDescriptor vsd = entry.getValue();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId());
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
 			nfvNsInfo.put(vsdId, info);
 			log.debug("Added NS instantiation info for VSD " + vsdId + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
 					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
@@ -71,13 +72,14 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	@Override
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException {
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
 		log.debug("ExpD->NSD translation at basic translator.");
 		if (expdId == null) throw new MalformattedElementException("Received null expdId as input to the basic translator");
 		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expdId);
 		if (expdOpt.isPresent()) {
-			VsdNsdTranslationRule rule = findMatchingTranslationRule(expdOpt.get());
-			return new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId());
+			ExpDescriptor expd = expdOpt.get();
+			VsdNsdTranslationRule rule = findMatchingTranslationRule(expd);
+			return new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
 		} else {
 			log.error("Experiment descriptor " + expdId + " not found in DB.");
 			throw new NotExistingEntityException("Experiment descriptor " + expdId + " not found in DB.");

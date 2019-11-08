@@ -15,13 +15,16 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NfvNsInstantiationInfo {
 
 	private String nfvNsdId;
 	private String nsdVersion;
 	private String deploymentFlavourId;
 	private String instantiationLevelId;
-	
+	private List<String> domainIds = new ArrayList<String>();
 	
 	public NfvNsInstantiationInfo() {
 		
@@ -32,16 +35,19 @@ public class NfvNsInstantiationInfo {
 	 * @param nfvNsdId NSD ID
 	 * @param nsdVersion NSD version
 	 * @param deploymentFlavourId NS Deployment Flavour ID
-	 * @param instantiationLevelId NS Instantiation Level ID 
+	 * @param instantiationLevelId NS Instantiation Level ID
+	 * @param domains list of domains where the NFV NS should be instantiated
 	 */
 	public NfvNsInstantiationInfo(String nfvNsdId,
 			String nsdVersion,
 			String deploymentFlavourId,
-			String instantiationLevelId) {
+			String instantiationLevelId,
+			List<String> domainIds) {
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
+		if (domainIds != null) this.domainIds = domainIds;
 	}
 	
 	public void setNfvNsdId(String nfvNsdId) {
@@ -59,7 +65,21 @@ public class NfvNsInstantiationInfo {
 	public void setInstantiationLevelId(String instantiationLevelId) {
 		this.instantiationLevelId = instantiationLevelId;
 	}
+	
+	
 
+	/**
+	 * @return the domainIds
+	 */
+	public List<String> getDomainIds() {
+		return domainIds;
+	}
+	/**
+	 * @param domainId the domainIds to set
+	 */
+	public void setDomainIds(List<String> domainIds) {
+		this.domainIds = domainIds;
+	}
 	/**
 	 * @return the nfvNsdId
 	 */
