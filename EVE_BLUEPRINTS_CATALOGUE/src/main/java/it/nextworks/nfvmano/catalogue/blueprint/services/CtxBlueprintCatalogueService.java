@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -97,7 +98,12 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		log.debug("Storing NSDs");
 		for(Nsd nsd : request.getNsds()){
 			try {
-				String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, null));
+				Map<String, String> userDefinedData = new HashMap<>();
+				List<EveSite> sites = ctxBlueprint.getCompatibleSites();
+				for (EveSite site : sites) {
+					userDefinedData.put(site.toString(), "yes");
+				}
+				String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
 				log.debug("Added NSD " + nsd.getNsdIdentifier() +
 						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
 				ctxBlueprintInfo.addNsdInfoId(nsdInfoId);
