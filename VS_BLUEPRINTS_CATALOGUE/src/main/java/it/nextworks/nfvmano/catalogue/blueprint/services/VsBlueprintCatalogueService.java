@@ -16,6 +16,7 @@
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,12 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			List<Nsd> nsds = request.getNsds();
 			for (Nsd nsd : nsds) {
 				try {
-					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, null));
+					Map<String, String> userDefinedData = new HashMap<>();
+					List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
+					for (EveSite site : sites) {
+						userDefinedData.put(site.toString(), "yes");
+					}
+					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
 					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
 							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
 					vsBlueprintInfo.addNsdInfoId(nsdInfoId);
