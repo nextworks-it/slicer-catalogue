@@ -21,6 +21,8 @@ import { DesignSwitchComponent } from './design-switch/design-switch.component';
 import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch.component';
 import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
 import { ExperimentsComponent } from './experiments/experiments.component';
+import { ExperimentsDetailsComponent } from './experiments-details/experiments-details.component';
+import { SitesSwitchComponent } from './sites-switch/sites-switch.component';
 import { LoginComponent } from './login/login.component';
 
 
@@ -29,6 +31,7 @@ export const AppRoutes: Routes = [
     { path: 'portal_home', component: PortalHomeComponent },
     { path: 'design_experiment', component: DesignSwitchComponent },
     { path: 'request_experiment', component: ExperimentSwitchComponent },
+    { path: 'manage_site', component: SitesSwitchComponent },
     { path: 'schedule_experiment', component: DescriptorsESchedulerComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'blueprints_vs', component: BlueprintsVsComponent },
@@ -48,6 +51,7 @@ export const AppRoutes: Routes = [
     { path: 'descriptors_e_details', component: DescriptorsEDetailsComponent },
     { path: 'descriptors_vs_details', component: DescriptorsVsDetailsComponent },
     { path: 'experiments', component: ExperimentsComponent },
+    { path: 'experiments_details', component: ExperimentsDetailsComponent },
     { path: 'login', component: LoginComponent},
 
     

@@ -69,6 +69,7 @@ import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch
 import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
 import { ExperimentsComponent } from './experiments/experiments.component';
 import { ExperimentsDetailsComponent } from './experiments-details/experiments-details.component';
+import { SitesSwitchComponent } from './sites-switch/sites-switch.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +105,8 @@ import { ExperimentsDetailsComponent } from './experiments-details/experiments-d
     ExperimentSwitchComponent,
     DescriptorsESchedulerComponent,
     ExperimentsComponent,
-    ExperimentsDetailsComponent
+    ExperimentsDetailsComponent,
+    SitesSwitchComponent
   ],
   imports: [
     BrowserModule,
