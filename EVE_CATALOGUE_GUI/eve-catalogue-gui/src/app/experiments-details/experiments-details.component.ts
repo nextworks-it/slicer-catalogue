@@ -85,4 +85,8 @@ export class ExperimentsDetailsComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.table.dataSource = this.dataSource;
   }
+
+  getRole() {
+    return localStorage.getItem('role');
+  }
 }

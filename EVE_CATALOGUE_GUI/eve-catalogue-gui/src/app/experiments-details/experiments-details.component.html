@@ -2,7 +2,7 @@
 <mat-toolbar style="background: transparent;">
     <span style="margin-left: 15px;"><h1 class="mat-h1">Experiment Details:</h1></span>
     <span style="margin-left: 20px;"> {{experiment.experimentId}}</span>
-    <span>
+    <span *ngIf="getRole().indexOf('EXPERIMENTER') >= 0;">
         <button mat-raised-button color="primary" [matMenuTriggerFor]="actions_menu" style="margin-left: 20px;">
             Actions <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
@@ -12,6 +12,17 @@
         <button mat-menu-item>Activate Execution</button>
         <button mat-menu-item>Monitor</button>
         <button mat-menu-item>Visualize Results</button>
+    </mat-menu>
+    <span *ngIf="getRole().indexOf('SITE_MANAGER') >= 0;">
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="site_actions_menu" style="margin-left: 20px;">
+            Actions <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+    </span>
+    <mat-menu #site_actions_menu="matMenu">
+        <button mat-menu-item *ngIf="experiment.status != 'SCHEDULING' && experiment.status != 'ACCEPTED'">NONE</button>
+        <button mat-menu-item *ngIf="experiment.status == 'SCHEDULING'">Accept / Refuse</button>
+        <button mat-menu-item *ngIf="experiment.status == 'SCHEDULING'">Modify Time Slot</button>
+        <button mat-menu-item *ngIf="experiment.status == 'ACCEPTED'">Set Ready</button>
     </mat-menu>
 </mat-toolbar>
 <div style="background: transparent; padding: 30px;">

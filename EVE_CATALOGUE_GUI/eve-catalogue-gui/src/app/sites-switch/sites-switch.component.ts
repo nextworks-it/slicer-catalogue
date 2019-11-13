@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sites-switch',
@@ -9,12 +10,19 @@ export class SitesSwitchComponent implements OnInit {
 
   cards = [
     { title: 'View Tickets', subtitle: '', cols: 1, rows: 1, path: '/tickets', icon: 'input' },
-    { title: 'Manage Experiments', subtitle: '', cols: 1, rows: 1, path: '/manage_experiments', icon: 'input' } 
+    { title: 'Manage Experiments', subtitle: '', cols: 1, rows: 1, path: '/experiments', icon: 'input' } 
   ];
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
+  }
+
+  goTo(path: string) {
+    //console.log(expDescriptorId);
+    localStorage.setItem('role', 'SITE_MANAGER');
+
+    this.router.navigate([path]);
   }
 
 }

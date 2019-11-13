@@ -14,6 +14,10 @@ export class PortalHomeComponent implements OnInit {
   }
 
   goTo(path: string) {
+
+    if (path.indexOf('/experiments') >= 0) {
+      localStorage.setItem('role', 'EXPERIMENTER');
+    }
     this.router.navigate([path]);
   }
 

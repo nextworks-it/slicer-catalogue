@@ -14,15 +14,15 @@
   <button mat-stroked-button aria-label="Clear" (click)="clearStateFilter(); selectedState=undefined; $event.stopPropagation()" style="margin-left: 10px;">Clear <mat-icon>close</mat-icon>
   </button>
   
-  <table mat-table class="full-width-table" matSort [dataSource]="dataSource">
+  <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
     <!-- Id Column -->
-    <ng-container matColumnDef="id">
+    <ng-container matColumnDef="experimentId">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
       <td mat-cell *matCellDef="let row"><b>{{row.experimentId}}</b></td>
     </ng-container>
 
     <!-- ExpD Id Column -->
-    <ng-container matColumnDef="expDId">
+    <ng-container matColumnDef="experimentDescriptorId">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Descriptor Id</th>
       <td mat-cell *matCellDef="let row"><b>{{row.experimentDescriptorId}}</b></td>
     </ng-container>
