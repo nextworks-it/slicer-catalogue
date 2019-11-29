@@ -155,7 +155,7 @@ public class ExpDescriptorCatalogueRestController {
 							null
 					)
 			);
-			return new ResponseEntity<List<ExpDescriptor>>(response.getExpDescriptors(), HttpStatus.OK);
+			return new ResponseEntity<ExpDescriptor>(response.getExpDescriptors().get(0), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
