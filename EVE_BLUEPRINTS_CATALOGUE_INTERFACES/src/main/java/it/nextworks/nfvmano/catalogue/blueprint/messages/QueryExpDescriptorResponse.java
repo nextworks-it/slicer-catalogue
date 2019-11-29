@@ -31,7 +31,11 @@ public class QueryExpDescriptorResponse implements InterfaceMessage {
 	public QueryExpDescriptorResponse(List<ExpDescriptor> expDescriptors) {
 		if (expDescriptors != null) this.expDescriptors = expDescriptors;
 	}
-	
+
+	public void setExpDescriptors(List<ExpDescriptor> expDescriptors) {
+		if (expDescriptors != null) this.expDescriptors = expDescriptors;
+	}
+
 	/**
 	 * @return the expDescriptors
 	 */
