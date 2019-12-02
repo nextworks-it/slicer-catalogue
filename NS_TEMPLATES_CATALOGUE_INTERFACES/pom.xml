@@ -67,6 +67,12 @@
             <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>NsTemplatesIM</artifactId>
             <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>NfvManoLibsTemplates</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

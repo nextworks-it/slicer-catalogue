@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 @Entity
 public class NsTemplateInfo implements InterfaceInformationElement {
 
+
     @Override
     public void isValid() throws MalformattedElementException {
 

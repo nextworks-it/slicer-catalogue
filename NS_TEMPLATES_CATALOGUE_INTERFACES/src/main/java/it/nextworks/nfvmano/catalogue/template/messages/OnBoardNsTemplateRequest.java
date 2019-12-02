@@ -17,10 +17,25 @@ package it.nextworks.nfvmano.catalogue.template.messages;
 
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardNsTemplateRequest implements InterfaceMessage {
+
+    private NST nst;
+
+    public OnBoardNsTemplateRequest() { }
+
+    public OnBoardNsTemplateRequest(NST nst) {
+        this.nst = nst;
+    }
+
+    public NST getNst() {
+        return nst;
+    }
+
     @Override
     public void isValid() throws MalformattedElementException {
-
+        if (nst == null) throw new MalformattedElementException("Onboard NS Template request without NS Template");
+        else nst.isValid();
     }
 }
