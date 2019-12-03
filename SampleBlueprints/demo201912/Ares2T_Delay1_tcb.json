@@ -1,0 +1,13 @@
+{
+  "testCaseBlueprint": {
+    "description": "Test case to run the Ares2T tracking service with traffic delay",
+    "name": "TCB Ares2T Tracking with delay",
+    "script": "## TODO ## \nsudo tc qdisc add dev eth2 root netem delay $$var$$.delay $$var$$.delay_var $$var$$.dep%",
+    "userParameters": {
+      "delay": "$$var$$.delay",
+      "delay variance": "$$var$$.delay_var",
+      "consecutive delay dependency percentage": "$$var$$.dep"
+    },
+    "version": "1.0"
+  }
+}
