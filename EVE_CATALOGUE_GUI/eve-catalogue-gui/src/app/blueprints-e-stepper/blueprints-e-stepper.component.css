@@ -1,3 +1,11 @@
+.full-width-table {
+    margin-top: 2%;
+    width: 90%;
+    height: 80%;
+    margin-left:5%; 
+    margin-right:5%;
+}
+
 .data-form {
     min-width: 150px;
     max-width: 700px;

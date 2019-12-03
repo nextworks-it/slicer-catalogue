@@ -1,4 +1,4 @@
-<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<app-experiment-sub-toolbar></app-experiment-sub-toolbar>
 <mat-toolbar style="background: transparent;">
     <span style="margin-left: 15px;"><h1 class="mat-h1">Experiment Details:</h1></span>
     <span style="margin-left: 20px;"> {{experiment.experimentId}}</span>
@@ -26,7 +26,7 @@
     </mat-menu>
 </mat-toolbar>
 <div style="background: transparent; padding: 30px;">
-    <table mat-table class="full-width-table" matSort aria-label="Elements" width="60%">
+    <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- KEY Column -->
         <ng-container matColumnDef="key">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Field</th>

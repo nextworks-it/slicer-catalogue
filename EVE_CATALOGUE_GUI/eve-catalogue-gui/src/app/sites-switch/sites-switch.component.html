@@ -1,25 +1,21 @@
 <!--app-catalogue-sub-toolbar></app-catalogue-sub-toolbar-->
 <div class="grid-container">
-    <mat-grid-list cols="2" rowHeight="100px">
+    <mat-grid-list cols="2" rowHeight="2:1">
         <mat-grid-tile *ngFor="let card of cards" [colspan]="card.cols" [rowspan]="card.rows">
-            <!--button mat-raised-button color="primary" routerLink={{card.path}} style="width: 80%; height: 70px; font-size: 23px;">
-                <mat-icon>library_books</mat-icon> {{card.title}}
-            </button-->
-            <mat-card class="dashboard-card">
+            <mat-card class="grid-card">
                 <mat-card-header>
-                    <div mat-card-avatar style="background-size: cover;"><mat-icon>{{card.icon}}</mat-icon></div>
-                    <mat-card-title>
-                        <span>
-                            <button mat-button (click)="goTo(card.path)" style="color: white; font-size: 18px;">{{card.title}}
-                            </button>
-                        </span>
-                    </mat-card-title>
-                    <mat-card-subtitle>
-                        <span>{{card.subtitle}} </span>
-                    </mat-card-subtitle>
+                <!--div mat-card-avatar class="header-image"></div-->
+                <mat-card-title >             
+                </mat-card-title>
+                <mat-card-subtitle></mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content class="dashboard-card-content">
+                <!--img mat-card-image src="../../assets/images/kd-ic-catalogue-white.png"-->
+                <mat-card-content >
+                    <div style="float: left;"><img src={{card.icon}} class="card-image"></div>
+                    <div class="card-title"><button class="card-actions" mat-button routerLink={{card.path}}>{{card.title}}</button></div>      
                 </mat-card-content>
+                <mat-card-actions>
+                </mat-card-actions>
             </mat-card>
         </mat-grid-tile>
     </mat-grid-list>

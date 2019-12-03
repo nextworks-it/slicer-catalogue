@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
 import { ExperimentsDetailsDataSource, ExperimentsDetailsItemKV } from './experiments-details.datasource';
+import { ExperimentsService } from '../experiments.service';
 import { ExperimentInfo } from '../experiments/experiment-info';
 
 @Component({
@@ -39,10 +40,11 @@ export class ExperimentsDetailsComponent implements OnInit, AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['key', 'value'];
 
-  constructor() { }
+  constructor(private experimentsService: ExperimentsService) { }
 
   ngOnInit() {
-    var expId = localStorage.getItem('expId');this.tableData.push({key: "Id", value: ['experimentId']});
+    /*
+    this.tableData.push({key: "Id", value: ['experimentId']});
     this.tableData.push({key: "Tenant Id", value: ['tenantId']});
     this.tableData.push({key: "Status", value: ['ACCEPTED']});
     this.tableData.push({key: "Exp Descriptor Id", value: ['12']});
@@ -53,10 +55,11 @@ export class ExperimentsDetailsComponent implements OnInit, AfterViewInit {
     this.tableData.push({key: "NFV Instance Id", value: ['47']});
     this.tableData.push({key: "Execution Id", value: ['56']});
     this.tableData.push({key: "Execution Status", value: ['INIT']});
-    this.tableData.push({key: "Error Message", value: ['!!!!!!!']});
+    this.tableData.push({key: "Error Message", value: ['!!!!!!!']});*/
     
+    var expId = localStorage.getItem('expId');
     this.dataSource = new ExperimentsDetailsDataSource(this.tableData);
-    //this.getExperiment(expId);
+    this.getExperiment(expId);
   }
 
   ngAfterViewInit(): void {
@@ -66,6 +69,10 @@ export class ExperimentsDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getExperiment(expId: string) {
+    this.experimentsService.getExperiment(expId, null).subscribe((experimentInfos: ExperimentInfo[]) => {
+      console.log(experimentInfos);
+    });
+
     this.tableData.push({key: "Id", value: ['experimentId']});
     this.tableData.push({key: "Tenant Id", value: ['tenantId']});
     this.tableData.push({key: "Status", value: ['ACCEPTED']});

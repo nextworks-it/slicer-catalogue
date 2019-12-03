@@ -17,6 +17,7 @@ import { BlueprintsEcDetailsComponent } from './blueprints-ec-details/blueprints
 import { BlueprintsVsDetailsComponent } from './blueprints-vs-details/blueprints-vs-details.component';
 import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
 import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
+import { BlueprintsEStepperComponent } from './blueprints-e-stepper/blueprints-e-stepper.component';
 import { DesignSwitchComponent } from './design-switch/design-switch.component';
 import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch.component';
 import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
@@ -29,11 +30,11 @@ import { LoginComponent } from './login/login.component';
 export const AppRoutes: Routes = [
     { path: '', redirectTo: '/portal_home', pathMatch: 'full' },
     { path: 'portal_home', component: PortalHomeComponent },
-    { path: 'design_experiment', component: DesignSwitchComponent },
+    { path: 'design_experiment', component: DashboardComponent },
     { path: 'request_experiment', component: ExperimentSwitchComponent },
     { path: 'manage_site', component: SitesSwitchComponent },
     { path: 'schedule_experiment', component: DescriptorsESchedulerComponent },
-    { path: 'dashboard', component: DashboardComponent },
+    /*{ path: 'dashboard', component: DashboardComponent },*/
     { path: 'blueprints_vs', component: BlueprintsVsComponent },
     { path: 'blueprints_tc', component: BlueprintsTcComponent },
     { path: 'blueprints_ec', component: BlueprintsEcComponent },
@@ -50,6 +51,7 @@ export const AppRoutes: Routes = [
     { path: 'blueprints_vs_details', component: BlueprintsVsDetailsComponent },
     { path: 'descriptors_e_details', component: DescriptorsEDetailsComponent },
     { path: 'descriptors_vs_details', component: DescriptorsVsDetailsComponent },
+    { path: 'onboard_exp_blueprint', component: BlueprintsEStepperComponent},
     { path: 'experiments', component: ExperimentsComponent },
     { path: 'experiments_details', component: ExperimentsDetailsComponent },
     { path: 'login', component: LoginComponent},

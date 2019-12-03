@@ -1,5 +1,5 @@
 <mat-toolbar style="background-color: transparent;">
-    <span><button mat-button routerLink="/">Home <mat-icon>home</mat-icon></button></span>
+    <span><button mat-button (click)="goTo();"><mat-icon>home</mat-icon> Home </button></span>
     <span>
         <button mat-button [matMenuTriggerFor]="blueprints_menu">
             Blueprints <mat-icon>keyboard_arrow_down</mat-icon>
@@ -10,6 +10,7 @@
             Descriptors <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
     </span>
+    <span><button mat-button (click)="backClicked();"><mat-icon>arrow_back</mat-icon> Back </button></span>
     <!--span>
         <button mat-button [matMenuTriggerFor]="nfv_menu">
             NFV <mat-icon>keyboard_arrow_down</mat-icon>

@@ -1,22 +1,26 @@
-<mat-grid-list cols="4" rowHeight="85%">
-    <mat-grid-tile>
-        <button mat-raised-button color="primary" style="width: 60%; height: 70px; font-size: 23px;" (click)="goTo('/design_experiment');">
-            <mat-icon>create</mat-icon> Design Experiment
-        </button>
-    </mat-grid-tile>
-    <mat-grid-tile>
-        <button mat-raised-button color="primary" style="width: 80%; height: 70px; font-size: 23px;" routerLink="/request_experiment">
-            <mat-icon>double_arrow</mat-icon> Request New Experiments
-        </button>
-    </mat-grid-tile>
-    <mat-grid-tile>
-        <button mat-raised-button color="primary" style="width: 80%; height: 70px; font-size: 23px;" (click)="goTo('/experiments');">
-            <mat-icon>build</mat-icon> Manage Your Experiment
-        </button>
-    </mat-grid-tile>
-    <mat-grid-tile>
-        <button mat-raised-button color="primary" style="width: 60%; height: 70px; font-size: 23px;" routerLink="/manage_site">
-            <mat-icon>beenhere</mat-icon> Manage Your Site
-        </button>
-    </mat-grid-tile>
-</mat-grid-list>
+<table class="grid-table">
+    <tr>
+        <td>
+            <button mat-raised-button color="accent" style="color: white;" class="grid-button" (click)="goTo('/design_experiment');">
+                <!--mat-icon>create</mat-icon--><img src="../../assets/images/kd-ic-sdk-white.png" style="width: 50%;"> <p>Design Experiment</p>
+            </button>
+        </td>
+        <td>
+            <button mat-raised-button style="color: white; background-color: #f0a30a;" class="grid-button" (click)="goTo('/request_experiment');">
+                <!--mat-icon>double_arrow</mat-icon--><img src="../../assets/images/kd-ic-slicer-white.png" style="width: 50%;"> <p>Request Experiments</p>
+            </button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button mat-raised-button style="color: white; background-color: #B71C1C;" class="grid-button" (click)="goTo('/experiments');">
+                <!--mat-icon>build</mat-icon--><img src="../../assets/images/kd-ic-Orchestrator-white.png" style="width: 50%;"> <p>Manage Experiment</p>
+            </button>
+        </td>
+        <td>
+            <button mat-raised-button style="color: white; background-color: #0277BD;" class="grid-button" (click)="goTo('/manage_site')">
+                <!--mat-icon>beenhere</mat-icon--><img src="../../assets/images/kd-ic-virtual-net-white.png" style="width: 50%;"> <p>Manage Site</p>
+            </button>
+        </td>
+    </tr>
+</table>
