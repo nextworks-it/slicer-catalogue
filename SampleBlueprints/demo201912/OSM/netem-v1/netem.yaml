@@ -1,0 +1,51 @@
+vnfd:vnfd-catalog:
+  vnfd:
+  - connection-point:
+    - name: cp-1
+      port-security-enabled: 'false'
+      type: VPORT
+    - name: cp-2
+      port-security-enabled: 'false'
+      type: VPORT
+    - name: cp-3
+      port-security-enabled: 'false'
+      type: VPORT
+    description: Delay generator
+    id: 396d1b6b-331b-4dd7-b48e-376517d3654a
+    mgmt-interface:
+      cp: cp-1
+    name: delay-generator-v1
+    service-function-chain: UNAWARE
+    short-name: delay-generator-v1
+    vdu:
+    - count: 1
+      id: delay-generator-v1
+      image: netem-v1
+      interface:
+      - external-connection-point-ref: cp-1
+        name: eth0
+        position: '1'
+        type: EXTERNAL
+        virtual-interface:
+          type: VIRTIO
+      - external-connection-point-ref: cp-2
+        name: eth1
+        position: '2'
+        type: EXTERNAL
+        virtual-interface:
+          type: VIRTIO
+      - external-connection-point-ref: cp-3
+        name: eth2
+        position: '3'
+        type: EXTERNAL
+        virtual-interface:
+          type: VIRTIO
+      name: delay-generator-v1
+      supplemental-boot-data:
+        boot-data-drive: 'false'
+      vm-flavor:
+        memory-mb: '1024'
+        storage-gb: '5'
+        vcpu-count: '1'
+    vendor: NXW
+    version: '1.0'
