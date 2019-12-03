@@ -14,9 +14,17 @@ export class PortalHomeComponent implements OnInit {
   }
 
   goTo(path: string) {
-
+    if (path.indexOf('/design_experiment') >= 0) {
+      localStorage.setItem('role', 'DESIGNER');
+    }
+    if (path.indexOf('/request_experiment') >= 0) {
+      localStorage.setItem('role', 'EXPERIMENTER');
+    }
     if (path.indexOf('/experiments') >= 0) {
       localStorage.setItem('role', 'EXPERIMENTER');
+    }
+    if (path.indexOf('/manage_site') >= 0) {
+      localStorage.setItem('role', 'SITE_MANAGER');
     }
     this.router.navigate([path]);
   }

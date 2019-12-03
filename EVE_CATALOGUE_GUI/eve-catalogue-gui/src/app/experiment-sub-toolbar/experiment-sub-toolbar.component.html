@@ -1,0 +1,6 @@
+<mat-toolbar style="background-color: transparent;">
+    <span><button mat-button (click)="goTo();"><mat-icon>home</mat-icon> Home </button></span>
+    <span><button mat-button routerLink="/tickets" *ngIf="getRole().indexOf('SITE_MANAGER') >= 0;"><mat-icon>list</mat-icon> Tickets </button></span>
+    <span><button mat-button routerLink="/experiments" *ngIf="getRole().indexOf('SITE_MANAGER') >= 0;"><mat-icon>build</mat-icon> Experiments </button></span>
+    <span><button mat-button (click)="backClicked();"><mat-icon>arrow_back</mat-icon> Back </button></span>
+</mat-toolbar>

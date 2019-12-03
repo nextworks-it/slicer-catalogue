@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
 import { BlueprintsEcService } from '../blueprints-ec.service';
 import { BlueprintsExpService } from '../blueprints-exp.service';
 import { BlueprintsTcService } from '../blueprints-tc.service';
@@ -23,6 +25,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor(private breakpointObserver: BreakpointObserver,
+    iconRegistry: MatIconRegistry, sanitizer: DomSanitizer,
     private blueprintsEcService: BlueprintsEcService,
     private blueprintsExpService: BlueprintsExpService,
     private bluepritnsTcService: BlueprintsTcService,
@@ -31,17 +34,21 @@ export class DashboardComponent implements OnInit {
     private descriptorsExpService: DescriptorsExpService,
     private descriptorsTcService: DescriptorsTcService,
     private descriptorsVsService: DescriptorsVsService
-    ) {}
+    ) {
+      iconRegistry.addSvgIcon(
+        'library_add',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/images/library_add.svg'));
+    }
 
     ngOnInit(): void {
       this.getVsBlueprints();
-      this.getVsDescriptors();
+      //this.getVsDescriptors();
       this.getEcBlueprints();
-      this.getEcDescriptors();
+      //this.getEcDescriptors();
       this.getTcBlueprints();
-      this.getTcDescriptors();
+      //this.getTcDescriptors();
       this.getExpBlueprints();
-      this.getExpDescriptors();
+      //this.getExpDescriptors();
     }
 
     getEcBlueprints() {

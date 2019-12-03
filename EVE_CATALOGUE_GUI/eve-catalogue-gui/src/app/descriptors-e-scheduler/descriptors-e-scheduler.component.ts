@@ -3,6 +3,7 @@ import { ExpDescriptorInfo } from '../descriptors-e/exp-descriptor-info';
 import { ExpBlueprintInfo } from '../blueprints-e/exp-blueprint-info';
 import { DescriptorsExpService } from '../descriptors-exp.service';
 import { BlueprintsExpService } from '../blueprints-exp.service';
+import { ExperimentsService } from '../experiments.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
@@ -28,9 +29,11 @@ export class DescriptorsESchedulerComponent implements OnInit {
   start_date: string;
   end_date: string;
 
-  constructor(private _formBuilder: FormBuilder, 
+  constructor(private _formBuilder: FormBuilder,
+    private router: Router, 
     private descriptorsExpService: DescriptorsExpService,
-    private blueprintsExpService: BlueprintsExpService) { }
+    private blueprintsExpService: BlueprintsExpService,
+    private experimentService: ExperimentsService) { }
 
   ngOnInit() {
     this.scheduleFormGroup = this._formBuilder.group({
@@ -99,9 +102,17 @@ export class DescriptorsESchedulerComponent implements OnInit {
     scheduleExperimentRequest['experimentDescriptorId'] = expDescriptorId;
     scheduleExperimentRequest['proposedTimeSlot'] = {};
     scheduleExperimentRequest['proposedTimeSlot']['startTime'] = startDate;
-    scheduleExperimentRequest['proposedTimeSlot']['endTime'] = endDate;
+    scheduleExperimentRequest['proposedTimeSlot']['stopTime'] = endDate;
     scheduleExperimentRequest['targetSites'] = [targetSite];
 
     console.log(JSON.stringify(scheduleExperimentRequest, null, 4));
+
+    this.experimentService.postExperiment(scheduleExperimentRequest)
+          .subscribe(experimentId => {
+            console.log("Experiment with id " + experimentId)
+            if (experimentId != null) {
+              this.router.navigate(['/experiments']);
+            }
+          });
   }
 }
