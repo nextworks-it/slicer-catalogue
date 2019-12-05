@@ -148,8 +148,9 @@
             "nsdName": "ARES2T Tracker Service @ 5GEVE",
             "nsdInvariantId": "ns_ares2t_tracker_v1.0",
             "vnfdId": [
-                "vnf_Ares2T_Tracker",
-                "vnf_Ares2T_Vis"
+                "c84b227e-520e-43c0-a75e-e52781dd54dd",
+				"419b1884-aea1-4cad-8647-c2cec55287b9",
+                "51c420e3-c83d-4ce9-a5bf-0dbe339b351d"
             ],
             "sapd": [
                 {
@@ -271,9 +272,9 @@
                     "vnfProfile": [
                         {
                             "vnfProfileId": "vnfp_small_Ares2T_Tracker",
-                            "vnfdId": "vnf_Ares2T_Tracker",
+                            "vnfdId": "419b1884-aea1-4cad-8647-c2cec55287b9",
                             "flavourId": "vnf_df_Ares2T_Tracker",
-                            "instantiationLevel": "vnf_il_small_Ares2T_Tracker",
+                            "instantiationLevel": "vnf_il_Ares2T_Tracker",
                             "minNumberOfInstances": 1,
                             "maxNumberOfInstances": 1,
                             "nsVirtualLinkConnectivity": [
@@ -299,9 +300,9 @@
                         },
 			{
                             "vnfProfileId": "vnfp_big_Ares2T_Tracker",
-                            "vnfdId": "vnf_Ares2T_Tracker",
+                            "vnfdId": "c84b227e-520e-43c0-a75e-e52781dd54dd",
                             "flavourId": "vnf_df_Ares2T_Tracker",
-                            "instantiationLevel": "vnf_il_big_Ares2T_Tracker",
+                            "instantiationLevel": "vnf_il_Ares2T_Tracker",
                             "minNumberOfInstances": 1,
                             "maxNumberOfInstances": 1,
                             "nsVirtualLinkConnectivity": [
@@ -327,7 +328,7 @@
                         },
 			{
                             "vnfProfileId": "vnfp_Ares2T_Vis",
-                            "vnfdId": "vnf_Ares2T_Vis",
+                            "vnfdId": "51c420e3-c83d-4ce9-a5bf-0dbe339b351d",
                             "flavourId": "vnf_df_Ares2T_Vis",
                             "instantiationLevel": "vnf_il_Ares2T_Vis",
                             "minNumberOfInstances": 1,
