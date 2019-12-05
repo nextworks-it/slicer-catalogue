@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Change Status for Experiment w/ Id: {{data.expId}}</h1>
+<mat-dialog-content [formGroup]="expMgmtForm">
+    <mat-form-field>
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="selectedStatus">
+            <mat-option *ngIf="(data.expStatus).indexOf('SCHEDULING') >= 0" value="ACCEPTED">ACCEPTED</mat-option>
+            <mat-option *ngIf="(data.expStatus).indexOf('SCHEDULING') >= 0" value="REFUSED">REFUSED</mat-option>
+            <mat-option *ngIf="(data.expStatus).indexOf('ACCEPTED') >= 0" value="READY">READY</mat-option>
+        </mat-select>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button color="warn" (click)="onNoClick()">Close</button>
+    <button mat-raised-button color="accent" (click)="confirmSelection()" cdkFocusInitial>Submit</button>
+</mat-dialog-actions>

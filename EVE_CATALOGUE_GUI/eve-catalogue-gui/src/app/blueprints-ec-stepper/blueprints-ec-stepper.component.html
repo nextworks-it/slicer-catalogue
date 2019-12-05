@@ -2,7 +2,7 @@
     <mat-step [stepControl]="firstFormGroup">
         <form [formGroup]="firstFormGroup">
             <ng-template matStepLabel>Upload Blueprint</ng-template>
-            <input #blueprintFile type="file" formControlName="firstCtrl" required/>
+            <input #blueprintFile type="file" formControlName="firstCtrl" (change)="onUploadedCtxb($event,blueprintFile.files)" required/>
             <div class="margin-top">
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
             </div>
@@ -11,7 +11,7 @@
     <mat-step [stepControl]="secondFormGroup">
         <form [formGroup]="secondFormGroup">
             <ng-template matStepLabel>Upload NSDs</ng-template>
-            <input #nsdFiles type="file" formControlName="secondCtrl" required/>
+            <input #nsdFiles type="file" formControlName="secondCtrl" (change)="onUploadedNsd($event,nsdFiles.files)" required/>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
@@ -26,17 +26,33 @@
                     <td>
                         <h4>NSD</h4>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput #nsdId placeholder="NSD Id" formControlName="nsdId" required>
+                            <input matInput id="nsdId" placeholder="NSD Id" required formControlName="nsdId">
                         </mat-form-field>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput #nsdVersion placeholder="NSD Version" formControlName="nsdVersion" required>
+                            <input matInput id="nsdVersion" placeholder="NSD Version" required formControlName="nsdVersion">
                         </mat-form-field>
-                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput #nsFlavourId placeholder="NS Flavour Id" formControlName="nsFlavourId" required>
+                        <mat-form-field appearance="outline" class="rules-full-width">
+                            <mat-label>NS Flavour Id</mat-label>
+                            <mat-select formControlName="nsFlavourId" name="nsFlavourId" (selectionChange)="onNsDfSelected($event);">
+                                <mat-option *ngFor="let df of dfs" [value]="df.nsDfId">
+                                    {{df.nsDfId}}
+                                </mat-option>
+                            </mat-select>
                         </mat-form-field>
-                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput #nsInstLevel placeholder="NS Instantiation Level Id" formControlName="nsInstLevel" required>
+                        <!--mat-form-field appearance="outline" color=primary class="data-full-width">
+                            <input matInput id="nsFlavourId" placeholder="NS Flavour Id" required formControlName="nsFlavourIdCtrl">
+                        </mat-form-field-->
+                        <mat-form-field appearance="outline" class="rules-full-width">
+                            <mat-label>NS Instantiation Level Id</mat-label>
+                            <mat-select formControlName="nsInstLevel" name="nsInstLevel">
+                                <mat-option *ngFor="let instLevel of instLevels" [value]="instLevel.nsLevelId">
+                                    {{instLevel.nsLevelId}}
+                                </mat-option>
+                            </mat-select>
                         </mat-form-field>
+                        <!--mat-form-field appearance="outline" color=primary class="data-full-width">
+                            <input matInput id="nsInstLevel" placeholder="NS Instantiation Level Id" required formControlName="nsInstLevelIdCtrl">
+                        </mat-form-field-->
                     </td>
                     <td></td>
                     <td></td>
@@ -48,7 +64,12 @@
                             <h5>Param {{i + 1}}</h5>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                    <input matInput placeholder="Parameter Id" required formControlName="parameterId">
+                                    <mat-label>Parameter Id</mat-label>
+                                    <mat-select formControlName="parameterId">
+                                        <mat-option *ngFor="let param of translationParams" [value]="param.parameterId">
+                                            {{param.parameterId}}
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
                             </td>
                             <td>

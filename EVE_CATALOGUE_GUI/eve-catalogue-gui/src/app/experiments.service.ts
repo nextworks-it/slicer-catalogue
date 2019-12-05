@@ -61,6 +61,22 @@ export class ExperimentsService {
     );
   }
 
+  changeExperimentStatus(changeStatusRequest: Object): Observable<String> {
+    return this.http.put(this.baseUrl + this.experimentInfoUrl + '/' + changeStatusRequest['experimentId'] + '/status', changeStatusRequest, this.httpOptions)
+    .pipe(
+      tap((result: String) => this.log(`changed status for Experiment w/ id=${changeStatusRequest['experimentId']}`, 'SUCCESS')),
+      catchError(this.handleError<String>('changeExperimentStatus'))
+    )
+  }
+
+  executeExperimentAction(actionRequest: Object, action: string): Observable<String> {
+    return this.http.post(this.baseUrl + this.experimentInfoUrl + '/' + actionRequest['experimentId'] + '/action/' + action, actionRequest, this.httpOptions)
+    .pipe(
+      tap((result: String) => this.log(`executed action ${action} on Experiment w/ id=${actionRequest['experimentId']}`, 'SUCCESS')),
+      catchError(this.handleError<String>('executeExperimentAction'))
+    )
+  }
+  
   /**
    * Handle Http operation that failed.
    * Let the app continue.

@@ -31,10 +31,10 @@
                 </ng-container>
 
                 <!-- Script Column -->
-                <ng-container matColumnDef="script">
+                <!--ng-container matColumnDef="script">
                     <th mat-header-cell *matHeaderCellDef>Script</th>
                     <td mat-cell *matCellDef="let row">{{row.testCaseBlueprint.script}}</td>
-                </ng-container>
+                </ng-container-->
 
                 <!-- User Parameters Column -->
                 <ng-container matColumnDef="user_params">
@@ -114,12 +114,12 @@
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Name" required formControlName="userParamName">
+                                        <input matInput placeholder="Name" formControlName="userParamName">
                                     </mat-form-field>
                                 </td>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Value" required formControlName="userParamValue">
+                                        <input matInput placeholder="Value" formControlName="userParamValue">
                                     </mat-form-field>
                                 </td>
                             </div>
@@ -145,12 +145,12 @@
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Name" required formControlName="infraParamName">
+                                        <input matInput placeholder="Name" formControlName="infraParamName">
                                     </mat-form-field>
                                 </td>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Value" required formControlName="infraParamValue">
+                                        <input matInput placeholder="Value" formControlName="infraParamValue">
                                     </mat-form-field>
                                 </td>
                             </div>

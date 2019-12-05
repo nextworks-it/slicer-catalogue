@@ -17,6 +17,7 @@ export interface Blueprint {
   value: String;
   viewValue: String;
   sites: String[];
+  obj: Object;
 }
 
 @Component({
@@ -65,6 +66,14 @@ export class BlueprintsEStepperComponent implements OnInit {
     "DELTA",
     "GAUGE"
   ];
+
+  nsdObj: Object;
+
+  dfs: String[] = [];
+
+  instLevels: String[] = [];
+
+  translationParams: String[] = [];
 
   vsbs: Blueprint[] = [];
   ctxbs: Blueprint[] = [];
@@ -194,6 +203,15 @@ export class BlueprintsEStepperComponent implements OnInit {
   onVsbSelected(event: any) {
     //console.log(event);
     this.selectedVsb = event.value;
+
+    for (var i = 0; i < this.vsbs.length; i ++) {
+      if (this.vsbs[i]['obj']['blueprintId'] == event.value) {
+        for (var j = 0; j < this.vsbs[i]['obj']['parameters'].length; j++) {
+          this.translationParams.push(this.vsbs[i]['obj']['parameters'][j]);
+        }
+        console.log(this.translationParams);
+      }
+    }
   }
 
   onNameGiven(event: any) {
@@ -204,6 +222,15 @@ export class BlueprintsEStepperComponent implements OnInit {
   onSelectedCb(event: any) {
     //console.log(event);
     this.selectedCbs.push(event.value);
+
+    for (var i = 0; i < this.ctxbs.length; i ++) {
+      if (this.ctxbs[i]['obj']['blueprintId'] == event.value) {
+        for (var j = 0; j < this.ctxbs[i]['obj']['parameters'].length; j++) {
+          this.translationParams.push(this.ctxbs[i]['obj']['parameters'][j]);
+        }        
+        console.log(this.translationParams);
+      }
+    }
   }
 
   onUploadedNsd(event: any, nsds: File[]) {
@@ -222,18 +249,41 @@ export class BlueprintsEStepperComponent implements OnInit {
     }
 
     Promise.all(promises).then(fileContents => {
-        var nsdObj = JSON.parse(fileContents[0]);
+        this.nsdObj = JSON.parse(fileContents[0]);
 
-        this.fourthFormGroup.get('nsdIdCtrl').setValue(nsdObj['nsdIdentifier']);
-        this.fourthFormGroup.get('nsdVersionCtrl').setValue(nsdObj['version']);
-        this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
-        this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
+        this.fourthFormGroup.get('nsdIdCtrl').setValue(this.nsdObj['nsdIdentifier']);
+        this.fourthFormGroup.get('nsdVersionCtrl').setValue(this.nsdObj['version']);
+        
+        this.dfs = this.nsdObj['nsDf'];
+        
+        //this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
+        //this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
     });
+  }
+
+  onNsDfSelected(event:any) {
+    var selectedDf = event.value;
+
+    for (var i = 0; i < this.nsdObj['nsDf'].length; i++) {
+      if (this.nsdObj['nsDf'][i]['nsDfId'] == selectedDf) {
+        this.instLevels = this.nsdObj['nsDf'][i]['nsInstantiationLevel'];
+      }
+    }
+  }
+
+  onNsInstLevelSelected(event:any) {
+    var selectedInstLevel = event.value;
+
+    for (var i = 0; i < this.instLevels.length; i++) {
+      if (this.instLevels[i]['nsLevelId'] == selectedInstLevel) {
+
+      }
+    }  
   }
 
   onParameterGiven(event: any) {
     //console.log(event);
-    this.parameterNames.push(event.target.value);
+    this.parameterNames.push(event.value);
   }
 
   onMetricGiven(event: any) {
@@ -255,7 +305,7 @@ export class BlueprintsEStepperComponent implements OnInit {
     this.blueprintsVsService.getVsBlueprints().subscribe((vsBlueprintInfos: VsBlueprintInfo[]) => 
       {
         for (var i = 0; i < vsBlueprintInfos.length; i++) {
-          this.vsbs.push({value: vsBlueprintInfos[i]['vsBlueprintId'], viewValue: vsBlueprintInfos[i]['vsBlueprint']['description'], sites: vsBlueprintInfos[i]['vsBlueprint']['compatibleSites']});
+          this.vsbs.push({value: vsBlueprintInfos[i]['vsBlueprintId'], viewValue: vsBlueprintInfos[i]['vsBlueprint']['description'], sites: vsBlueprintInfos[i]['vsBlueprint']['compatibleSites'], obj: vsBlueprintInfos[i]['vsBlueprint']});
         }
       });
   }
@@ -268,7 +318,7 @@ export class BlueprintsEStepperComponent implements OnInit {
     this.blueprintsCtxService.getCtxBlueprints().subscribe((ctxBlueprintInfos: CtxBlueprintInfo[]) =>
       {
         for (var i = 0; i < ctxBlueprintInfos.length; i++) {
-          this.ctxbs.push({value: ctxBlueprintInfos[i]['ctxBlueprintId'], viewValue: ctxBlueprintInfos[i]['ctxBlueprint']['description'], sites: ctxBlueprintInfos[i]['ctxBlueprint']['compatibleSites']});
+          this.ctxbs.push({value: ctxBlueprintInfos[i]['ctxBlueprintId'], viewValue: ctxBlueprintInfos[i]['ctxBlueprint']['description'], sites: ctxBlueprintInfos[i]['ctxBlueprint']['compatibleSites'], obj: ctxBlueprintInfos[i]['ctxBlueprint']});
         }
       });
   }
@@ -281,7 +331,7 @@ export class BlueprintsEStepperComponent implements OnInit {
     this.blueprintsTcService.getTcBlueprints().subscribe((tcBlueprintInfos: TcBlueprintInfo[]) =>
       {
         for (var i = 0; i < tcBlueprintInfos.length; i++) {
-          this.tcbs.push({value: tcBlueprintInfos[i]['testCaseBlueprintId'], viewValue: tcBlueprintInfos[i]['testCaseBlueprint']['description'], sites: tcBlueprintInfos[i]['testCaseBlueprint']['compatibleSites']});
+          this.tcbs.push({value: tcBlueprintInfos[i]['testCaseBlueprintId'], viewValue: tcBlueprintInfos[i]['testCaseBlueprint']['description'], sites: tcBlueprintInfos[i]['testCaseBlueprint']['compatibleSites'], obj: tcBlueprintInfos[i]['testCaseBlueprint']});
         }
       });
   }

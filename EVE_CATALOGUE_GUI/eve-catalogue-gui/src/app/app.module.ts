@@ -71,6 +71,8 @@ import { ExperimentsComponent } from './experiments/experiments.component';
 import { ExperimentsDetailsComponent } from './experiments-details/experiments-details.component';
 import { SitesSwitchComponent } from './sites-switch/sites-switch.component';
 import { ExperimentSubToolbarComponent } from './experiment-sub-toolbar/experiment-sub-toolbar.component';
+import { ExperimentsMgmtDialogComponent } from './experiments-mgmt-dialog/experiments-mgmt-dialog.component';
+import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/experiments-execute-dialog.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +110,9 @@ import { ExperimentSubToolbarComponent } from './experiment-sub-toolbar/experime
     ExperimentsComponent,
     ExperimentsDetailsComponent,
     SitesSwitchComponent,
-    ExperimentSubToolbarComponent
+    ExperimentSubToolbarComponent,
+    ExperimentsMgmtDialogComponent,
+    ExperimentsExecuteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -147,6 +151,10 @@ import { ExperimentSubToolbarComponent } from './experiment-sub-toolbar/experime
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     HttpClientModule,
     CytoscapeModule
+  ],
+  entryComponents: [
+    ExperimentsMgmtDialogComponent,
+    ExperimentsExecuteDialogComponent
   ],
   providers: [BlueprintsVsService],
   bootstrap: [AppComponent]

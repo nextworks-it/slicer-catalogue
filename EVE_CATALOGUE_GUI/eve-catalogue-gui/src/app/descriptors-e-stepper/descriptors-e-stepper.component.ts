@@ -90,9 +90,9 @@ export class DescriptorsEStepperComponent implements OnInit {
     this.secondFormGroup = this._formBuilder.group({
       vsDescName: ['', Validators.required],
       vsDescVersion: ['', Validators.required],
-      managementType: ['', Validators.required],
-      ssType: ['', Validators.required],
-      isPublic: [false],
+      managementType: [''],
+      ssType: [''],
+      isPublic: [false]/*,
       priorityType: ['', Validators.required],
       isSharable: [false],
       includeSharable: [false],
@@ -101,7 +101,7 @@ export class DescriptorsEStepperComponent implements OnInit {
       prohibitedProviders: ['', Validators.required],
       timeType: ['', Validators.required],
       coverageType: ['', Validators.required],
-      isLowCost: [false]
+      isLowCost: [false]*/
     });
     this.thirdFormGroup = this._formBuilder.group({
     });
@@ -209,7 +209,7 @@ export class DescriptorsEStepperComponent implements OnInit {
     }
 
     onBoardExpRequest['vsDescriptor']['qosParameters'] = qosParameters;
-    onBoardExpRequest['vsDescriptor']['serviceConstraints'] = [];
+    /*onBoardExpRequest['vsDescriptor']['serviceConstraints'] = [];
 
     for (var i = 0; i < this.vsBlueprint['atomicComponents'].length; i++) {
       var tempConstr = {};
@@ -227,20 +227,24 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['vsDescriptor']['sla']['availabilityCoverage'] = this.secondFormGroup.get('coverageType').value;
     onBoardExpRequest['vsDescriptor']['sla']['serviceCreationTime'] = this.secondFormGroup.get('timeType').value;
     onBoardExpRequest['vsDescriptor']['sla']['lowCostRequired'] = this.secondFormGroup.get('isLowCost').value;
-    onBoardExpRequest['vsDescriptor']['isPublic'] = this.secondFormGroup.get('isPublic').value;
+    onBoardExpRequest['vsDescriptor']['isPublic'] = this.secondFormGroup.get('isPublic').value;*/
 
     for (var i = 0; i < this.tcBlueprints.length; i++) {
       var tempTc = {};
       tempTc['blueprintId'] = this.tcBlueprints[i].value;
       tempTc['parameters'] = {}
-      let userParams = new Map(Object.entries(this.tcBlueprints[i]['item']['userParameters']));
-      let infraParams = new Map(Object.entries(this.tcBlueprints[i]['item']['infrastructureParameters']));
-
-      for (let key of userParams.keys()) {
-        tempTc['parameters'][key] = this.document.getElementById("user_" + key).value;
+      if (this.tcBlueprints[i]['item']['userParameters']) {
+        let userParams = new Map(Object.entries(this.tcBlueprints[i]['item']['userParameters']));
+        for (let key of userParams.keys()) {
+          tempTc['parameters'][key] = this.document.getElementById("user_" + key).value;
+        }
       }
-      for (let key of infraParams.keys()) {
-        tempTc['parameters'][key] = this.document.getElementById("infra_" + key).value;
+      
+      if (this.tcBlueprints[i]['item']['infrastructureParameters']) {
+        let infraParams = new Map(Object.entries(this.tcBlueprints[i]['item']['infrastructureParameters']));   
+        for (let key of infraParams.keys()) {
+          tempTc['parameters'][key] = this.document.getElementById("infra_" + key).value;
+        }
       }
       onBoardExpRequest['testCaseConfiguration'].push(tempTc);
     }

@@ -2,10 +2,18 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { ExperimentInfo } from './experiment-info';
 import { DescriptorsExpService } from '../descriptors-exp.service';
 import { ExperimentsService } from '../experiments.service';
 import { Router } from '@angular/router';
+import { ExperimentsMgmtDialogComponent } from '../experiments-mgmt-dialog/experiments-mgmt-dialog.component';
+import { ExperimentsExecuteDialogComponent } from '../experiments-execute-dialog/experiments-execute-dialog.component';
+
+export interface DialogData {
+  expId: string;
+  expStatus: string;
+}
 
 @Component({
   selector: 'app-experiments',
@@ -86,6 +94,7 @@ export class ExperimentsComponent implements OnInit {
   displayedColumns = ['experimentId', 'experimentDescriptorId', 'sites', 'status', 'execStatus', 'buttons'];
 
   constructor(private router: Router,
+    public dialog: MatDialog,
     private descriptorsExpService: DescriptorsExpService,
     private experimentsService: ExperimentsService) { }
 
@@ -152,5 +161,44 @@ export class ExperimentsComponent implements OnInit {
 
   getRole() {
     return localStorage.getItem('role');
+  }
+
+  openMgmtDialog(expId: string, expStatus: string) {
+    const dialogRef = this.dialog.open(ExperimentsMgmtDialogComponent, {
+      width: '30%',
+      data: {expId: expId, expStatus: expStatus}
+    });
+
+    dialogRef.afterClosed().subscribe(selectedStatus => {
+      if (selectedStatus) {
+        //console.log('Selected Status: ' + selectedStatus);
+        var changeStatusRequest = {};
+        changeStatusRequest['experimentId'] = expId;
+        changeStatusRequest['status'] = selectedStatus;
+
+        console.log('changeStatusRequest: ' + JSON.stringify(changeStatusRequest, null, 4));
+
+        this.experimentsService.changeExperimentStatus(changeStatusRequest).subscribe();
+      }
+    });
+  }
+
+  openExecDialog(expId: string, expStatus: string) {
+    const dialogRef = this.dialog.open(ExperimentsExecuteDialogComponent, {
+      width: '30%',
+      data: {expId: expId, expStatus: expStatus}
+    });
+
+    dialogRef.afterClosed().subscribe(selectedAction => {      
+      if (selectedAction) {
+        //console.log('Selected Status: ' + selectedAction);
+        var actionRequest = {};
+        actionRequest['experimentId'] = expId;
+
+        console.log('changeStatusRequest: ' + JSON.stringify(actionRequest, null, 4));
+
+        this.experimentsService.executeExperimentAction(actionRequest, selectedAction).subscribe();
+      }
+    });
   }
 }

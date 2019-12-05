@@ -10,6 +10,16 @@ import { BlueprintsEcService } from '../blueprints-ec.service';
 })
 export class BlueprintsEcStepperComponent implements OnInit {
 
+  nsdObj: Object;
+
+  ctxbObj: Object;
+
+  dfs: String[] = [];
+
+  instLevels: String[] = [];
+
+  translationParams: String[] = [];
+
   isLinear = false;
   isButtonVisible = false;
   items: FormArray;
@@ -51,6 +61,69 @@ export class BlueprintsEcStepperComponent implements OnInit {
   removeItem() {
     this.items = this.thirdFormGroup.get('items') as FormArray;
     this.items.removeAt(this.items.length - 1);
+  }
+
+  onUploadedCtxb(event: any, ctxbs: File[]) {
+    //console.log(event);
+
+    let promises = [];
+
+    for (let ctx of ctxbs) {
+        let ctxbPromise = new Promise(resolve => {
+            let reader = new FileReader();
+            reader.readAsText(ctx);
+            reader.onload = () => resolve(reader.result);
+        });
+        promises.push(ctxbPromise);
+    }
+
+    Promise.all(promises).then(fileContents => {
+        this.ctxbObj = JSON.parse(fileContents[0]);
+
+        console.log(JSON.stringify(this.ctxbObj, null, 4));
+
+        this.translationParams = this.ctxbObj['parameters'];
+    });
+  }
+
+  onUploadedNsd(event: any, nsds: File[]) {
+    //console.log(event);
+    //this.uploadedNsdName = event.target.files[0].name;
+
+    let promises = [];
+
+    for (let nsd of nsds) {
+        let nsdPromise = new Promise(resolve => {
+            let reader = new FileReader();
+            reader.readAsText(nsd);
+            reader.onload = () => resolve(reader.result);
+        });
+        promises.push(nsdPromise);
+    }
+
+    Promise.all(promises).then(fileContents => {
+        this.nsdObj = JSON.parse(fileContents[0]);
+
+        console.log(JSON.stringify(this.nsdObj, null, 4));
+
+        this.thirdFormGroup.get('nsdId').setValue(this.nsdObj['nsdIdentifier']);
+        this.thirdFormGroup.get('nsdVersion').setValue(this.nsdObj['version']);
+        
+        this.dfs = this.nsdObj['nsDf'];
+        
+        //this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
+        //this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
+    });
+  }
+
+  onNsDfSelected(event:any) {
+    var selectedDf = event.value;
+
+    for (var i = 0; i < this.nsdObj['nsDf'].length; i++) {
+      if (this.nsdObj['nsDf'][i]['nsDfId'] == selectedDf) {
+        this.instLevels = this.nsdObj['nsDf'][i]['nsInstantiationLevel'];
+      }
+    }
   }
 
   createOnBoardCtxBlueprintRequest(blueprints: File[], nsds: File[]) {
