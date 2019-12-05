@@ -101,7 +101,7 @@
             "nsdName": "NETEM Traffic Delay Generator Service",
             "nsdInvariantId": "Netem_Delay_Generator_v1.0",
             "vnfdId": [
-                "vnf_netem"
+                "396d1b6b-331b-4dd7-b48e-376517d3654a"
             ],
             "sapd": [
                 {
@@ -238,7 +238,7 @@
                     "vnfProfile": [
                         {
                             "vnfProfileId": "vnfp_netem",
-                            "vnfdId": "vnf_netem",
+                            "vnfdId": "396d1b6b-331b-4dd7-b48e-376517d3654a",
                             "flavourId": "vnf_df_netem",
                             "instantiationLevel": "vnf_il_netem",
                             "minNumberOfInstances": 1,

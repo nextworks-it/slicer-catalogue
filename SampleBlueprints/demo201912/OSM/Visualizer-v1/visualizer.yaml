@@ -1,0 +1,43 @@
+vnfd:vnfd-catalog:
+  vnfd:
+  - connection-point:
+    - name: cp_vis_mgt
+      port-security-enabled: 'false'
+      type: VPORT
+    - name: cp_vis_data
+      port-security-enabled: 'false'
+      type: VPORT
+    description: ARES2T visualizer experiment
+    id: 51c420e3-c83d-4ce9-a5bf-0dbe339b351d
+    logo: kibana.png
+    mgmt-interface:
+      cp: cp_vis_mgt
+    name: visualizer-v1
+    service-function-chain: UNAWARE
+    short-name: visualizer-v1
+    vdu:
+    - count: 1
+      id: visualizer-v1
+      image: visualizer-v1
+      interface:
+      - external-connection-point-ref: cp_vis_mgt
+        name: eth0
+        position: '1'
+        type: EXTERNAL
+        virtual-interface:
+          type: VIRTIO
+      - external-connection-point-ref: cp_vis_data
+        name: eth1
+        position: '2'
+        type: EXTERNAL
+        virtual-interface:
+          type: VIRTIO
+      name: visualizer-v1
+      supplemental-boot-data:
+        boot-data-drive: 'false'
+      vm-flavor:
+        memory-mb: '8192'
+        storage-gb: '20'
+        vcpu-count: '4'
+    vendor: NXW
+    version: '1.0'
