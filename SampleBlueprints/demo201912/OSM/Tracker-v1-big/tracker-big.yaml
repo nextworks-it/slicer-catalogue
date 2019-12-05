@@ -1,20 +1,20 @@
 vnfd:vnfd-catalog:
   vnfd:
   - connection-point:
-    - name: cp-1
+    - name: cp_tracker_mgt
       port-security-enabled: 'false'
       type: VPORT
-    - name: cp-2
+    - name: cp_tracker_ext_in
       port-security-enabled: 'false'
       type: VPORT
-    - name: cp-3
+    - name: cp_tracker_data
       port-security-enabled: 'false'
       type: VPORT
     description: ARES2T tracking experiment - full version
     id: c84b227e-520e-43c0-a75e-e52781dd54dd
     logo: tracker.png
     mgmt-interface:
-      cp: cp-1
+      cp: cp_tracker_mgt
     name: tracker-big-v1
     service-function-chain: UNAWARE
     short-name: tracker-big-v1
@@ -23,19 +23,19 @@ vnfd:vnfd-catalog:
       id: tracker-big-v1
       image: tracker-v1
       interface:
-      - external-connection-point-ref: cp-1
+      - external-connection-point-ref: cp_tracker_mgt
         name: eth0
         position: '1'
         type: EXTERNAL
         virtual-interface:
           type: VIRTIO
-      - external-connection-point-ref: cp-2
+      - external-connection-point-ref: cp_tracker_ext_in
         name: eth1
         position: '2'
         type: EXTERNAL
         virtual-interface:
           type: VIRTIO
-      - external-connection-point-ref: cp-3
+      - external-connection-point-ref: cp_tracker_data
         name: eth2
         position: '3'
         type: EXTERNAL
