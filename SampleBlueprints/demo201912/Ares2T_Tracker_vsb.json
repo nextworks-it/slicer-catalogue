@@ -18,15 +18,15 @@
                 "serversNumber": 1,
                 "endPointsIds": [
                     "cp_tracker_ext_in",
-		    "cp_tracker_data",
-		    "cp_tracker_mgt"
+                    "cp_tracker_data",
+                    "cp_tracker_mgt"
                 ]
             },
             {
                 "componentId": "visualization_tool",
                 "serversNumber": 1,
                 "endPointsIds": [
-		    "cp_vis_data",
+                    "cp_vis_data",
                     "cp_vis_mgt"
                 ]
             }
@@ -50,7 +50,7 @@
                 "management": true,
                 "ranConnection": false
             },
-	    {
+            {
                 "endPointId": "cp_vis_data",
                 "external": false,
                 "management": false,
@@ -62,7 +62,7 @@
                 "management": true,
                 "ranConnection": false
             },
-	    {
+            {
                 "endPointId": "sap_tracking_mobile",
                 "external": true,
                 "management": false,
@@ -94,46 +94,46 @@
                 "endPointIds": [
                     "sap_tracking_mgt",
                     "cp_vis_mgt",
-		    "cp_tracker_mgt"
+                    "cp_tracker_mgt"
                 ],
                 "external": true
             }
         ],
-  "applicationMetrics": [
-    {
-      "metricId": "tracked_devices",
-      "name": "Number of total tracked devices",
-      "metricCollectionType": "CUMULATIVE",
-      "unit": "devices",
-      "interval": "5s",
-      "topic": "/app/tracked_devices"
-    },
-    {
-      "metricId": "processed_records",
-      "name": "Number of total processed records",
-      "metricCollectionType": "CUMULATIVE",
-      "unit": "records",
-      "interval": "5s",
-      "topic": "/app/processed_records"
-    },
-    {
-      "metricId": "tracking_response_time",
-      "name": "Max response time in milliseconds",
-      "metricCollectionType": "GAUGE",
-      "unit": "ms",
-      "interval": "1s",
-      "topic": "/app/tracking_response_time"
-    },
-    {
-      "metricId": "tracking_memory_usage",
-      "name": "Memory usage in %",
-      "metricCollectionType": "GAUGE",
-      "unit": "%",
-      "interval": "1s",
-      "topic": "/app/tracking_memory_usage"
-    }
-  ],
-    "compatibleContextBlueprint": [
+        "applicationMetrics": [
+            {
+                "metricId": "tracked_devices",
+                "name": "Number of total tracked devices",
+                "metricCollectionType": "CUMULATIVE",
+                "unit": "devices",
+                "interval": "5s",
+                "topic": "/app/tracked_devices"
+            },
+            {
+                "metricId": "processed_records",
+                "name": "Number of total processed records",
+                "metricCollectionType": "CUMULATIVE",
+                "unit": "records",
+                "interval": "5s",
+                "topic": "/app/processed_records"
+            },
+            {
+                "metricId": "tracking_response_time",
+                "name": "Max response time in milliseconds",
+                "metricCollectionType": "GAUGE",
+                "unit": "ms",
+                "interval": "1s",
+                "topic": "/app/tracking_response_time"
+            },
+            {
+                "metricId": "tracking_memory_usage",
+                "name": "Memory usage in %",
+                "metricCollectionType": "GAUGE",
+                "unit": "%",
+                "interval": "1s",
+                "topic": "/app/tracking_memory_usage"
+            }
+        ],
+        "compatibleContextBlueprint": [
             "{{cb_id}}"
         ],
         "compatibleSites": [
@@ -149,7 +149,7 @@
             "nsdInvariantId": "ns_ares2t_tracker_v1.0",
             "vnfdId": [
                 "c84b227e-520e-43c0-a75e-e52781dd54dd",
-				"419b1884-aea1-4cad-8647-c2cec55287b9",
+                "419b1884-aea1-4cad-8647-c2cec55287b9",
                 "51c420e3-c83d-4ce9-a5bf-0dbe339b351d"
             ],
             "sapd": [
@@ -170,7 +170,7 @@
                     "sapAddressAssignment": false,
                     "nsVirtualLinkDescId": "vl_tracking_mobile"
                 },
-		{
+                {
                     "cpdId": "sap_tracking_mgt",
                     "description": "SAP for management",
                     "layerProtocol": "IPV4",
@@ -205,11 +205,7 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Network to connect to the mobile user equipment"
@@ -230,16 +226,12 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Management network"
                 },
-	        {
+                {
                     "virtualLinkDescId": "vl_tracking_data",
                     "virtualLinkDescProvider": "NXW",
                     "virtuaLinkDescVersion": "1.0",
@@ -255,11 +247,7 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Internal network to connect the tracking service components"
@@ -290,7 +278,7 @@
                                         "cp_tracker_data"
                                     ]
                                 },
-	 			{
+                                {
                                     "virtualLinkProfileId": "vlp_vl_tracking_mgt",
                                     "cpdId": [
                                         "cp_tracker_mgt"
@@ -298,7 +286,7 @@
                                 }
                             ]
                         },
-			{
+                        {
                             "vnfProfileId": "vnfp_big_Ares2T_Tracker",
                             "vnfdId": "c84b227e-520e-43c0-a75e-e52781dd54dd",
                             "flavourId": "vnf_df_Ares2T_Tracker",
@@ -318,7 +306,7 @@
                                         "cp_tracker_data"
                                     ]
                                 },
-	 			{
+                                {
                                     "virtualLinkProfileId": "vlp_vl_tracking_mgt",
                                     "cpdId": [
                                         "cp_tracker_mgt"
@@ -326,7 +314,7 @@
                                 }
                             ]
                         },
-			{
+                        {
                             "vnfProfileId": "vnfp_Ares2T_Vis",
                             "vnfdId": "51c420e3-c83d-4ce9-a5bf-0dbe339b351d",
                             "flavourId": "vnf_df_Ares2T_Vis",
@@ -340,7 +328,7 @@
                                         "cp_vis_data"
                                     ]
                                 },
-	 			{
+                                {
                                     "virtualLinkProfileId": "vlp_vl_tracking_mgt",
                                     "cpdId": [
                                         "cp_vis_mgt"
@@ -399,7 +387,7 @@
                                     "vnfProfileId": "vnfp_big_Ares2T_Tracker",
                                     "numberOfInstances": 1
                                 },
-				{
+                                {
                                     "vnfProfileId": "vnfp_Ares2T_Vis",
                                     "numberOfInstances": 1
                                 }
@@ -436,7 +424,7 @@
                                     "vnfProfileId": "vnfp_small_Ares2T_Tracker",
                                     "numberOfInstances": 1
                                 },
-				{
+                                {
                                     "vnfProfileId": "vnfp_Ares2T_Vis",
                                     "numberOfInstances": 1
                                 }
@@ -491,7 +479,7 @@
                 }
             ]
         },
-	{
+        {
             "nsdId": "ns_ares2t_tracker",
             "nsdVersion": "1.0",
             "nsFlavourId": "ns_Ares2T_Tracking_df",
