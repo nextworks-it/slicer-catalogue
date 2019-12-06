@@ -29,7 +29,7 @@ export class BlueprintsVsService {
   getVsBlueprints(): Observable<VsBlueprintInfo[]> {
     return this.http.get<VsBlueprintInfo[]>(this.baseUrl + this.vsBlueprintInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsBlueprintInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched vsBlueprintInfos - SUCCESS')),
         catchError(this.handleError<VsBlueprintInfo[]>('getVsBlueprints', []))
       );
   }
@@ -37,7 +37,7 @@ export class BlueprintsVsService {
   getVsBlueprint(vsBlueprintId: string): Observable<VsBlueprintInfo> {
     return this.http.get<VsBlueprintInfo>(this.baseUrl + this.vsBlueprintInfoUrl + "/" + vsBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsBlueprintInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched vsBlueprintInfo - SUCCESS')),
         catchError(this.handleError<VsBlueprintInfo>('getVsBlueprint'))
       );
   }
@@ -82,6 +82,7 @@ export class BlueprintsVsService {
   private log(message: string, action: string) {
     this.messageService.add(`BluepritsVSService: ${message}`);
     this.openSnackBar(`BluepritsVSService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

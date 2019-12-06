@@ -94,31 +94,51 @@ export class BlueprintsEcDetailsComponent implements OnInit {
         }
         this.tableData.push({key: "Active Ctxds", value: values});
       
+        var atomicComponentsCps = [];
+      
         for (var i = 0; i < atomicComponents.length; i++) {
           this.graphData.nodes.push(
             { data: { id: atomicComponents[i]['componentId'], name: atomicComponents[i]['componentId'], weight: 70, colorCode: 'white', shapeType: 'ellipse' }, classes: 'bottom-center vnf' }
           );
-          this.graphData.edges.push(
-            { data: { source: atomicComponents[i]['componentId'], target: atomicComponents[i]['endPointsIds'][0], colorCode: 'black', strength: 70 } }
-          );
+
+          atomicComponentsCps.push(...atomicComponents[i]['endPointsIds']);
+          console.log(atomicComponentsCps);
         }
-        
-        for (var i = 0; i < endPoints.length; i++) {
-          if (endPoints[i]['ranConnection']) {
+
+        var sapCps = [];
+        for (var i = 0; i < endPoints.length; i ++) {
+          if (!(atomicComponentsCps.includes(endPoints[i]['endPointId']))) {
+            sapCps.push(endPoints[i]['endPointId']);
             this.graphData.nodes.push(
               { data: { id: endPoints[i]['endPointId'], name: endPoints[i]['endPointId'], weight: 50, colorCode: 'white', shapeType: 'ellipse' }, classes: 'bottom-center sap' }
             );
-            for (var j = 0; j < endPoints.length; j++) {
-              if (endPoints[i]['endPointId'] != endPoints[j]['endPointId']) {
+          }
+        }
+        
+        var connectivityServices = ctxBlueprint['connectivityServices'];
+
+        for (var i = 0; i < connectivityServices.length; i++) {
+          this.graphData.nodes.push(
+            { data: { id: "conn_service_" + i, name: "", weight: 50, colorCode: 'white', shapeType: 'ellipse' }, classes: 'bottom-center net' }
+          );
+
+          for (var j = 0; j < atomicComponents.length; j++) {
+            for (var h = 0; h < atomicComponents[j]['endPointsIds'].length; h++) {
+              if (connectivityServices[i]['endPointIds'].includes(atomicComponents[j]['endPointsIds'][h])) {
                 this.graphData.edges.push(
-                  { data: { source: endPoints[i]['endPointId'], target: endPoints[j]['endPointId'], colorCode: 'grey', strength: 70 } }
+                  { data: { source: atomicComponents[j]['componentId'], target: "conn_service_" + i, colorCode: 'black', strength: 70 } }
                 );
               }
             }
           }
-          this.graphData.nodes.push(
-            { data: { id: endPoints[i]['endPointId'], name: endPoints[i]['endPointId'], weight: 50, colorCode: 'white', shapeType: 'ellipse' }, classes: 'bottom-center net' }
-          );
+          
+          for (var j = 0; j < sapCps.length; j++) {
+            if (connectivityServices[i]['endPointIds'].includes(sapCps[j])) {
+              this.graphData.edges.push(
+                { data: { source: sapCps[j], target: "conn_service_" + i, colorCode: 'grey', strength: 70 } }
+              );
+            }
+          }
         }
 
         //console.log(this.tableData);

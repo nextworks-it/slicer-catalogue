@@ -25,7 +25,7 @@ export class DescriptorsVsService {
   getVsDescriptors(): Observable<VsDescriptorInfo[]> {
     return this.http.get<VsDescriptorInfo[]>(this.baseUrl + this.vsDescriptorInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsDescriptorInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched vsDescriptorInfos - SUCCESS')),
         catchError(this.handleError<VsDescriptorInfo[]>('getVsDescriptors', []))
       );
   }
@@ -33,7 +33,7 @@ export class DescriptorsVsService {
   getVsDescriptor(vsDescriptorId: string): Observable<VsDescriptorInfo> {
     return this.http.get<VsDescriptorInfo>(this.baseUrl + this.vsDescriptorInfoUrl + "/" + vsDescriptorId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched vsDescriptorInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched vsDescriptorInfo - SUCCESS')),
         catchError(this.handleError<VsDescriptorInfo>('getVsBlueprint'))
       );
   }
@@ -62,6 +62,7 @@ export class DescriptorsVsService {
   private log(message: string, action: string) {
     this.messageService.add(`DescriptorsVsService: ${message}`);
     this.openSnackBar(`DescriptorsVsService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

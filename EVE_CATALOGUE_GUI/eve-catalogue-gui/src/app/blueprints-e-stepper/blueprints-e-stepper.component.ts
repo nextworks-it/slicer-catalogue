@@ -401,7 +401,7 @@ export class BlueprintsEStepperComponent implements OnInit {
         translationRule['input'] = paramsObj;
         onBoardExpRequest.translationRules.push(translationRule);
 
-        var metrics = this.fifthFormGroup.controls.metric_items as FormArray;
+        /*var metrics = this.fifthFormGroup.controls.metric_items as FormArray;
         var metric_controls = metrics.controls;
         var metricsObj = [];
 
@@ -433,7 +433,7 @@ export class BlueprintsEStepperComponent implements OnInit {
         }
 
         expBlueprint['metrics'] = metricsObj;
-        expBlueprint['kpis'] = kpisObj;
+        expBlueprint['kpis'] = kpisObj;*/
 
         onBoardExpRequest['expBlueprint'] = expBlueprint;
 

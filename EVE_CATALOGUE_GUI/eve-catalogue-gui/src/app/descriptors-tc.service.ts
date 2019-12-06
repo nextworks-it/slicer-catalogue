@@ -25,7 +25,7 @@ export class DescriptorsTcService {
   getTcDescriptors(): Observable<TcDescriptorInfo[]> {
     return this.http.get<TcDescriptorInfo[]>(this.baseUrl + this.tcDescriptorInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched tcDescriptorInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched tcDescriptorInfos - SUCCESS')),
         catchError(this.handleError<TcDescriptorInfo[]>('getTcDescriptors', []))
       );
   }
@@ -33,7 +33,7 @@ export class DescriptorsTcService {
   getTcDescriptor(tcDescriptorId: string): Observable<TcDescriptorInfo> {
     return this.http.get<TcDescriptorInfo>(this.baseUrl + this.tcDescriptorInfoUrl + "/" + tcDescriptorId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched tcDescriptorInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched tcDescriptorInfo - SUCCESS')),
         catchError(this.handleError<TcDescriptorInfo>('getTcBlueprint'))
       );
   }
@@ -62,6 +62,7 @@ export class DescriptorsTcService {
   private log(message: string, action: string) {
     this.messageService.add(`DescriptorsTcService: ${message}`);
     this.openSnackBar(`DescriptorsTcService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

@@ -179,9 +179,11 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['tenantId'] = "admin";
     onBoardExpRequest['kpiThresholds'] = {};
 
-    for (var j = 0; j < this.expBlueprint['kpis'].length; j++) {
-      onBoardExpRequest['kpiThresholds'][this.expBlueprint['kpis'][j]['kpiId']] =
-        this.document.getElementById('metric_' + this.expBlueprint['kpis'][j]['kpiId']).value;
+    if (this.expBlueprint['kpis']) {
+      for (var j = 0; j < this.expBlueprint['kpis'].length; j++) {
+        onBoardExpRequest['kpiThresholds'][this.expBlueprint['kpis'][j]['kpiId']] =
+          this.document.getElementById('metric_' + this.expBlueprint['kpis'][j]['kpiId']).value;
+      }
     }
 
     for (var i = 0; i < this.ctxBlueprints.length; i++) {

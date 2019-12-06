@@ -25,7 +25,7 @@ export class DescriptorsExpService {
   getExpDescriptors(): Observable<ExpDescriptorInfo[]> {
     return this.http.get<ExpDescriptorInfo[]>(this.baseUrl + this.expDescriptorInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched expDescriptorInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched expDescriptorInfos - SUCCESS')),
         catchError(this.handleError<ExpDescriptorInfo[]>('getExpDescriptors', []))
       );
   }
@@ -33,7 +33,7 @@ export class DescriptorsExpService {
   getExpDescriptor(expDescriptorId: string): Observable<ExpDescriptorInfo> {
     return this.http.get<ExpDescriptorInfo>(this.baseUrl + this.expDescriptorInfoUrl + "/" + expDescriptorId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched expDescriptorInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched expDescriptorInfo - SUCCESS')),
         catchError(this.handleError<ExpDescriptorInfo>('getExpBlueprint'))
       );
   }
@@ -78,6 +78,7 @@ export class DescriptorsExpService {
   private log(message: string, action: string) {
     this.messageService.add(`DescriptorsExpService: ${message}`);
     this.openSnackBar(`DescriptorsExpService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

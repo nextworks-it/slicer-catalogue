@@ -25,7 +25,7 @@ export class ExperimentsService {
   getExperiments(): Observable<ExperimentInfo[]> {
     return this.http.get<ExperimentInfo[]>(this.baseUrl + this.experimentInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched experimentInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched experimentInfos - SUCCESS')),
         catchError(this.handleError<ExperimentInfo[]>('getExperiments', []))
       );
   }
@@ -40,7 +40,7 @@ export class ExperimentsService {
     }
     return this.http.get<ExperimentInfo[]>(this.baseUrl + this.experimentInfoUrl + requestParams, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched experimentInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched experimentInfos - SUCCESS')),
         catchError(this.handleError<ExperimentInfo[]>('getExperiment', []))
       );
   }
@@ -101,6 +101,8 @@ export class ExperimentsService {
   private log(message: string, action: string) {
     this.messageService.add(`ExperimentsService: ${message}`);
     this.openSnackBar(`ExperimentsService: ${message}`, action);
+    if (message.indexOf('created') < 0)
+      window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

@@ -64,7 +64,7 @@
               <!--mat-button-toggle value="activate" *ngIf="getRole().indexOf('EXPERIMENTER') >= 0 && (row.status).indexOf('INSTANTIATED') >= 0;"><mat-icon>play_arrow</mat-icon></mat-button-toggle-->
               <!--mat-button-toggle value="monitor" *ngIf="getRole().indexOf('EXPERIMENTER') >= 0;"><mat-icon>network_check</mat-icon></mat-button-toggle-->
               <!--mat-button-toggle value="results" *ngIf="getRole().indexOf('EXPERIMENTER') >= 0;"><mat-icon>multiline_chart</mat-icon></mat-button-toggle-->
-              <mat-button-toggle value="manage" *ngIf="getRole().indexOf('SITE_MANAGER') >= 0;" (click)="openMgmtDialog(row.experimentId, row.status);"><mat-icon>build</mat-icon></mat-button-toggle>
+              <mat-button-toggle value="manage" *ngIf="getRole().indexOf('SITE_MANAGER') >= 0 && ((row.status).indexOf('SCHEDULING') >= 0 || (row.status).indexOf('ACCEPTED') >= 0);" (click)="openMgmtDialog(row.experimentId, row.status);"><mat-icon>build</mat-icon></mat-button-toggle>
               <mat-button-toggle value="view_descriptor" (click)="viewExperiment(row.experimentId)"><mat-icon>remove_red_eye</mat-icon></mat-button-toggle>
               <mat-button-toggle value="delete" *ngIf="((row.status).indexOf('TERMINATED') >= 0 || (row.status).indexOf('FAILED') >= 0) && getRole().indexOf('EXPERIMENTER') >= 0;" (click)="deleteExperiment(row.experimentId)"><mat-icon>delete_forever</mat-icon></mat-button-toggle>
             </mat-button-toggle-group>

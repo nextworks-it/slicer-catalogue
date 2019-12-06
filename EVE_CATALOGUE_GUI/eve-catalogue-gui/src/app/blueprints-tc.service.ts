@@ -25,7 +25,7 @@ export class BlueprintsTcService {
   getTcBlueprints(): Observable<TcBlueprintInfo[]> {
     return this.http.get<TcBlueprintInfo[]>(this.baseUrl + this.tcBlueprintInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched tcBlueprintInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched tcBlueprintInfos - SUCCESS')),
         catchError(this.handleError<TcBlueprintInfo[]>('getTcBlueprints', []))
       );
   }
@@ -33,7 +33,7 @@ export class BlueprintsTcService {
   getTcBlueprint(tcBlueprintId: string): Observable<TcBlueprintInfo> {
     return this.http.get<TcBlueprintInfo>(this.baseUrl + this.tcBlueprintInfoUrl + "/" + tcBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched tcBlueprintInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched tcBlueprintInfo - SUCCESS')),
         catchError(this.handleError<TcBlueprintInfo>('getTcBlueprint'))
       );
   }
@@ -78,6 +78,7 @@ export class BlueprintsTcService {
   private log(message: string, action: string) {
     this.messageService.add(`BluepritsTcService: ${message}`);
     this.openSnackBar(`BluepritsTcService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {
