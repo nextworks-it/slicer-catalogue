@@ -12,10 +12,10 @@
                 "applicabilityField": "Traffic shaping"
             }
         ],
-        "configurableParameters" : [
-                "delay_avg",
-                "delay_var",
-                "consecutive_delay_dependency_percentage"
+        "configurableParameters": [
+            "delay_avg",
+            "delay_var",
+            "consecutive_delay_dependency_percentage"
         ],
         "atomicComponents": [
             {
@@ -41,7 +41,7 @@
                 "management": false,
                 "ranConnection": false
             },
-	    {
+            {
                 "endPointId": "cp_dg_mgt",
                 "external": true,
                 "management": true,
@@ -59,7 +59,7 @@
                 "management": false,
                 "ranConnection": false
             },
-	    {
+            {
                 "endPointId": "sap_dg_mgt",
                 "external": true,
                 "management": true,
@@ -121,7 +121,7 @@
                     "sapAddressAssignment": false,
                     "nsVirtualLinkDescId": "vl_dg_mgt"
                 },
-		{
+                {
                     "cpdId": "sap_dg_in",
                     "description": "SAP for incoming traffic",
                     "layerProtocol": "IPV4",
@@ -138,7 +138,7 @@
                     "sapAddressAssignment": false,
                     "nsVirtualLinkDescId": "vl_dg_in"
                 },
-		{
+                {
                     "cpdId": "sap_dg_out",
                     "description": "SAP for outgoing traffic",
                     "layerProtocol": "IPV4",
@@ -173,15 +173,12 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Management network"
-                },{
+                },
+                {
                     "virtualLinkDescId": "vl_dg_in",
                     "virtualLinkDescProvider": "NXW",
                     "virtuaLinkDescVersion": "1.0",
@@ -197,15 +194,12 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Network to receive incoming traffic."
-                },{
+                },
+                {
                     "virtualLinkDescId": "vl_dg_out",
                     "virtualLinkDescProvider": "NXW",
                     "virtuaLinkDescVersion": "1.0",
@@ -221,11 +215,7 @@
                                 "packetLossRatio": 0,
                                 "priority": 0
                             },
-                            "serviceAvaibilityLevel": "LEVEL_1",
-                            "bitrateRequirements": {
-                                "root": 2,
-                                "leaf": 2
-                            }
+                            "serviceAvaibilityLevel": "LEVEL_1"
                         }
                     ],
                     "description": "Network to send outgoing delayed traffic."
@@ -279,7 +269,7 @@
                                 "leaf": "1"
                             }
                         },
-			{
+                        {
                             "virtualLinkProfileId": "vlp_vl_dg_mgt",
                             "virtualLinkDescId": "vl_dg_mgt",
                             "flavourId": "df_vl_dg_mgt",
@@ -292,7 +282,7 @@
                                 "leaf": "1"
                             }
                         },
-			{
+                        {
                             "virtualLinkProfileId": "vlp_vl_dg_in",
                             "virtualLinkDescId": "vl_dg_in",
                             "flavourId": "df_vl_dg_in",
@@ -324,14 +314,14 @@
                                         "leaf": "1"
                                     }
                                 },
-				{
+                                {
                                     "virtualLinkProfileId": "vlp_vl_dg_in",
                                     "bitRateRequirements": {
                                         "root": "1",
                                         "leaf": "1"
                                     }
                                 },
-				{
+                                {
                                     "virtualLinkProfileId": "vlp_vl_dg_mgt",
                                     "bitRateRequirements": {
                                         "root": "1",
