@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 
 import { NgModule } from '@angular/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -116,7 +117,7 @@ import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(AppRoutes),
+    RouterModule.forRoot(AppRoutes, { useHash: true }),
     BrowserAnimationsModule,
     LayoutModule,
     FlexLayoutModule,
@@ -156,7 +157,7 @@ import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/
     ExperimentsMgmtDialogComponent,
     ExperimentsExecuteDialogComponent
   ],
-  providers: [BlueprintsVsService],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -42,17 +42,21 @@ export class BlueprintsEDetailsComponent implements OnInit {
         this.tableData.push({key: "Description", value: [expBlueprint['description']]});
         var values = [];
 
-        for (var i = 0; i < expBlueprint['kpis'].length; i++) {
-          values.push(expBlueprint['kpis'][i]['name']);
+        if (expBlueprint['kpis']) {
+          for (var i = 0; i < expBlueprint['kpis'].length; i++) {
+            values.push(expBlueprint['kpis'][i]['name']);
+          }
+          this.tableData.push({key: "KPIs", value: values});
         }
-        this.tableData.push({key: "KPIs", value: values});
 
-        values = [];
+        if (expBlueprint['metrics']) {
+          values = [];
 
-        for (var i = 0; i < expBlueprint['metrics'].length; i++) {
-          values.push(expBlueprint['metrics'][i]['name']);
+          for (var i = 0; i < expBlueprint['metrics'].length; i++) {
+            values.push(expBlueprint['metrics'][i]['name']);
+          }
+          this.tableData.push({key: "Metrics", value: values});
         }
-        this.tableData.push({key: "Metrics", value: values});
 
         values = [];
 

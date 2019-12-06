@@ -44,11 +44,13 @@ export class DescriptorsEDetailsComponent implements OnInit {
         this.tableData.push({key: "TC Descriptor Ids", value: expDescriptorInfo['testCaseDescriptorIds']});
         var values = [];
 
-        var kpis = new Map(Object.entries(expDescriptorInfo['kpiThresholds']));
-        kpis.forEach((value: string, key: string) => {
-          values.push(key + ": " + value)
-        });
-        this.tableData.push({key: "KPIs Thresholds", value: values});
+        if (expDescriptorInfo['kpiThresholds']) {
+          var kpis = new Map(Object.entries(expDescriptorInfo['kpiThresholds']));
+          kpis.forEach((value: string, key: string) => {
+            values.push(key + ": " + value)
+          });
+          this.tableData.push({key: "KPIs Thresholds", value: values});
+        }
         
         this.dataSource = new DescriptorsEDetailsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
