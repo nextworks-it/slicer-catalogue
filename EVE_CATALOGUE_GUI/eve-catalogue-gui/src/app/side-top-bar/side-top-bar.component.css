@@ -1,5 +1,7 @@
 .sidenav-container {
   height: 100%;
+  /*background-color: #212121;*/
+  /*background-image: linear-gradient(grey, #212121);*/
 }
 
 .sidenav {
@@ -13,7 +15,7 @@
 .mat-toolbar.mat-primary {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 50;
 }
 
 .fill-remaining-space {

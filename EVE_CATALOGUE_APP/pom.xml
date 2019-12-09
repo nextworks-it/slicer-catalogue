@@ -66,6 +66,12 @@
         
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>TranslatorService</artifactId>
+            <version>0.0.2-EVE-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
             <artifactId>EveBlueprintsCatalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>

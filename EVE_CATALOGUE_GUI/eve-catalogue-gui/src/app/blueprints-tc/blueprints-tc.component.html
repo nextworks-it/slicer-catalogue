@@ -1,9 +1,10 @@
-<mat-toolbar>
-    <h1 class="mat-h1">Test Case Blueprints</h1>
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
+    <span style="margin-left: 15px;"><h1 class="mat-h1">Test Case Blueprints</h1></span>
 </mat-toolbar>
-<mat-tab-group>
+<mat-tab-group [selectedIndex]="2">
     <mat-tab label="View">
-        <mat-card>
+        <div style="background: transparent; padding: 30px;">
             <table mat-table class="full-width-table" matSort aria-label="Elements">
                 <!-- Id Column -->
                 <ng-container matColumnDef="id">
@@ -30,10 +31,10 @@
                 </ng-container>
 
                 <!-- Script Column -->
-                <ng-container matColumnDef="script">
+                <!--ng-container matColumnDef="script">
                     <th mat-header-cell *matHeaderCellDef>Script</th>
                     <td mat-cell *matCellDef="let row">{{row.testCaseBlueprint.script}}</td>
-                </ng-container>
+                </ng-container-->
 
                 <!-- User Parameters Column -->
                 <ng-container matColumnDef="user_params">
@@ -64,7 +65,7 @@
                 <td mat-cell *matCellDef="let row">
                     <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
                     <!-- mat-button-toggle value="view_blueprint" (click)="viewTcBlueprintGraph(row.testCaseBlueprintId)"><mat-icon color="primary">remove_red_eye</mat-icon></mat-button-toggle -->
-                    <mat-button-toggle value="delete" (click)="deleteTcBlueprint(row.testCaseBlueprintId)"><mat-icon color="primary">delete_forever</mat-icon></mat-button-toggle>
+                    <mat-button-toggle value="delete" (click)="deleteTcBlueprint(row.testCaseBlueprintId)"><mat-icon>delete_forever</mat-icon></mat-button-toggle>
                     </mat-button-toggle-group>
                 </td>
                 </ng-container>
@@ -77,12 +78,14 @@
                 [length]="dataSource?.data.length"
                 [pageIndex]="0"
                 [pageSize]="50"
-                [pageSizeOptions]="[25, 50, 100, 250]">
+                [pageSizeOptions]="[25, 50, 100, 250]"
+                style="background: transparent;">
             </mat-paginator>
-        </mat-card>
+        </div>
     </mat-tab>
     <mat-tab label="Onboard">
-        <mat-card>
+        <div style="background: transparent; padding: 30px;">
+            <div class="rules-div">
             <form [formGroup]="tcFormGroup" class="rules-form">
                 <h3>Create Test Case</h3>
                 <table class="rules-full-width">
@@ -111,12 +114,12 @@
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Name" required formControlName="userParamName">
+                                        <input matInput placeholder="Name" formControlName="userParamName">
                                     </mat-form-field>
                                 </td>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Value" required formControlName="userParamValue">
+                                        <input matInput placeholder="Value" formControlName="userParamValue">
                                     </mat-form-field>
                                 </td>
                             </div>
@@ -142,12 +145,12 @@
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Name" required formControlName="infraParamName">
+                                        <input matInput placeholder="Name" formControlName="infraParamName">
                                     </mat-form-field>
                                 </td>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                        <input matInput placeholder="Value" required formControlName="infraParamValue">
+                                        <input matInput placeholder="Value" formControlName="infraParamValue">
                                     </mat-form-field>
                                 </td>
                             </div>
@@ -168,10 +171,11 @@
                     </tr>
                 </table>
                 <div class="margin-top">
-                    <button mat-raised-button color="warn" class="margin-all" (click)="createOnBoardTcBlueprintRequest();">Submit</button>
+                    <button mat-raised-button color="accent" class="margin-all" (click)="createOnBoardTcBlueprintRequest();">Submit</button>
                 </div>
             </form>
-        </mat-card>
+            </div>
+        </div>
     </mat-tab>
 </mat-tab-group>
   

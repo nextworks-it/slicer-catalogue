@@ -25,7 +25,7 @@ export class BlueprintsEcService {
   getCtxBlueprints(): Observable<CtxBlueprintInfo[]> {
     return this.http.get<CtxBlueprintInfo[]>(this.baseUrl + this.ctxBlueprintUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ctxBlueprints', 'SUCCESS')),
+        tap(_ => console.log('fetched ctxBlueprints - SUCCESS')),
         catchError(this.handleError<CtxBlueprintInfo[]>('getCtxBlueprints', []))
       );
   }
@@ -33,7 +33,7 @@ export class BlueprintsEcService {
   getCtxBlueprint(ctxBlueprintId: string): Observable<CtxBlueprintInfo> {
     return this.http.get<CtxBlueprintInfo>(this.baseUrl + this.ctxBlueprintUrl + "/" + ctxBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ctxBlueprint', 'SUCCESS')),
+        tap(_ => console.log('fetched ctxBlueprint - SUCCESS')),
         catchError(this.handleError<CtxBlueprintInfo>('getCtxBlueprint'))
       );
   }
@@ -78,6 +78,7 @@ export class BlueprintsEcService {
   private log(message: string, action: string) {
     this.messageService.add(`BluepritsECService: ${message}`);
     this.openSnackBar(`BluepritsECService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

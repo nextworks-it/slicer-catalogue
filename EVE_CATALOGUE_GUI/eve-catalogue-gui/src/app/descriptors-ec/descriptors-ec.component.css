@@ -1,5 +1,9 @@
 .full-width-table {
-  width: 100%;
+  margin-top: 2%;
+  width: 80%;
+  height: 80%;
+  margin-left:10%; 
+  margin-right:10%;
 }
 
 .margin-all {
@@ -7,6 +11,11 @@
 }
 
 a {
-  text-decoration: blue;
-  text-decoration-line: underline;
+  font-weight: bold;
+  color: #f0a30a;
+}
+
+a:hover {
+  color: white;
+  cursor: pointer;
 }

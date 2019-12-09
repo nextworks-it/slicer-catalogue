@@ -2,10 +2,12 @@ import {Component, OnChanges, Renderer, ElementRef, Input, Output, EventEmitter}
 
 declare var cytoscape: any;
 
+//#424242; 
 @Component({
   selector: 'app-blueprints-graph',
   template: '<div id="cy"></div>',
     styles: [`#cy {
+        background: #fff;
         height: 100%;
         width: 100%;
         position: relative;

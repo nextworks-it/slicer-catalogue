@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 
 import { NgModule } from '@angular/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +30,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CytoscapeModule } from 'ngx-cytoscape';
@@ -59,6 +63,17 @@ import { DescriptorsEStepperComponent } from './descriptors-e-stepper/descriptor
 import { DescriptorsTcComponent } from './descriptors-tc/descriptors-tc.component';
 import { DescriptorsVsDetailsComponent } from './descriptors-vs-details/descriptors-vs-details.component';
 import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptors-e-details.component';
+import { PortalHomeComponent } from './portal-home/portal-home.component';
+import { CatalogueSubToolbarComponent } from './catalogue-sub-toolbar/catalogue-sub-toolbar.component';
+import { DesignSwitchComponent } from './design-switch/design-switch.component';
+import { ExperimentSwitchComponent } from './experiment-switch/experiment-switch.component';
+import { DescriptorsESchedulerComponent } from './descriptors-e-scheduler/descriptors-e-scheduler.component';
+import { ExperimentsComponent } from './experiments/experiments.component';
+import { ExperimentsDetailsComponent } from './experiments-details/experiments-details.component';
+import { SitesSwitchComponent } from './sites-switch/sites-switch.component';
+import { ExperimentSubToolbarComponent } from './experiment-sub-toolbar/experiment-sub-toolbar.component';
+import { ExperimentsMgmtDialogComponent } from './experiments-mgmt-dialog/experiments-mgmt-dialog.component';
+import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/experiments-execute-dialog.component';
 
 @NgModule({
   declarations: [
@@ -87,11 +102,22 @@ import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptor
     DescriptorsEStepperComponent,
     DescriptorsTcComponent,
     DescriptorsVsDetailsComponent,
-    DescriptorsEDetailsComponent
+    DescriptorsEDetailsComponent,
+    PortalHomeComponent,
+    CatalogueSubToolbarComponent,
+    DesignSwitchComponent,
+    ExperimentSwitchComponent,
+    DescriptorsESchedulerComponent,
+    ExperimentsComponent,
+    ExperimentsDetailsComponent,
+    SitesSwitchComponent,
+    ExperimentSubToolbarComponent,
+    ExperimentsMgmtDialogComponent,
+    ExperimentsExecuteDialogComponent
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(AppRoutes),
+    RouterModule.forRoot(AppRoutes, { useHash: true }),
     BrowserAnimationsModule,
     LayoutModule,
     FlexLayoutModule,
@@ -118,12 +144,20 @@ import { DescriptorsEDetailsComponent } from './descriptors-e-details/descriptor
     MatSnackBarModule,
     MatExpansionModule,
     MatDialogModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRippleModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     HttpClientModule,
     CytoscapeModule
   ],
-  providers: [BlueprintsVsService],
+  entryComponents: [
+    ExperimentsMgmtDialogComponent,
+    ExperimentsExecuteDialogComponent
+  ],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -26,7 +26,7 @@ export class DescriptorsEcService {
   getCtxDescriptors(): Observable<EcDescriptorInfo[]> {
     return this.http.get<EcDescriptorInfo[]>(this.baseUrl + this.ctxDescriptorInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ecDescriptorInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched ecDescriptorInfos - SUCCESS')),
         catchError(this.handleError<EcDescriptorInfo[]>('getCtxDescriptors', []))
       );
   }
@@ -34,7 +34,7 @@ export class DescriptorsEcService {
   getCtxDescriptor(ecDescriptorId: string): Observable<EcDescriptorInfo> {
     return this.http.get<EcDescriptorInfo>(this.baseUrl + this.ctxDescriptorInfoUrl + "/" + ecDescriptorId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched ecDescriptorInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched ecDescriptorInfo - SUCCESS')),
         catchError(this.handleError<EcDescriptorInfo>('getCtxBlueprint'))
       );
   }
@@ -63,6 +63,7 @@ export class DescriptorsEcService {
   private log(message: string, action: string) {
     this.messageService.add(`DescriptorsEcService: ${message}`);
     this.openSnackBar(`DescriptorsEcService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

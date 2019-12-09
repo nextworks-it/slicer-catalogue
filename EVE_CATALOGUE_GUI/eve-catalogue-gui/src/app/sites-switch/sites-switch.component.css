@@ -1,0 +1,51 @@
+.grid-container {
+    margin-top: 2%;
+    width:50%;
+    height: 80%;
+    margin-left:25%; 
+    margin-right:25%;
+  }
+  
+.fill-remaining-space {
+    /* This fills the remaining space, by using flexbox. 
+        Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+}
+
+.grid-card {
+    width: 85%; 
+    height: 45%;
+    color: white;
+    font-weight: bold;
+    background-color: #0277BD;
+}
+
+.icon-display {
+    color: white;
+    transform: scale(2);
+}
+
+.header-image {
+    background-image: url('../../assets/images/kd-ic-catalogue-white.png');
+    background-size: cover;
+}
+
+.card-actions {
+    /*color: #60a917;*/
+    color: white;
+    font-size: large;
+    float: right;
+}
+
+.card-title {
+    font-size: larger;
+    float: right;
+    text-align: center;
+}
+
+.card-image {
+    height: auto; 
+    width: auto; 
+    max-width: 50px; 
+    max-height: 50px;
+}

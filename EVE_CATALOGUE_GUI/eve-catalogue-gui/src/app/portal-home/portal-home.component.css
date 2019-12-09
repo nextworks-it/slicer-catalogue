@@ -1,0 +1,27 @@
+.fill-remaining-space {
+    /* This fills the remaining space, by using flexbox. 
+        Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+}
+
+.title a {
+    font-size: 30px;
+    color: white;
+    text-decoration: none;
+}
+
+.grid-table {
+    margin-top: 2%;
+    width:50%;
+    height: 80%;
+    margin-left:25%; 
+    margin-right:25%;
+}
+
+.grid-button {
+    width: 90%; 
+    height: 90%;
+    color: black;
+    font-size: larger;
+    font-weight: bold;
+}

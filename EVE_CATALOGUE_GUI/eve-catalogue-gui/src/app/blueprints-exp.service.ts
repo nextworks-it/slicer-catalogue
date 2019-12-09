@@ -25,7 +25,7 @@ export class BlueprintsExpService {
   getExpBlueprints(): Observable<ExpBlueprintInfo[]> {
     return this.http.get<ExpBlueprintInfo[]>(this.baseUrl + this.expBlueprintInfoUrl, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched expBlueprintInfos', 'SUCCESS')),
+        tap(_ => console.log('fetched expBlueprintInfos - SUCCESS')),
         catchError(this.handleError<ExpBlueprintInfo[]>('getExpBlueprints', []))
       );
   }
@@ -33,7 +33,7 @@ export class BlueprintsExpService {
   getExpBlueprint(expBlueprintId: string): Observable<ExpBlueprintInfo> {
     return this.http.get<ExpBlueprintInfo>(this.baseUrl + this.expBlueprintInfoUrl + "/" + expBlueprintId, this.httpOptions)
       .pipe(
-        tap(_ => this.log('fetched expBlueprintInfo', 'SUCCESS')),
+        tap(_ => console.log('fetched expBlueprintInfo - SUCCESS')),
         catchError(this.handleError<ExpBlueprintInfo>('getExpBlueprint'))
       );
   }
@@ -78,6 +78,7 @@ export class BlueprintsExpService {
   private log(message: string, action: string) {
     this.messageService.add(`BluepritsExpService: ${message}`);
     this.openSnackBar(`BluepritsExpService: ${message}`, action);
+    window.location.reload();
   }
 
   openSnackBar(message: string, action: string) {

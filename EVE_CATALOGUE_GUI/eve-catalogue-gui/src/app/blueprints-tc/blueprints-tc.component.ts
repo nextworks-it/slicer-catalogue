@@ -27,7 +27,7 @@ export class BlueprintsTcComponent implements OnInit {
   tcFormGroup: FormGroup;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name', 'version', 'description', 'script', 'user_params', 'infra_params', 'tcds', 'buttons'];
+  displayedColumns = ['id', 'name', 'version', 'description', /*'script',*/ 'user_params', 'infra_params', 'tcds', 'buttons'];
 
   constructor(private _formBuilder: FormBuilder, 
     private blueprintsTcService: BlueprintsTcService,
@@ -139,7 +139,9 @@ export class BlueprintsTcComponent implements OnInit {
 
     for (var j = 0; j < user_controls.length; j++) {
       //console.log(user_controls[j].value);
-      userParamsMap[(user_controls[j].value)['userParamName']] = (user_controls[j].value)['userParamValue'];
+      if ((user_controls[j].value)['userParamName'] != "") {
+        userParamsMap[(user_controls[j].value)['userParamName']] = (user_controls[j].value)['userParamValue'];
+      }
     }
 
     testCaseBlueprint['userParameters'] = userParamsMap;
@@ -150,7 +152,9 @@ export class BlueprintsTcComponent implements OnInit {
 
     for (var j = 0; j < infra_controls.length; j++) {
       //console.log(infra_controls[j].value);
-      infraParamsMap[(infra_controls[j].value)['infraParamName']] = (infra_controls[j].value)['infraParamValue'];
+      if ((infra_controls[j].value)['infraParamName'] != "") {
+        infraParamsMap[(infra_controls[j].value)['infraParamName']] = (infra_controls[j].value)['infraParamValue'];
+      }
     }
 
     testCaseBlueprint['infrastructureParameters'] = infraParamsMap;

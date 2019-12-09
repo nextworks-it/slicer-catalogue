@@ -1,6 +1,8 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer mode="side" opened="true">
-    <mat-toolbar><a href="https://www.5g-eve.eu/" target="_blank"><img src="assets/images/logo_5geve_120.png"></a></mat-toolbar>
+  <mat-sidenav #drawer mode="side" opened="false">
+    <mat-toolbar><span class="title">Catalogue</span>
+      <!--a href="https://www.5g-eve.eu/" target="_blank"><img src="assets/images/logo_5geve_120.png"></a-->
+    </mat-toolbar>
     <mat-nav-list>
       <mat-list-item>
         <div mat-line>Home</div>
@@ -47,8 +49,9 @@
   </mat-sidenav>
   <mat-sidenav-content class="sidenav-container">
     <mat-toolbar color="primary">
-      <button mat-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button>
-      <span class="title"><a routerLink="/" ><!-- img src="assets/images/logo_5geve_100.png" -->5G EVE Portal Catalogue</a></span>
+      <!--button mat-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button-->
+      <a href="https://www.5g-eve.eu/" target="_blank"><img src="assets/images/logo_5geve_white_120.png"></a>
+      <span class="title" style="margin-left: 10px;"><a routerLink="/" >5G EVE Portal</a></span>
 
       <!-- This fills the remaining space of the current row -->
       <span class="fill-remaining-space"></span>
@@ -56,7 +59,6 @@
       <span><a href="http://www.nextworks.it/" target="_blank"><img src="assets/images/logo_nextworks_150.png"></a></span>
     </mat-toolbar>
     <!-- Add Content Here -->
-
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

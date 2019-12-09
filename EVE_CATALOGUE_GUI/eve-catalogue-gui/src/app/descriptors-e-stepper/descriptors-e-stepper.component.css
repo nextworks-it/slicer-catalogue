@@ -1,3 +1,11 @@
+.full-width-table {
+    margin-top: 2%;
+    width: 70%;
+    height: 80%;
+    margin-left:15%; 
+    margin-right:15%;
+}
+
 .rules-form {
     min-width: 150px;
     max-width: 600px;

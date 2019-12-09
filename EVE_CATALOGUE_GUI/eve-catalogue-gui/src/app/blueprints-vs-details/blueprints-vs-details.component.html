@@ -1,8 +1,9 @@
-<mat-toolbar>
-    <h1 class="mat-h1">Vertical Service Blueprint Details</h1>
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
+    <span style="margin-left: 15px;"><h1 class="mat-h1">Vertical Service Blueprint Details</h1></span>
 </mat-toolbar>
 <div style="float: left; width: 48%; margin: 1%">
-    <mat-card>
+    <div style="background: transparent; padding: 30px">
         <table mat-table matSort aria-label="Elements" class="full-width-table" width="100%">
             <!-- KEY Column -->
             <ng-container matColumnDef="key">
@@ -24,14 +25,17 @@
             [length]="dataSource?.data.length"
             [pageIndex]="0"
             [pageSize]="50"
-            [pageSizeOptions]="[25, 50, 100, 250]">
+            [pageSizeOptions]="[25, 50, 100, 250]"
+            style="background: transparent;">
         </mat-paginator>
-    </mat-card>
+    </div>
 </div>
 <mat-divider [vertical]="true"></mat-divider>
 <div style="float: left; width: 48%; margin: 1%">
-    <app-blueprints-graph [elements]="vsbDetailservice.graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-graph>
-    <p><b>Selected Node: </b>{{node_name}}</p>
+    <div style="padding: 30px;">
+        <app-blueprints-graph [elements]="vsbDetailservice.graphData" [layout]="layout" (select)="nodeChange($event)"></app-blueprints-graph>
+        <div style="padding-top: 30px;"><p><b>Selected Node: </b>{{node_name}}</p></div>        
+    </div>
 </div>
 
 
