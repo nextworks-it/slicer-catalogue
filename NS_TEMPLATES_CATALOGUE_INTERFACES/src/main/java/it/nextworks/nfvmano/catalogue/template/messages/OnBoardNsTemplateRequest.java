@@ -29,13 +29,18 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
         this.nst = nst;
     }
 
-    public NST getNst() {
-        return nst;
-    }
 
     @Override
     public void isValid() throws MalformattedElementException {
         if (nst == null) throw new MalformattedElementException("Onboard NS Template request without NS Template");
         else nst.isValid();
     }
+    
+	public NST getNst() {
+		return nst;
+	}
+
+	public void setNst(NST nst) {
+		this.nst = nst;
+	}
 }

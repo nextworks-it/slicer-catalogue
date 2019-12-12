@@ -15,26 +15,31 @@
 
 package it.nextworks.nfvmano.catalogue.template.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class QueryNsTemplateResponse implements InterfaceMessage {
 
-    private List<NsTemplateInfo> nsTemplateInfo = new ArrayList<>();
+    private List<NsTemplateInfo> nsTemplateInfos = new ArrayList<>();
 
+    public QueryNsTemplateResponse(List<NsTemplateInfo> nsTemplateInfos) {
+    	if(nsTemplateInfos!=null) {
+    		this.nsTemplateInfos = nsTemplateInfos;
+    	}
+    }
     /**
      * @return the nsTemplateInfo
      */
-    public List<NsTemplateInfo> getNsTemplateInfo() {
-        return nsTemplateInfo;
+    public List<NsTemplateInfo> getNsTemplateInfos() {
+        return nsTemplateInfos;
     }
 
     @Override
     public void isValid() throws MalformattedElementException {
-
+    	for (NsTemplateInfo nstInfo : nsTemplateInfos) nstInfo.isValid();
     }
 }

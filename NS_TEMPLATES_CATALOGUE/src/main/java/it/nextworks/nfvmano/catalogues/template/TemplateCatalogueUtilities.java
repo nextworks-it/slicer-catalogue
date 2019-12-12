@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-package it.nextworks.nfvmano.catalogues.template;import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+package it.nextworks.nfvmano.catalogues.template;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 
 import java.util.HashMap;
 import java.util.Map;
