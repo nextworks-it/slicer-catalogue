@@ -11,6 +11,9 @@
         </button>
     </span>
     <span><button mat-button (click)="backClicked();"><mat-icon>arrow_back</mat-icon> Back </button></span>
+    <span class="fill-remaining-space"></span>
+    <span *ngIf="getRole().indexOf('DESIGNER') >= 0;"><img src="../../assets/images/kd-ic-sdk-green.png" class="logo"></span>
+    <span *ngIf="getRole().indexOf('EXPERIMENTER') >= 0;"><img src="../../assets/images/kd-ic-slicer-amber.png" class="logo"></span>
     <!--span>
         <button mat-button [matMenuTriggerFor]="nfv_menu">
             NFV <mat-icon>keyboard_arrow_down</mat-icon>

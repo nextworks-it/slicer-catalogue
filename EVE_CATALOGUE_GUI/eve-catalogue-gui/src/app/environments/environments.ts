@@ -6,7 +6,7 @@ export const environment = {
     production: false,
     portalBaseUrl: 'http://localhost:8082/portal/catalogue/',
     lcmBaseUrl: 'http://localhost:8083/portal/elm/',
-    apiUrl: 'http://localhost:4200',
+    apiUrl: 'http://localhost',
     backServerUrl: ''
 };
 ​
