@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 @EntityScan(basePackages = "it.nextworks.nfvmano")
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 
-public class SpringAppTest {
+public class SpringAppNSTemplateCatalogue {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringAppTest.class, args);
+		SpringApplication.run(SpringAppNSTemplateCatalogue.class, args);
 	}
 
 }
