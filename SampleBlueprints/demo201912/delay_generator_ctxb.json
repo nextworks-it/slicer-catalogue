@@ -1,0 +1,360 @@
+{
+    "ctxBlueprint": {
+        "version": "1.0",
+        "name": "Delay Generator",
+        "description": "NETEM Traffic Delay Generator Service",
+        "parameters": [
+            {
+                "parameterId": "incoming_traffic_load",
+                "parameterName": "Incoming Traffic Load",
+                "parameterType": "number",
+                "parameterDescription": "Maximum bw of the incoming traffic in Mbps",
+                "applicabilityField": "Traffic shaping"
+            }
+        ],
+        "configurableParameters": [
+            "delay_avg",
+            "delay_var",
+            "consecutive_delay_dependency_percentage"
+        ],
+        "atomicComponents": [
+            {
+                "componentId": "delay_generator",
+                "serversNumber": 1,
+                "endPointsIds": [
+                    "cp_dg_traffic_in",
+                    "cp_dg_traffic_out",
+                    "cp_dg_mgt"
+                ]
+            }
+        ],
+        "endPoints": [
+            {
+                "endPointId": "cp_dg_traffic_in",
+                "external": true,
+                "management": false,
+                "ranConnection": true
+            },
+            {
+                "endPointId": "cp_dg_traffic_out",
+                "external": true,
+                "management": false,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "cp_dg_mgt",
+                "external": true,
+                "management": true,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "sap_dg_in",
+                "external": true,
+                "management": false,
+                "ranConnection": true
+            },
+            {
+                "endPointId": "sap_dg_out",
+                "external": true,
+                "management": false,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "sap_dg_mgt",
+                "external": true,
+                "management": true,
+                "ranConnection": false
+            }
+        ],
+        "compatibleSites": [
+            "ITALY_TURIN"
+        ],
+        "connectivityServices": [
+            {
+                "endPointIds": [
+                    "sap_dg_mgt",
+                    "cp_dg_mgt"
+                ],
+                "external": true
+            },
+            {
+                "endPointIds": [
+                    "sap_dg_out",
+                    "cp_dg_traffic_out"
+                ],
+                "external": true
+            },
+            {
+                "endPointIds": [
+                    "sap_dg_in",
+                    "cp_dg_traffic_in"
+                ],
+                "external": true
+            }
+        ]
+    },
+    "nsds": [
+        {
+            "version": "1.0",
+            "nsdIdentifier": "Netem_Delay_Generator",
+            "designer": "NXW",
+            "nsdName": "NETEM Traffic Delay Generator Service",
+            "nsdInvariantId": "Netem_Delay_Generator_v1.0",
+            "vnfdId": [
+                "396d1b6b-331b-4dd7-b48e-376517d3654a"
+            ],
+            "sapd": [
+                {
+                    "cpdId": "sap_dg_mgt",
+                    "description": "SAP for management",
+                    "layerProtocol": "IPV4",
+                    "cpRole": "ROOT",
+                    "addressData": [
+                        {
+                            "addressType": "IP_ADDRESS",
+                            "iPAddressAssignment": false,
+                            "floatingIpActivated": false,
+                            "iPAddressType": "IPv4",
+                            "numberOfIpAddress": 1
+                        }
+                    ],
+                    "sapAddressAssignment": false,
+                    "nsVirtualLinkDescId": "vl_dg_mgt"
+                },
+                {
+                    "cpdId": "sap_dg_in",
+                    "description": "SAP for incoming traffic",
+                    "layerProtocol": "IPV4",
+                    "cpRole": "ROOT",
+                    "addressData": [
+                        {
+                            "addressType": "IP_ADDRESS",
+                            "iPAddressAssignment": false,
+                            "floatingIpActivated": true,
+                            "iPAddressType": "IPv4",
+                            "numberOfIpAddress": 1
+                        }
+                    ],
+                    "sapAddressAssignment": false,
+                    "nsVirtualLinkDescId": "vl_dg_in"
+                },
+                {
+                    "cpdId": "sap_dg_out",
+                    "description": "SAP for outgoing traffic",
+                    "layerProtocol": "IPV4",
+                    "cpRole": "ROOT",
+                    "addressData": [
+                        {
+                            "addressType": "IP_ADDRESS",
+                            "iPAddressAssignment": false,
+                            "floatingIpActivated": true,
+                            "iPAddressType": "IPv4",
+                            "numberOfIpAddress": 1
+                        }
+                    ],
+                    "sapAddressAssignment": false,
+                    "nsVirtualLinkDescId": "vl_dg_out"
+                }
+            ],
+            "virtualLinkDesc": [
+                {
+                    "virtualLinkDescId": "vl_dg_mgt",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_dg_mgt",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Management network"
+                },
+                {
+                    "virtualLinkDescId": "vl_dg_in",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_dg_in",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Network to receive incoming traffic."
+                },
+                {
+                    "virtualLinkDescId": "vl_dg_out",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_dg_out",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Network to send outgoing delayed traffic."
+                }
+            ],
+            "nsDf": [
+                {
+                    "nsDfId": "ns_Netem_Delay_Generator_df",
+                    "flavourKey": "ns_Netem_Delay_Generator_df_fk",
+                    "vnfProfile": [
+                        {
+                            "vnfProfileId": "vnfp_netem",
+                            "vnfdId": "396d1b6b-331b-4dd7-b48e-376517d3654a",
+                            "flavourId": "vnf_df_netem",
+                            "instantiationLevel": "vnf_il_netem",
+                            "minNumberOfInstances": 1,
+                            "maxNumberOfInstances": 1,
+                            "nsVirtualLinkConnectivity": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_out",
+                                    "cpdId": [
+                                        "cp_dg_traffic_out"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_mgt",
+                                    "cpdId": [
+                                        "cp_dg_mgt"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_in",
+                                    "cpdId": [
+                                        "cp_dg_traffic_in"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "virtualLinkProfile": [
+                        {
+                            "virtualLinkProfileId": "vlp_vl_dg_out",
+                            "virtualLinkDescId": "vl_dg_out",
+                            "flavourId": "df_vl_dg_out",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        },
+                        {
+                            "virtualLinkProfileId": "vlp_vl_dg_mgt",
+                            "virtualLinkDescId": "vl_dg_mgt",
+                            "flavourId": "df_vl_dg_mgt",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        },
+                        {
+                            "virtualLinkProfileId": "vlp_vl_dg_in",
+                            "virtualLinkDescId": "vl_dg_in",
+                            "flavourId": "df_vl_dg_in",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        }
+                    ],
+                    "nsInstantiationLevel": [
+                        {
+                            "nsLevelId": "ns_Netem_Delay_Generator_il",
+                            "description": "Default instantiation level for the network delay generator",
+                            "vnfToLevelMapping": [
+                                {
+                                    "vnfProfileId": "vnfp_netem",
+                                    "numberOfInstances": 1
+                                }
+                            ],
+                            "virtualLinkToLevelMapping": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_out",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_in",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_dg_mgt",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "defaultNsInstantiationLevelId": "ns_Netem_Delay_Generator_il",
+                    "dependencies": []
+                }
+            ],
+            "security": {
+                "signature": "NSD_SIGNATURE",
+                "algorithm": "NSD_ALGORITHM",
+                "certificate": "NSD_CERTIFICATE"
+            }
+        }
+    ],
+    "translationRules": [
+        {
+            "nsdId": "Netem_Delay_Generator",
+            "nsdVersion": "1.0",
+            "nsFlavourId": "ns_Netem_Delay_Generator_df",
+            "nsInstantiationLevelId": "ns_Netem_Delay_Generator_il",
+            "input": [
+                {
+                    "parameterId": "incoming_traffic_load",
+                    "minValue": "1",
+                    "maxValue": "1000"
+                }
+            ]
+        }
+    ]
+}
