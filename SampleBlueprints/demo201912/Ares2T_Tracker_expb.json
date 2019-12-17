@@ -356,7 +356,11 @@
                                     }
                                 },
                                 {
-                                    "virtualLinkProfileId": "vlp_vl_tracking_exp_data"
+                                    "virtualLinkProfileId": "vlp_vl_tracking_exp_data",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
                                 }
                             ]
                         },
