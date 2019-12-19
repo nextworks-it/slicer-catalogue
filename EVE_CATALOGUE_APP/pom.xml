@@ -63,6 +63,12 @@
             <artifactId>VsBlueprintsCatalogue</artifactId>
             <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>NsTemplatesCatalogue</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
         
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
