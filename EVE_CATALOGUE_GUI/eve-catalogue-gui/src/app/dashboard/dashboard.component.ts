@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -26,6 +27,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(private breakpointObserver: BreakpointObserver,
     iconRegistry: MatIconRegistry, sanitizer: DomSanitizer,
+    private router: Router,
     private blueprintsEcService: BlueprintsEcService,
     private blueprintsExpService: BlueprintsExpService,
     private bluepritnsTcService: BlueprintsTcService,
@@ -60,6 +62,7 @@ export class DashboardComponent implements OnInit {
     getExpBlueprints() {
       this.blueprintsExpService.getExpBlueprints().subscribe(expBlueprints => {
         this.cards.push({ title: 'Experiments Blueprints', subtitle: '', counter: expBlueprints.length, cols: 1, rows: 1, path: '/blueprints_exp' });
+        this.cards.push({ title: 'Virtual Network Functions', subtitle: '', counter: '', cols: 1, rows: 1, path: '' });
       });
     }
 
@@ -97,5 +100,13 @@ export class DashboardComponent implements OnInit {
       this.descriptorsVsService.getVsDescriptors().subscribe(vsDescriptors => {
         this.cards.push({ title: 'Vertical Service Descriptors', subtitle: '', counter: vsDescriptors.length, cols: 1, rows: 1, path: '/descriptors_vs' })
       });
+    }
+
+    goTo(path: string) {
+      if (path.indexOf('http') >= 0) {
+        window.open(path, '_blank');
+      } else {
+        this.router.navigate([path]);
+      }
     }
 }
