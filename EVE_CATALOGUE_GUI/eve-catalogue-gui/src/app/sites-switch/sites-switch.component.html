@@ -1,4 +1,4 @@
-<!--app-catalogue-sub-toolbar></app-catalogue-sub-toolbar-->
+<app-experiment-sub-toolbar></app-experiment-sub-toolbar>
 <div class="grid-container">
     <mat-grid-list cols="2" rowHeight="2:1">
         <mat-grid-tile *ngFor="let card of cards" [colspan]="card.cols" [rowspan]="card.rows">
@@ -12,7 +12,7 @@
                 <!--img mat-card-image src="../../assets/images/kd-ic-catalogue-white.png"-->
                 <mat-card-content >
                     <div style="float: left;"><img src={{card.icon}} class="card-image"></div>
-                    <div class="card-title"><button class="card-actions" mat-button routerLink={{card.path}}>{{card.title}}</button></div>      
+                    <div class="card-title"><button class="card-actions" mat-button (click)="goTo(card.path);">{{card.title}}</button></div>      
                 </mat-card-content>
                 <mat-card-actions>
                 </mat-card-actions>
