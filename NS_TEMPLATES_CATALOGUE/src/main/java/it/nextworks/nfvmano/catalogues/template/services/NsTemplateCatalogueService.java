@@ -192,7 +192,8 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 			throw new AlreadyExistingEntityException(logErrorStr);
 		}
     	
-    	NST target = new NST(null, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(),  nst.getNstServiceProfile());
+    	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+    	
     	String nstTargetName=nst.getNstName();
     	target.setNstName(nstTargetName);
     	
