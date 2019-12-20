@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class SitesSwitchComponent implements OnInit {
 
   cards = [
-    { title: 'View Tickets', subtitle: '', cols: 1, rows: 1, path: '/tickets', icon: '../../assets/images/format_list_bulleted_white.png', btn: '' },
+    { title: 'View Tickets', subtitle: '', cols: 1, rows: 1, path: '', icon: '../../assets/images/format_list_bulleted_white.png', btn: '' },
     { title: 'Manage Experiments', subtitle: '', cols: 1, rows: 1, path: '/experiments', icon: '../../assets/images/build_white.png', btn: '' } 
   ];
 
@@ -19,10 +19,14 @@ export class SitesSwitchComponent implements OnInit {
   }
 
   goTo(path: string) {
-    //console.log(expDescriptorId);
+    //console.log(path);
     localStorage.setItem('role', 'SITE_MANAGER');
 
-    this.router.navigate([path]);
+    if (path.indexOf('http') >= 0) {
+      window.open(path, '_blank');
+    } else {
+      this.router.navigate([path]);
+    }
   }
 
 }

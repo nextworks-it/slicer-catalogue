@@ -1,6 +1,6 @@
 <mat-toolbar style="background-color: transparent;">
     <span><button mat-button (click)="goTo();"><mat-icon>home</mat-icon> Home </button></span>
-    <span>
+    <span *ngIf="getRole().indexOf('DESIGNER') >= 0;">
         <button mat-button [matMenuTriggerFor]="blueprints_menu">
             Blueprints <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
