@@ -22,7 +22,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.catalogue.template.interfaces.NsTemplateCatalogueInterface;
@@ -38,6 +37,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedExcep
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
+import org.springframework.stereotype.Service;
 
 @Service
 public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface {
