@@ -62,9 +62,9 @@ public class BasicTranslator extends AbstractTranslator {
 			String vsdId = entry.getKey();
 			VsDescriptor vsd = entry.getValue();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
 			nfvNsInfo.put(vsdId, info);
-			log.debug("Added NS instantiation info for VSD " + vsdId + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
+			log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
 					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
 		}
 		return nfvNsInfo;
@@ -79,7 +79,7 @@ public class BasicTranslator extends AbstractTranslator {
 		if (expdOpt.isPresent()) {
 			ExpDescriptor expd = expdOpt.get();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(expd);
-			return new NfvNsInstantiationInfo(rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			return new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
 		} else {
 			log.error("Experiment descriptor " + expdId + " not found in DB.");
 			throw new NotExistingEntityException("Experiment descriptor " + expdId + " not found in DB.");

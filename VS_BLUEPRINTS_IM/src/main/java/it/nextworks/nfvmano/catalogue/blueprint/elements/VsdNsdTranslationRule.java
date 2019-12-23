@@ -52,6 +52,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private String blueprintId;
 	
+	private String nstId;
 	private String nsdId; 
 	private String nsdVersion;
 	private String nsFlavourId;
@@ -78,6 +79,31 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		this.nsdVersion = nsdVersion;
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
+	}
+	
+	/**
+	 * @param input
+	 * @param nstId
+	 * @param nsdId
+	 * @param nsdVersion
+	 * @param nsFlavourId
+	 * @param nsInstantiationLevelId
+	 */
+	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nstId, String nsdId, String nsdVersion,
+                                 String nsFlavourId, String nsInstantiationLevelId) {
+		if (input!= null) this.input = input;
+		this.nstId = nstId;
+		this.nsdId = nsdId;
+		this.nsdVersion = nsdVersion;
+		this.nsFlavourId = nsFlavourId;
+		this.nsInstantiationLevelId = nsInstantiationLevelId;
+	}
+
+
+	
+
+	public String getNstId() {
+		return nstId;
 	}
 
 
@@ -153,6 +179,12 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		this.blueprintId = blueprintId;
 	}
 
+
+	@JsonIgnore
+	public boolean matchesNstId(String id) {
+		if (nstId.equals(id)) return true;
+		else return false;
+	}
 
 
 	@JsonIgnore
