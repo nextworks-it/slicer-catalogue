@@ -80,9 +80,7 @@ public class NsTemplateCatalogueServiceTest {
         nstServiceProfile.setuRLLCPerfReq(urLLCPerfReq);
 
         ArrayList<String> nsstIDs=createArrayListWithRandomValuesIn(3, "nsstID");
-        nst = new NST("nstId", "nstVersion", "nstProvider", nsstIDs, nstServiceProfile);
-        nst.setNsdId("nsdID");
-        nst.setNstName("nstName");
+        nst = new NST("nstId", "nstName","nstVersion", "nstProvider", nsstIDs, "nsdID", "nsdVersion",nstServiceProfile);
     }
 
     /*Given two objects of the same class expressed in classObjects,
