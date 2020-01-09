@@ -86,8 +86,6 @@ public class VsDescriptorCatalogueRestController {
 	public VsDescriptorCatalogueRestController() { }
 
 
-	//Commented this since the VSDs of the Experiments are created from the ExpDs
-	/*
 	@ApiOperation(value = "Onboard a new Vertical Service Descriptor")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "The ID of the created Vertical Service Descriptor.", response = String.class),
@@ -120,7 +118,7 @@ public class VsDescriptorCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	*/
+	
 
 	@ApiOperation(value = "Query ALL the Vertical Service Descriptor")
 	@ApiResponses(value = {
@@ -187,8 +185,6 @@ public class VsDescriptorCatalogueRestController {
 	}
 	
 
-	//Commented this since the VSDs of the Experiments are created from the ExpDs
-	/*
 	@ApiOperation(value = "Delete a Vertical Service Descriptor with the given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
@@ -215,7 +211,7 @@ public class VsDescriptorCatalogueRestController {
 		}
 	}
 
-	 */
+	
 
 	
 }
