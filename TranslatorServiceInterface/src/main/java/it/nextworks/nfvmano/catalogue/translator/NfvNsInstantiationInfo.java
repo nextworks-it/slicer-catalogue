@@ -68,6 +68,7 @@ public class NfvNsInstantiationInfo {
 			String deploymentFlavourId,
 			String instantiationLevelId,
 			List<String> domainIds) {
+		this.nstId=nstId;
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
