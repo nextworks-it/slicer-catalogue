@@ -8,8 +8,8 @@
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>NS_TEMPLATES_CATALOGUE_INTEFACES</name>
-    <description>Blueprints interfaces for the associated services</description>
+    <name>NS_TEMPLATES_CATALOGUE_INTERFACES</name>
+    <description>Ns template interfaces for the associated services</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -32,7 +32,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 
     @Override
     public void isValid() throws MalformattedElementException {
-        if (nst == null) throw new MalformattedElementException("Onboard NS Template request without NS Template");
+        if (nst == null) throw new MalformattedElementException("On board NS Template request without NS Template");
         else nst.isValid();
     }
     
