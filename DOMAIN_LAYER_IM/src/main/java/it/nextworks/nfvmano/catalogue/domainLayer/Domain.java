@@ -2,22 +2,14 @@ package it.nextworks.nfvmano.catalogue.domainLayer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.*;
-
-/**
-This class represents a domain, i.e. an entity that owns other domain layers.
- It is characterized by:
-
- ..
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
- Moreover, a domain can be connected (through a previous agreeement) with other domains, via some specific domain layers.
- */
 @Entity
 public class Domain {
 
@@ -42,7 +34,7 @@ public class Domain {
     private List <DomainLayer> ownedLayers;
 
     //Key: id of domain having an agreement with, value: external domain layers id list the agreement is established with.
-    //E.g. If this domain has an agreement with an another domain the ID is C, the key of the map is C and the list will be the C's domain layer to interact to
+    //E.g. If this domain has an agreement with an another domain which ID is C, the key of the map is C and the list will be the C's domain layer to interact to
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})

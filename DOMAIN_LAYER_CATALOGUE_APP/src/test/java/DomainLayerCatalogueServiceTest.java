@@ -104,26 +104,6 @@ public class DomainLayerCatalogueServiceTest {
     }
 
 
-    private Long onboardCustomNspDomainLayer(String customName){
-        /*NspDomainLayer nspDomainLayer = new NspDomainLayer(
-                "nspDomainLayer (no nfvo)"+customName,
-                "nspDomainLayer (no nfvo) desc",
-                "nspDomainLayer (no nfvo) owner",
-                "nspDomainLayer (no nfvo) admin");
-        nspDomainLayer.setCSP(false);
-        try {
-            Long verticalDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(nspDomainLayer);
-            assertTrue(verticalDomainLayerId!=null);
-            return verticalDomainLayerId;
-        } catch (MalformattedElementException e) {
-            e.printStackTrace();
-        } catch (AlreadyExistingEntityException e) {
-            e.printStackTrace();
-        }*/
-        return null;
-
-    }
-
     private void onBoardDomainTest(Domain domain){
         try {
             Long domainId= domainCatalogueService.onBoardDomain(domain);
@@ -199,6 +179,4 @@ public class DomainLayerCatalogueServiceTest {
         assertTrue(notFound);
         assertTrue(domainCatalogueService.getAllDomains().size()==1);
     }
-
 }
-
