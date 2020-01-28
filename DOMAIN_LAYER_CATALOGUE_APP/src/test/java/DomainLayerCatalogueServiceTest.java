@@ -1,6 +1,6 @@
 import it.nextworks.nfvmano.catalogue.SpringAppDomainLayerCatalogue;
-import it.nextworks.nfvmano.catalogue.template.elements.*;
-import it.nextworks.nfvmano.catalogues.template.services.DomainLayerCatalogueService;
+import it.nextworks.nfvmano.catalogue.domainLayer.*;
+import it.nextworks.nfvmano.catalogues.domainLayer.services.DomainCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
@@ -16,8 +16,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -29,7 +28,7 @@ public class DomainLayerCatalogueServiceTest {
     private static final Logger log = LoggerFactory.getLogger(DomainLayerCatalogueServiceTest.class);
 
     @Autowired
-    private DomainLayerCatalogueService domainLayerCatalogueService;
+    private DomainCatalogueService domainCatalogueService;
 
 
     public DomainLayerCatalogueServiceTest() {
@@ -63,7 +62,7 @@ public class DomainLayerCatalogueServiceTest {
                     Object objReturned2 =pd.getReadMethod().invoke(obj2);
                     if(objReturned1!=null && objReturned2!=null) {
                         areEqual=objReturned1.equals(objReturned2);
-                        if(objReturned1 instanceof List<?> && ((List) objReturned1).size()>0 && ((List) objReturned1).get(0) instanceof String) {
+                        if(objReturned1 instanceof List<?> && ((List) objReturned1).size()>0 && ((List) objReturned1).size()>0 && ((List) objReturned1).get(0) instanceof String) {
                             String str1=String.valueOf(objReturned1);
                             String str2=String.valueOf(objReturned2);
                             areEqual=str1.equals(str2);
@@ -106,7 +105,7 @@ public class DomainLayerCatalogueServiceTest {
 
 
     private Long onboardCustomNspDomainLayer(String customName){
-        NspDomainLayer nspDomainLayer = new NspDomainLayer(
+        /*NspDomainLayer nspDomainLayer = new NspDomainLayer(
                 "nspDomainLayer (no nfvo)"+customName,
                 "nspDomainLayer (no nfvo) desc",
                 "nspDomainLayer (no nfvo) owner",
@@ -120,202 +119,86 @@ public class DomainLayerCatalogueServiceTest {
             e.printStackTrace();
         } catch (AlreadyExistingEntityException e) {
             e.printStackTrace();
-        }
+        }*/
         return null;
+
     }
 
+    private void onBoardDomainTest(Domain domain){
+        try {
+            Long domainId= domainCatalogueService.onBoardDomain(domain);
+            assertTrue(domainId!=null);
+            Domain domainActual = domainCatalogueService.getDomain(domain.getDomainId());
+            ArrayList<String> toExclude= new ArrayList<String>();
+            toExclude.add("DomainInterface");
+            toExclude.add("OwnedLayers");
+            toExclude.add("DomainsAgreement");
+            assertTrue(haveTwoObjsSameFields(Domain.class,domain,domainActual,toExclude));
+            assertTrue(haveTwoObjsSameFields(DomainInterface.class,domain.getDomainInterface(),domainActual.getDomainInterface(),new ArrayList<>()));
+            assertTrue(domain.getOwnedLayers().size()==domainActual.getOwnedLayers().size());
+            assertTrue(domain.getDomainsAgreement().size()==domainActual.getDomainsAgreement().size());
+
+        } catch (MalformattedElementException e) {
+            e.printStackTrace();
+        } catch (AlreadyExistingEntityException e) {
+            e.printStackTrace();
+        } catch (NotExistingEntityException e) {
+            e.printStackTrace();
+        }
+    }
+    //A domain called "A" owns a vertical domain layer. A domain called "B" owns an NSP and NFVO domains layer. A relationship between domain A and the domain layers of B is tested.
     @Test
-    public void testOnBoardingDomainLayer() throws InterruptedException {
-        //0. Creating some custom objects
-        ArrayList<InterfaceType> interfaceTypeArrayList = new  ArrayList<InterfaceType>();
-        interfaceTypeArrayList.add(InterfaceType.HTTP);
-        interfaceTypeArrayList.add(InterfaceType.RABBIT);
+    public void testDomainCatalogueService() {
+        //Domain A objects
+        final String DOMAIN_A_ID="DomainAid";
+        DomainInterface domainAinterface = new DomainInterface("url.url.rul", 8080, true, InterfaceType.HTTP);
+        VerticalDomainLayer verticalDomainLayer = new VerticalDomainLayer("verticalDomainLayerID",DspType.VERTICAL_EXPERIMENT);
+        ArrayList<DomainLayer> listOwnedLayerDomainA = new ArrayList<DomainLayer>();
+        listOwnedLayerDomainA.add(verticalDomainLayer);
+        Domain domainA = new Domain(DOMAIN_A_ID,"domainNameA","domainDescriptionA","domainOwnerA","Domain adminA",listOwnedLayerDomainA,new HashSet<>(),domainAinterface);
 
-        ArrayList<Long> domainLayerIdsArrayList = new  ArrayList<Long>();
-        domainLayerIdsArrayList.add(onboardCustomNspDomainLayer("name nsp_1"));
-        domainLayerIdsArrayList.add(onboardCustomNspDomainLayer("name nsp_2"));
+        //Domain B objects
+        final String DOMAIN_B_ID="DomainBid";
+        NspDomainLayer nspDomainLayer = new NspDomainLayer("nspDomainLayerID",NspNbiType.NEUTRAL_HOSTING);
+        NfvoDomainLayer nfvoDomainLayer = new NfvoDomainLayer("nfvoDomainLayerId",ManoNbiType.NMRO_DRIVER);
+        ArrayList<DomainLayer> listOwnedLayerDomainB = new ArrayList<DomainLayer>();
+        listOwnedLayerDomainB.add(nspDomainLayer);
+        listOwnedLayerDomainB.add(nfvoDomainLayer);
+        DomainInterface domainBinterface = new DomainInterface("url2.url2.rul2", 8081, true, InterfaceType.HTTP);
+        Domain domainB = new Domain(DOMAIN_B_ID,"domainNameB","domainDescriptionB","domainOwnerB","Domain adminB",listOwnedLayerDomainB,new HashSet<>(),domainBinterface);
 
-        VerticalDomainLayer verticalDomainLayer = new VerticalDomainLayer("VerticalDomainLayer name",
-                "VerticalDomainLayer description",
-                "VerticalDomainLayer owner",
-                "VerticalDomainLayer admin",
-                null, null);
 
-        verticalDomainLayer.setInterfaceTypeList(interfaceTypeArrayList);
-        verticalDomainLayer.setDomainLayersIdAssociated(domainLayerIdsArrayList);
+        //Test on board Domain B and A
+        log.info("Testing on boarding Domain B");
+        onBoardDomainTest(domainB);
 
-        NspDomainLayer nspDomainLayer = new NspDomainLayer(
-                "nspDomainLayer (no nfvo) name",
-                "nspDomainLayer (no nfvo) desc",
-                "nspDomainLayer (no nfvo) owner",
-                "nspDomainLayer (no nfvo) admin");
-        nspDomainLayer.setCSP(true);
-        nspDomainLayer.setInterfaceTypeList(interfaceTypeArrayList);
-        nspDomainLayer.setDomainLayersIdAssociated(domainLayerIdsArrayList);
+        //An agreement between domain A and two domains layer owned by domain B is performed. Eventually, the domain A is on boarded with such info.
+        ArrayList<String> idDomainLayers = new ArrayList<String>();
+        idDomainLayers.add(domainB.getOwnedLayers().get(0).getDomainLayerId());
+        idDomainLayers.add(domainB.getOwnedLayers().get(1).getDomainLayerId());
 
-        NfvoDomainLayer nfvoDomainLayer = new NfvoDomainLayer(
-                "nfvoDomainLayer name",
-                "nfvoDomainLayer description",
-                "nfvoDomainLayer owner",
-                "nfvoDomainLayer admin",
-                true);
-        nfvoDomainLayer.setInterfaceTypeList(interfaceTypeArrayList);
-        nfvoDomainLayer.setDomainLayersIdAssociated(domainLayerIdsArrayList);
-
-        ArrayList<String> toExclude= new ArrayList<String>();
-        toExclude.add("InterfaceTypeList");
-        toExclude.add("DomainLayersIdAssociated");
-        toExclude.add("DomainLayersAssociated");
-
-        //1. On boarding of (1.1) Vertical Domain layer, (1.2) NSP domain layer and (1.3) NFVO domain layer is tested
-
+        DomainAgreement domainAgreement = new DomainAgreement(domainB.getDomainId(),idDomainLayers);
+        HashSet<DomainAgreement> domainAgreements = new HashSet<DomainAgreement>();
+        domainAgreements.add(domainAgreement);
+        domainA.setDomainsAgreement(domainAgreements);
+        log.info("Testing on boarding domain A");
+        onBoardDomainTest(domainA);
         try {
-            //1.1 Testing the on boarding of vertical domain layer
-            Long verticalDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(verticalDomainLayer);
-            DomainLayer verticalDomainLayerGet = domainLayerCatalogueService.getDomainLayer(verticalDomainLayerId);
-
-            assertTrue(haveTwoObjsSameFields(VerticalDomainLayer.class, verticalDomainLayer, verticalDomainLayerGet, toExclude));
-
-
-            log.info("Checking the interfaces within the vertical domain layer");
-            assertTrue(verticalDomainLayer.getInterfaceTypeList().size()==verticalDomainLayerGet.getInterfaceTypeList().size());
-            for(int i=0; i<verticalDomainLayer.getInterfaceTypeList().size(); i++){
-                assertTrue(haveTwoObjsSameFields(InterfaceType.class,verticalDomainLayer.getInterfaceTypeList().get(i),verticalDomainLayerGet.getInterfaceTypeList().get(i),toExclude));
-            }
-
-            log.info("Checking the domain layer IDs associated within the vertical domain layer");
-            for(int i=0; i<verticalDomainLayer.getDomainLayersIdAssociated().size(); i++){
-                assertTrue(verticalDomainLayer.getDomainLayersIdAssociated().get(i)==verticalDomainLayerGet.getDomainLayersIdAssociated().get(i));
-            }
-
-
-            //1.2 Testing the onboarding of nsp domain layer
-            Long nspDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(nspDomainLayer);
-            DomainLayer nspDomainLayerGet = domainLayerCatalogueService.getDomainLayer(nspDomainLayerId);
-            assertTrue(haveTwoObjsSameFields(NspDomainLayer.class, nspDomainLayer, nspDomainLayerGet, toExclude));
-
-            log.info("Checking the interfaces within the nsp domain layer");
-            assertTrue(nspDomainLayer.getInterfaceTypeList().size()==nspDomainLayerGet.getInterfaceTypeList().size());
-            for(int i=0; i<nspDomainLayer.getInterfaceTypeList().size(); i++){
-                assertTrue(haveTwoObjsSameFields(InterfaceType.class,nspDomainLayer.getInterfaceTypeList().get(i),nspDomainLayerGet.getInterfaceTypeList().get(i),toExclude));
-            }
-
-            log.info("Checking the domain layer IDs associated within the nsp domain layer");
-            for(int i=0; i<verticalDomainLayer.getDomainLayersIdAssociated().size(); i++){
-                assertTrue(verticalDomainLayer.getDomainLayersIdAssociated().get(i)==verticalDomainLayerGet.getDomainLayersIdAssociated().get(i));
-            }
-
-
-            //1.3 Testing the on boarding of nfvo domain layer
-            Long nfvoDomainLayerId =domainLayerCatalogueService.onBoardDomainLayer(nfvoDomainLayer);
-            DomainLayer nfvoDomainLayerGet = domainLayerCatalogueService.getDomainLayer(nfvoDomainLayerId);
-
-            assertTrue(haveTwoObjsSameFields(NfvoDomainLayer.class, nfvoDomainLayer, nfvoDomainLayerGet, toExclude));
-
-            List <DomainLayer> domainLayerList = domainLayerCatalogueService.getAllDomainLayers();
-            assertTrue(domainLayerList.size()>=3);
-
-        } catch (MalformattedElementException e) {
-            e.printStackTrace();
-        } catch (AlreadyExistingEntityException e) {
-            e.printStackTrace();
+            domainCatalogueService.deleteDomain(domainA.getDomainId());
         } catch (NotExistingEntityException e) {
             e.printStackTrace();
         }
-
-        //2. Going to test on boarding of duplicate
-        boolean isDuplicate=false;
-        try {
-            Long verticalDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(verticalDomainLayer);
-
-        } catch (MalformattedElementException e) {
-            e.printStackTrace();
-        } catch (AlreadyExistingEntityException e) {
-            isDuplicate=true;
-        }
-        assertTrue(isDuplicate);
-        log.info("Duplicate error raised as expected");
-
-        //3 Test case: the vertical domain layer is federated
-        log.info("Going to on board vertical domain layer with vertical domain layer federated");
-
-        ArrayList<String> driversList = new ArrayList<String>();
-        driversList.add("driver1");
-        driversList.add("driver2");
-        driversList.add("driver3");
-
-
-        VerticalDomainLayer verticalDomainLayerWithFed = new VerticalDomainLayer("VerticalDomainLayer with fed name",
-                "VerticalDomainLayer with fed description",
-                "VerticalDomainLayer with fed owner",
-                "VerticalDomainLayer with fed admin",
-                new VerticalDomainLayer(
-                        "VerticalDomainLayer Federated name",
-                        "VerticalDomainLayer Federated description",
-                        "VerticalDomainLayer Federated owner",
-                        "VerticalDomainLayer Federated admin",
-                        null,null),
-                new NspDomainLayer("Nsp embedded into Vertical name",
-                        "Nsp embedded into Vertical description",
-                        "Nsp embedded into Vertical owner",
-                        "Nsp embedded into Vertical admin",
-                        true,
-                        driversList, null));
-
-        try {
-            Long verticalDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(verticalDomainLayerWithFed);
-            VerticalDomainLayer verticalDomainLayerWithFedGet = (VerticalDomainLayer) domainLayerCatalogueService.getDomainLayer(verticalDomainLayerId);
-
-            assertTrue(haveTwoObjsSameFields(VerticalDomainLayer.class,
-                            verticalDomainLayerWithFed.getFederatedBy(),
-                            verticalDomainLayerWithFedGet.getFederatedBy(),
-                            toExclude));
-
-            assertTrue(haveTwoObjsSameFields(NspDomainLayer.class,
-                    verticalDomainLayerWithFed.getNspDomainLayer(),
-                    verticalDomainLayerWithFedGet.getNspDomainLayer(),
-                    toExclude));
-
-
-        } catch (MalformattedElementException e) {
-            e.printStackTrace();
-        } catch (AlreadyExistingEntityException e) {
-            e.printStackTrace();
-        } catch (NotExistingEntityException e) {
-            e.printStackTrace();
-
-        }
-
-        //4 the nsp contains nfvo as well
-        log.info("Going ot on board nsp domain layer with nfvo domain layer");
-        DomainLayer nspDomainLater = new NspDomainLayer(
-                "nspDomainLayer (with nfvo emb) name",
-                "nspDomainLayer (with nfvo emb) desc",
-                "nspDomainLayer (with nfvo emb) owner",
-                "nspDomainLayer (with nfvo emb) admin",
-                true,
-                driversList,
-                    new NfvoDomainLayer(
-                    "nfvoDomainLayer (embedded) name",
-                    "nfvoDomainLayer (embedded) description",
-                    "nfvoDomainLayer (embedded) owner",
-                    "nfvoDomainLayer (embedded) admin",
-                    true));
         boolean notFound=false;
         try {
-            Long nspDomainLayerId = domainLayerCatalogueService.onBoardDomainLayer(nspDomainLater);
-            domainLayerCatalogueService.deleteDomainLayer(nspDomainLayerId);
-            DomainLayer verticalDomainLayerGet = domainLayerCatalogueService.getDomainLayer(nspDomainLayerId);
-        } catch (MalformattedElementException e) {
-            e.printStackTrace();
-        } catch (AlreadyExistingEntityException e) {
-            e.printStackTrace();
+            domainCatalogueService.getDomain(domainA.getDomainId());
+
         } catch (NotExistingEntityException e) {
             notFound=true;
+            log.info("Element not found as expected");
         }
         assertTrue(notFound);
-        log.info("The domain layer has been successfully deleted from the DB");
-
-
+        assertTrue(domainCatalogueService.getAllDomains().size()==1);
     }
+
 }
+

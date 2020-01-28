@@ -1,14 +1,17 @@
-package it.nextworks.nfvmano.catalogue.template.elements;
+package it.nextworks.nfvmano.catalogue.domainLayer;
 
-public class DomainLayerInterface {
+import javax.persistence.Embeddable;
+
+@Embeddable
+public class DomainInterface {
     private String url;
     private int port;
     private boolean auth;
     private InterfaceType interfaceType;
 
-    public DomainLayerInterface(){}
+    public DomainInterface(){}
 
-    public DomainLayerInterface(String url, int port, boolean auth, InterfaceType interfaceType){
+    public DomainInterface(String url, int port, boolean auth, InterfaceType interfaceType){
         this.url=url;
         this.port=port;
         this.auth=auth;

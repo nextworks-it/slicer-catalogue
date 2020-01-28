@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-package it.nextworks.nfvmano.catalogues.template.rest;
+package it.nextworks.nfvmano.catalogues.domainLayer.rest;
 
-import it.nextworks.nfvmano.catalogue.template.elements.DomainLayer;
-import it.nextworks.nfvmano.catalogues.template.services.DomainLayerCatalogueService;
+import it.nextworks.nfvmano.catalogue.domainLayer.Domain;
+import it.nextworks.nfvmano.catalogues.domainLayer.services.DomainCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
@@ -35,17 +35,17 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/domainLayer/catalogue")
-public class DomainLayerCatalogueRestController {
+public class DomainCatalogueRestController {
 
-    private static final Logger log = LoggerFactory.getLogger(DomainLayerCatalogueRestController.class);
+    private static final Logger log = LoggerFactory.getLogger(DomainCatalogueRestController.class);
 
     @Autowired
-    private DomainLayerCatalogueService domainLayerCatalogueService;
+    private DomainCatalogueService domainCatalogueService;
 
     @Value("${catalogue.admin}")
     private String adminTenant;
 
-    public DomainLayerCatalogueRestController() { }
+    public DomainCatalogueRestController() { }
 
     private static String getUserFromAuth(Authentication auth) {
         Object principal = auth.getPrincipal();
@@ -56,21 +56,21 @@ public class DomainLayerCatalogueRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createDomainLayer(@RequestBody DomainLayer domainLayer, Authentication auth) {
-        log.debug("Received request to create a Domain layer.");
+    public ResponseEntity<?> createDomain(@RequestBody Domain domain, Authentication auth) {
+        log.debug("Received request to create a domain.");
         String user = getUserFromAuth(auth);
         if (!user.equals(adminTenant)) {
             log.warn("Request refused as tenant {} is not admin.", user);
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         try {
-            Long domainLayerId = domainLayerCatalogueService.onBoardDomainLayer(domainLayer);
-            return new ResponseEntity<String>(String.valueOf(domainLayerId), HttpStatus.CREATED);
+            Long domainId = domainCatalogueService.onBoardDomain(domain);
+            return new ResponseEntity<String>(String.valueOf(domainId), HttpStatus.CREATED);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (AlreadyExistingEntityException e) {
-            log.error("Domain layer already existing");
+            log.error("Domain already existing");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (Exception e) {
             log.error("Internal exception");
@@ -80,23 +80,23 @@ public class DomainLayerCatalogueRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getAllDomainLayer() {
-        log.debug("Received request to retrieve all domain layers.");
-        return new ResponseEntity<List<DomainLayer>>(domainLayerCatalogueService.getAllDomainLayers(), HttpStatus.OK);
+    public ResponseEntity<?> getAllDomain() {
+        log.debug("Received request to retrieve all domains.");
+        return new ResponseEntity<List<Domain>>(domainCatalogueService.getAllDomains(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{domainLayerId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDomainLayer(@PathVariable Long domainLayerId, Authentication auth) {
-        log.debug("Received request to retrieve Domain layer with ID " + domainLayerId);
+    @RequestMapping(value = "/{domainId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getDomain(@PathVariable String domainId, Authentication auth) {
+        log.debug("Received request to retrieve Domain with ID " + domainId);
         String user = getUserFromAuth(auth);
         if (!user.equals(adminTenant)) {
             log.warn("Request refused as tenant {} is not admin.", user);
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         try {
-             return new ResponseEntity<DomainLayer>(domainLayerCatalogueService.getDomainLayer(domainLayerId), HttpStatus.OK);
+             return new ResponseEntity<Domain>(domainCatalogueService.getDomain(domainId), HttpStatus.OK);
         }  catch (NotExistingEntityException e) {
-            log.error("Domain layer not found");
+            log.error("Domain not found with ID "+domainId+" not found");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Internal exception");
@@ -104,16 +104,16 @@ public class DomainLayerCatalogueRestController {
         }
     }
 
-    @RequestMapping(value = "/{domainLayerId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteDomainLayer(@PathVariable Long domainLayerId, Authentication auth) {
-        log.debug("Received request to delete Domain layer with ID " + domainLayerId);
+    @RequestMapping(value = "/{domainId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteDomain(@PathVariable String domainId, Authentication auth) {
+        log.debug("Received request to delete Domain with ID " + domainId);
         String user = getUserFromAuth(auth);
         if (!user.equals(adminTenant)) {
             log.warn("Request refused as tenant {} is not admin.", user);
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         try {
-            domainLayerCatalogueService.deleteDomainLayer(domainLayerId);
+            domainCatalogueService.deleteDomain(domainId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotExistingEntityException e) {
             log.error("NS Template not found");
