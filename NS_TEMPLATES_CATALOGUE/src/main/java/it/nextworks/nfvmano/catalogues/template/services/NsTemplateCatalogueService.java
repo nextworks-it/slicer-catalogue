@@ -181,11 +181,12 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     }
     
 
-    private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException {
+    private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException, MalformattedElementException {
     	String nstVersion =nst.getNstVersion();
     	String nstName =nst.getNstName();
-    	log.debug("Onboarding NsTemplate with name " + nstName + " and version " + nstVersion);
- 
+
+    	log.debug("On boarding NsTemplate with name " + nstName + " and version " + nstVersion);
+
     	if (nstRepository.findByNstNameAndNstVersion(nstName, nstVersion).isPresent()) {
     		String logErrorStr= "NsTemplate with name " + nstName + " and version " + nstVersion + " already present in DB.";
 			log.error(logErrorStr);
@@ -193,10 +194,12 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		}
     	
     	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
-    	
+		if(nst.getPpFunctionList().size()>0){
+			target.setPpFunctionList(nst.getPpFunctionList());
+		}
     	String nstTargetName=nst.getNstName();
     	target.setNstName(nstTargetName);
-    	
+
     	nstRepository.saveAndFlush(target);
     	String nstTargetID =String.valueOf(target.getId());
     	target.setNstId(nstTargetID);

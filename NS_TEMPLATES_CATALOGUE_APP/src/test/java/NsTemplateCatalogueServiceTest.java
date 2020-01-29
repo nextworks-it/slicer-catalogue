@@ -14,6 +14,9 @@ import java.util.Map;
 import it.nextworks.nfvmano.catalogue.SpringAppNSTCatalogue;
 import it.nextworks.nfvmano.catalogues.template.services.NsTemplateCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.templates.*;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFeatureLevel;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFeatureType;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes= SpringAppNSTCatalogue.class)
 public class NsTemplateCatalogueServiceTest {
 
-
+    private final boolean PP_FIELD_AVAILABLE=true;
     private static final Logger log = LoggerFactory.getLogger(NsTemplateCatalogueServiceTest.class);
 
     @Autowired
@@ -163,8 +166,17 @@ public class NsTemplateCatalogueServiceTest {
     }
 
 
-    private OnBoardNsTemplateRequest createOnBoardNsTemplateRequest() {
+    private OnBoardNsTemplateRequest createOnBoardNsTemplateRequest(boolean duplicatePpFunctions) {
         OnBoardNsTemplateRequest request=new OnBoardNsTemplateRequest();
+        List<PpFunction> ppFunctionList = new ArrayList<>();
+        ppFunctionList.add(new PpFunction("feature A name", PpFeatureLevel.ELEMENT, PpFeatureType.MONITORING));
+        if(!duplicatePpFunctions) {
+            ppFunctionList.add(new PpFunction("feature B name", PpFeatureLevel.SLICE, PpFeatureType.CONTROL));
+        }
+        else{
+            ppFunctionList.add(new PpFunction("feature A name", PpFeatureLevel.ELEMENT, PpFeatureType.MONITORING));
+        }
+        nst.setPpFunctionList(ppFunctionList);
         request.setNst(nst);
         return request;
     }
@@ -172,10 +184,27 @@ public class NsTemplateCatalogueServiceTest {
 
     @Test
     public void testOnBoardingNSTemplate() {
-
-        //1. On board a NST sample
-        OnBoardNsTemplateRequest request=createOnBoardNsTemplateRequest();
+        //0. On board a NST sample with two equal PP function.
         String nstID=null;
+        OnBoardNsTemplateRequest requestNstDuplicatePPFunction=createOnBoardNsTemplateRequest(true);
+        boolean isMalformed=false;
+        try {
+            nstID=nsTemplateCatalogueService.onBoardNsTemplate(requestNstDuplicatePPFunction);
+        } catch (MethodNotImplementedException e) {
+            e.printStackTrace();
+        } catch (MalformattedElementException e) {
+
+            isMalformed=true;
+        } catch (AlreadyExistingEntityException e) {
+            e.printStackTrace();
+        } catch (FailedOperationException e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(isMalformed);
+        log.info("Malformed request as expected");
+        //1. On board a NST sample
+        OnBoardNsTemplateRequest request=createOnBoardNsTemplateRequest(false);
         try {
             nstID=nsTemplateCatalogueService.onBoardNsTemplate(request);
         } catch (MethodNotImplementedException e) {
@@ -191,9 +220,12 @@ public class NsTemplateCatalogueServiceTest {
         nst.setNstId(nstID);
         log.info("TEST: NST on boarded with ID "+nstID+".");
 
+        //1b.
+
+
         //2. If it has been on boarded, then try to on board it again. This time should raise an exception because duplicate.
         boolean isDuplicate=false;
-        request=createOnBoardNsTemplateRequest();
+        request=createOnBoardNsTemplateRequest(false);
         try {
             nsTemplateCatalogueService.onBoardNsTemplate(request);
         } catch (MethodNotImplementedException e) {
@@ -227,6 +259,7 @@ public class NsTemplateCatalogueServiceTest {
             ArrayList<String> fieldsNSTnotToCheck=new ArrayList<String>();
             fieldsNSTnotToCheck.add("Id");
             fieldsNSTnotToCheck.add("NstServiceProfile");
+            fieldsNSTnotToCheck.add("PpFunctionList");
             assertTrue(haveTwoObjsSameFields(NST.class, actualNST, nst, fieldsNSTnotToCheck));
 
             //5. Check the NstServiceProfile. The two fields below are excluded because are going to check later
@@ -244,6 +277,16 @@ public class NsTemplateCatalogueServiceTest {
                 assertTrue(haveTwoObjsSameFields(URLLCPerfReq.class, actualNST.getNstServiceProfile().getuRLLCPerfReq().get(i),nst.getNstServiceProfile().getuRLLCPerfReq().get(i),new ArrayList<String>()));
             }
 
+            if(PP_FIELD_AVAILABLE) {
+                log.info("Going to compare P&P functions");
+                assertTrue(nst.getPpFunctionList().size()==actualNST.getPpFunctionList().size());
+                for(int i=0; i<nst.getPpFunctionList().size(); i++){
+                    assertTrue(actualNST.getPpFunctionList().get(i).getPpFeatureName().equals(nst.getPpFunctionList().get(i).getPpFeatureName()));
+                    assertTrue(actualNST.getPpFunctionList().get(i).getPpFeatureLevel().equals(nst.getPpFunctionList().get(i).getPpFeatureLevel()));
+                    assertTrue(actualNST.getPpFunctionList().get(i).getPpFeatureType().equals(nst.getPpFunctionList().get(i).getPpFeatureType()));
+                }
+                log.info("The NST on board and the NST get have the same pp functions");
+            }
 
         } catch (MethodNotImplementedException e) {
             e.printStackTrace();
@@ -254,6 +297,8 @@ public class NsTemplateCatalogueServiceTest {
         } catch (FailedOperationException e) {
             e.printStackTrace();
         }
+
+
         //6.Delete the added NST. Afterwards, the GET should return a response with empty list, i.e. its size must be equal to zero.
         try {
             nsTemplateCatalogueService.deleteNsTemplate(nstID);
@@ -272,6 +317,5 @@ public class NsTemplateCatalogueServiceTest {
             e.printStackTrace();
         }
     }
-
 
 }
