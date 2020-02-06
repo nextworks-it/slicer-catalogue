@@ -16,10 +16,7 @@
 package it.nextworks.nfvmano.catalogue.translator;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
@@ -38,6 +35,8 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	private TranslationRuleRepository ruleRepo;
 
+	private NstTranslationRuleRepository nstRuleRepo;
+
 	public BasicTranslator(VsDescriptorRepository vsdRepo,
 							ExpDescriptorRepository expDescriptorRepository,
 							CtxDescriptorRepository ctxDescriptorRepository,
@@ -45,7 +44,15 @@ public class BasicTranslator extends AbstractTranslator {
 		super(TranslatorType.BASIC_TRANSLATOR, vsdRepo, expDescriptorRepository, ctxDescriptorRepository);
 		this.ruleRepo = ruleRepo;
 	}
-	
+
+	public BasicTranslator(VsDescriptorRepository vsdRepo,
+						   ExpDescriptorRepository expDescriptorRepository,
+						   CtxDescriptorRepository ctxDescriptorRepository,
+						   NstTranslationRuleRepository nstRuleRepo) {
+		super(TranslatorType.BASIC_TRANSLATOR, vsdRepo, expDescriptorRepository, ctxDescriptorRepository);
+		this.nstRuleRepo = nstRuleRepo;
+	}
+
 	@Override
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
 			throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
@@ -113,7 +120,8 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	private VsdNstTranslationRule findMatchingTranslationRule(String blueprintId, Map<String, String> descriptorParameters) throws FailedOperationException, NotExistingEntityException {
 		if ((blueprintId == null) || (descriptorParameters.isEmpty())) throw new NotExistingEntityException("Impossible to translate descriptor into NST because of missing parameters");
-		List<VsdNstTranslationRule> rules = ruleRepo.findByBlueprintId(blueprintId);
+		//List<VsdNsdTranslationRule> rules = ruleRepo.findByBlueprintId(blueprintId);//OLD TO NOT BE DELETED
+		List<VsdNstTranslationRule> rules = nstRuleRepo.findByBlueprintId(blueprintId);
 		for (VsdNstTranslationRule rule : rules) {
 			if (rule.matchesVsdParameters(descriptorParameters)) {
 				log.debug("Found translation rule");

@@ -55,7 +55,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	private VsComponentRepository vsComponentRepository;
 	
 	@Autowired
-	private TranslationRuleRepository translationRuleRepository;
+	private NstTranslationRuleRepository nstTranslationRuleRepository;
 	
 	@Autowired
 	private NfvoCatalogueService nfvoCatalogueService;
@@ -83,9 +83,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
 			
 			log.debug("Storing translation rules");
-			List<VsdNstTranslationRule> trs = request.getTranslationRules();
+			List<VsdNstTranslationRule> trs = request.getNstTranslationRules();
 			for (VsdNstTranslationRule tr : trs) {
-				translationRuleRepository.saveAndFlush(tr);
+				nstTranslationRuleRepository.saveAndFlush(tr);
 			}
 			log.debug("Translation rules saved in internal DB.");
 			

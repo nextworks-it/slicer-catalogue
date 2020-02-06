@@ -16,9 +16,11 @@
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNstTranslationRule;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +28,31 @@ import java.util.List;
 public class OnBoardBlueprintRequest implements InterfaceMessage {
 
 	private List<VsdNstTranslationRule> translationRules = new ArrayList<>();
-	
+
+	private List<Nsd> nsds = new ArrayList<>();
+	private List<VsdNsdTranslationRule> nsdTranslationRules = new ArrayList<>();
+
 	public OnBoardBlueprintRequest() { }
-	
+
+	/**
+	 * Constructor
+	 *
+	 * @param nsds
+	 * @param nsdTranslationRules
+	 */
+	public OnBoardBlueprintRequest(List<Nsd> nsds,
+								   List<VsdNsdTranslationRule> nsdTranslationRules) {
+		if (nsds != null) this.nsds = nsds;
+		if (translationRules != null) this.nsdTranslationRules = nsdTranslationRules;
+	}
+
+	/**
+	 * @return the nsds
+	 */
+	public List<Nsd> getNsds() {
+		return nsds;
+	}
+
 	/**
 	 * Constructor 
 	 *
@@ -42,16 +66,28 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	/**
 	 * @return the translationRules
 	 */
-	public List<VsdNstTranslationRule> getTranslationRules() {
+	public List<VsdNsdTranslationRule> getTranslationRules() {
+		return nsdTranslationRules;
+	}
+
+	public List<VsdNstTranslationRule> getNstTranslationRules() {
 		return translationRules;
 	}
-	
+
 	@JsonIgnore
 	public void setBlueprintIdInTranslationRules(String blueprintId) {
 		for (VsdNstTranslationRule tr : translationRules)
 			tr.setBlueprintId(blueprintId);
 	}
 
+
+
+	@JsonIgnore
+	public void setNsdInfoIdInTranslationRules(String nsdInfoId, String nsdId, String nsdVersion) {
+		for (VsdNsdTranslationRule tr : nsdTranslationRules) {
+			if (tr.matchesNsdIdAndNsdVersion(nsdId, nsdVersion)) tr.setNsdInfoId(nsdInfoId);
+		}
+	}
 
 	@Override
 	public void isValid() throws MalformattedElementException {
