@@ -63,24 +63,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	public VsdNsdTranslationRule() { }
 	
-	
-	
-	/**
-	 * @param input
-	 * @param nsdId
-	 * @param nsdVersion
-	 * @param nsFlavourId
-	 * @param nsInstantiationLevelId
-	 */
-	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nsdId, String nsdVersion,
-                                 String nsFlavourId, String nsInstantiationLevelId) {
-		if (input!= null) this.input = input;
-		this.nsdId = nsdId;
-		this.nsdVersion = nsdVersion;
-		this.nsFlavourId = nsFlavourId;
-		this.nsInstantiationLevelId = nsInstantiationLevelId;
-	}
-	
+
 	/**
 	 * @param input
 	 * @param nstId
@@ -98,14 +81,11 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
 	}
-
-
 	
 
 	public String getNstId() {
 		return nstId;
 	}
-
 
 
 	/**
@@ -231,6 +211,12 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");
 		if (nsFlavourId == null) throw new MalformattedElementException("VSD NSD translation rule without NS flavour ID");
 		if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");
+	}
+
+	public void isValid2() throws MalformattedElementException {
+		if ((input == null) || (input.isEmpty())) throw new MalformattedElementException("VSD NSD translation rule without matching conditions");
+		else for (VsdParameterValueRange vr : input) vr.isValid();
+		if (nstId == null) throw new MalformattedElementException("VSD NST translation rule without NST ID");
 	}
 
 }

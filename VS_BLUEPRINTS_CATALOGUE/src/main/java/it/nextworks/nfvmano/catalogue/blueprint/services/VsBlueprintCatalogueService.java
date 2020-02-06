@@ -87,7 +87,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	public synchronized String onBoardVsBlueprint(OnBoardVsBlueprintRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Processing request to onboard a new VS blueprint");
-		request.isValid();
+		//request.isValid();
+		request.isValid2();
 		String vsbId = storeVsBlueprint(request.getVsBlueprint());
 		
 		VsBlueprintInfo vsBlueprintInfo;
@@ -99,32 +100,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		
 		request.setBlueprintIdInTranslationRules(vsbId);
-		
-		log.debug("Processing NFV descriptors");
+
 		try {
-			log.debug("Storing NSDs");
-			List<Nsd> nsds = request.getNsds();
-			for (Nsd nsd : nsds) {
-				try {
-					Map<String, String> userDefinedData = new HashMap<>();
-					List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
-					for (EveSite site : sites) {
-						userDefinedData.put(site.toString(), "yes");
-					}
-					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
-							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(nsdInfoId);
-					request.setNsdInfoIdInTranslationRules(nsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryNsdResponse nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-					String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-					log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(oldNsdInfoId);
-					request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				}
-			}
 			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
 			
 			log.debug("Storing translation rules");
