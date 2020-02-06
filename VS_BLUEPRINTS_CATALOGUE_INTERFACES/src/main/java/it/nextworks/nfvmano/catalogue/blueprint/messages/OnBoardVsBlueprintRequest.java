@@ -16,12 +16,11 @@
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 
-import java.util.List;
-
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNstTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+
+import java.util.List;
 
 public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 
@@ -33,13 +32,11 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	 * Constructor
 	 * 
 	 * @param vsBlueprint
-	 * @param nsds
 	 * @param translationRules
 	 */
-	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint, 
-			List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules) {
-		super(nsds, translationRules);
+	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint,
+			List<VsdNstTranslationRule> translationRules) {
+		super(translationRules);
 		this.vsBlueprint = vsBlueprint;
 	}
 

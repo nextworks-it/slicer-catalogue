@@ -15,75 +15,48 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNstTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
-
 public class OnBoardBlueprintRequest implements InterfaceMessage {
 
-	private List<Nsd> nsds = new ArrayList<>();
-	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
+	private List<VsdNstTranslationRule> translationRules = new ArrayList<>();
 	
 	public OnBoardBlueprintRequest() { }
 	
 	/**
 	 * Constructor 
-	 * 
-	 * @param nsds
+	 *
 	 * @param translationRules
 	 */
-	public OnBoardBlueprintRequest(List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules) {
-		if (nsds != null) this.nsds = nsds;
+	public OnBoardBlueprintRequest(List<VsdNstTranslationRule> translationRules) {
 		if (translationRules != null) this.translationRules = translationRules;
 	}
 
-	
-	/**
-	 * @return the nsds
-	 */
-	public List<Nsd> getNsds() {
-		return nsds;
-	}
 
 	/**
 	 * @return the translationRules
 	 */
-	public List<VsdNsdTranslationRule> getTranslationRules() {
+	public List<VsdNstTranslationRule> getTranslationRules() {
 		return translationRules;
 	}
 	
 	@JsonIgnore
 	public void setBlueprintIdInTranslationRules(String blueprintId) {
-		for (VsdNsdTranslationRule tr : translationRules) 
+		for (VsdNstTranslationRule tr : translationRules)
 			tr.setBlueprintId(blueprintId);
 	}
-	
-	@JsonIgnore
-	public void setNsdInfoIdInTranslationRules(String nsdInfoId, String nsdId, String nsdVersion) {
-		for (VsdNsdTranslationRule tr : translationRules) {
-			if (tr.matchesNsdIdAndNsdVersion(nsdId, nsdVersion)) tr.setNsdInfoId(nsdInfoId);
-		}
-	}
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		//if (nsds.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without NSD");
-		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
-		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
-		for (Nsd nsd : nsds) nsd.isValid();
-	}
-
-	public void isValid2() throws MalformattedElementException {
-		//if (nsds.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without NSD");
-		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without any translation rules");
-		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid2();
+		if (translationRules.isEmpty()) throw new MalformattedElementException("On board VS blueprint request without any translation rules");
+		else for (VsdNstTranslationRule tr : translationRules) tr.isValid();
 	}
 
 }

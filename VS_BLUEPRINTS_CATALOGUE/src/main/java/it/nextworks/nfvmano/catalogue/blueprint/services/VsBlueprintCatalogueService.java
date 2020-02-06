@@ -15,44 +15,23 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
+import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
+import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.QueryNsdResponse;
-import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
-import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.EveSite;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsComponent;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbLink;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbForwardingPathHop;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
-import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
-import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbForwardingPathHopRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbLinkRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -86,9 +65,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	@Override
 	public synchronized String onBoardVsBlueprint(OnBoardVsBlueprintRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
-		log.debug("Processing request to onboard a new VS blueprint");
-		//request.isValid();
-		request.isValid2();
+		log.debug("Processing request to on board a new VS blueprint");
+		request.isValid();
 		String vsbId = storeVsBlueprint(request.getVsBlueprint());
 		
 		VsBlueprintInfo vsBlueprintInfo;
@@ -105,8 +83,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
 			
 			log.debug("Storing translation rules");
-			List<VsdNsdTranslationRule> trs = request.getTranslationRules();
-			for (VsdNsdTranslationRule tr : trs) {
+			List<VsdNstTranslationRule> trs = request.getTranslationRules();
+			for (VsdNstTranslationRule tr : trs) {
 				translationRuleRepository.saveAndFlush(tr);
 			}
 			log.debug("Translation rules saved in internal DB.");

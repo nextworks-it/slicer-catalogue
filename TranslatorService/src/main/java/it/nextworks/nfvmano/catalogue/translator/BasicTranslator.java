@@ -15,27 +15,22 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class BasicTranslator extends AbstractTranslator {
 	
@@ -54,18 +49,19 @@ public class BasicTranslator extends AbstractTranslator {
 	@Override
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
 			throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
-		log.debug("VSD->NSD translation at basic translator.");
+		log.debug("VSD->NST translation at basic translator.");
 		if (vsdIds.size() > 1) throw new FailedOperationException("Processing of multiple VSDs not supported by the basic translator");
 		Map<String, NfvNsInstantiationInfo> nfvNsInfo = new HashMap<>();
 		Map<String, VsDescriptor> vsds = retrieveVsDescriptors(vsdIds);
 		for (Map.Entry<String, VsDescriptor> entry : vsds.entrySet()) {
 			String vsdId = entry.getKey();
 			VsDescriptor vsd = entry.getValue();
-			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			VsdNstTranslationRule rule = findMatchingTranslationRule(vsd);
+			//NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId());
 			nfvNsInfo.put(vsdId, info);
-			log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
-					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
+			//log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: "
+			//		+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
 		}
 		return nfvNsInfo;
 	}
@@ -78,15 +74,16 @@ public class BasicTranslator extends AbstractTranslator {
 		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expdId);
 		if (expdOpt.isPresent()) {
 			ExpDescriptor expd = expdOpt.get();
-			VsdNsdTranslationRule rule = findMatchingTranslationRule(expd);
-			return new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			VsdNstTranslationRule rule = findMatchingTranslationRule(expd);
+			return new NfvNsInstantiationInfo(rule.getNstId());
+			//return new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
 		} else {
 			log.error("Experiment descriptor " + expdId + " not found in DB.");
 			throw new NotExistingEntityException("Experiment descriptor " + expdId + " not found in DB.");
 		}
 	}
 	
-	private VsdNsdTranslationRule findMatchingTranslationRule(ExpDescriptor expd) throws FailedOperationException, NotExistingEntityException {
+	private VsdNstTranslationRule findMatchingTranslationRule(ExpDescriptor expd) throws FailedOperationException, NotExistingEntityException {
 		String blueprintId = expd.getExpBlueprintId();
 		Map<String, String> descriptorParameters = new HashMap<>();
 		// for the experiment descriptor the parameters are defined in the related VSD and CTXD
@@ -108,16 +105,16 @@ public class BasicTranslator extends AbstractTranslator {
 		return findMatchingTranslationRule(blueprintId, descriptorParameters);
 	}
 	
-	private VsdNsdTranslationRule findMatchingTranslationRule(VsDescriptor vsd) throws FailedOperationException, NotExistingEntityException {
+	private VsdNstTranslationRule findMatchingTranslationRule(VsDescriptor vsd) throws FailedOperationException, NotExistingEntityException {
 		String vsbId = vsd.getVsBlueprintId();
 		Map<String, String> vsdParameters = vsd.getQosParameters();
 		return findMatchingTranslationRule(vsbId, vsdParameters);
 	}
 	
-	private VsdNsdTranslationRule findMatchingTranslationRule(String blueprintId, Map<String, String> descriptorParameters) throws FailedOperationException, NotExistingEntityException {
-		if ((blueprintId == null) || (descriptorParameters.isEmpty())) throw new NotExistingEntityException("Impossible to translate descriptor into NSD because of missing parameters");
-		List<VsdNsdTranslationRule> rules = ruleRepo.findByBlueprintId(blueprintId);
-		for (VsdNsdTranslationRule rule : rules) {
+	private VsdNstTranslationRule findMatchingTranslationRule(String blueprintId, Map<String, String> descriptorParameters) throws FailedOperationException, NotExistingEntityException {
+		if ((blueprintId == null) || (descriptorParameters.isEmpty())) throw new NotExistingEntityException("Impossible to translate descriptor into NST because of missing parameters");
+		List<VsdNstTranslationRule> rules = ruleRepo.findByBlueprintId(blueprintId);
+		for (VsdNstTranslationRule rule : rules) {
 			if (rule.matchesVsdParameters(descriptorParameters)) {
 				log.debug("Found translation rule");
 				return rule;

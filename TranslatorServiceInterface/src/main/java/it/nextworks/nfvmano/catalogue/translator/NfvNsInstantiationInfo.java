@@ -51,7 +51,8 @@ public class NfvNsInstantiationInfo {
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
 	}
-	
+
+
 	/**
 	 * Constructor
 	 * 
@@ -75,8 +76,12 @@ public class NfvNsInstantiationInfo {
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
 	}
-	
-	
+
+
+	public NfvNsInstantiationInfo(String nstId) {
+		this.nstId=nstId;
+	}
+
 	public void setNstId(String nstId) {
 		this.nstId = nstId;
 	}

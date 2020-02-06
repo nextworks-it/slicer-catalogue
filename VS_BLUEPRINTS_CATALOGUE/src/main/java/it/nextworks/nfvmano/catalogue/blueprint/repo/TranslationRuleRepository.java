@@ -17,12 +17,12 @@ package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
 import java.util.List;
 
+import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNstTranslationRule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 
-public interface TranslationRuleRepository extends JpaRepository<VsdNsdTranslationRule, Long> {
+public interface TranslationRuleRepository extends JpaRepository<VsdNstTranslationRule, Long> {
 
-	List<VsdNsdTranslationRule> findByBlueprintId(String vsbId);
+	List<VsdNstTranslationRule> findByBlueprintId(String vsbId);
 	
 }
