@@ -15,14 +15,6 @@
 
 package it.nextworks.nfvmano.catalogues.template.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.catalogue.template.interfaces.NsTemplateCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
@@ -30,24 +22,24 @@ import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateInfoRepository;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface {
 
     private static final Logger log = LoggerFactory.getLogger(NsTemplateCatalogueService.class);
 
-    /*@Autowired
-    private NfvoCatalogueService nfvoCatalogueService;
-    */
-    
+
     @Autowired
     private NsTemplateInfoRepository nstInfoRepository;
     
@@ -55,7 +47,6 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     private NsTemplateRepository nstRepository;
 
 
-    
     public NsTemplateCatalogueService() { }
 
        
@@ -201,7 +192,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	target.setNstName(nstTargetName);
 
     	nstRepository.saveAndFlush(target);
-    	String nstTargetID =String.valueOf(target.getId());
+    	String nstTargetID =String.valueOf(target.getUuid());
     	target.setNstId(nstTargetID);
     	nstRepository.saveAndFlush(target);
     	log.debug("Added NsTemplate with ID " + nstTargetID);

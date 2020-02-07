@@ -258,6 +258,7 @@ public class NsTemplateCatalogueServiceTest {
             NST actualNST = nstInfos.get(0).getNST();
             ArrayList<String> fieldsNSTnotToCheck=new ArrayList<String>();
             fieldsNSTnotToCheck.add("Id");
+            fieldsNSTnotToCheck.add("Uuid");
             fieldsNSTnotToCheck.add("NstServiceProfile");
             fieldsNSTnotToCheck.add("PpFunctionList");
             assertTrue(haveTwoObjsSameFields(NST.class, actualNST, nst, fieldsNSTnotToCheck));
