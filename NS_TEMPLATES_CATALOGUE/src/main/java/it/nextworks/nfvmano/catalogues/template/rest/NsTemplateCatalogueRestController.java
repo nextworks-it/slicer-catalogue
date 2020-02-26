@@ -84,6 +84,7 @@ public class NsTemplateCatalogueRestController {
 
     }
 
+
     @RequestMapping(value = "/nstemplate", method = RequestMethod.GET)
     public ResponseEntity<?> getAllNsTemplates() {
         log.debug("Received request to retrieve all the NS Templates.");
@@ -142,4 +143,7 @@ public class NsTemplateCatalogueRestController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+
 }

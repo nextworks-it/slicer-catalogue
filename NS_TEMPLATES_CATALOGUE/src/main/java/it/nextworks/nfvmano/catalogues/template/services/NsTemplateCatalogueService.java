@@ -21,6 +21,7 @@ import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateInfoRepository;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
+import it.nextworks.nfvmano.catalogues.template.repo.NsstRepository;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
@@ -46,6 +47,8 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     @Autowired
     private NsTemplateRepository nstRepository;
 
+	@Autowired
+	private NsstRepository nsstRepository;
 
     public NsTemplateCatalogueService() { }
 
@@ -59,8 +62,8 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	String nstId = storeNsTemplate(request.getNst());
     	return nstId;
     }
-    
-    
+
+
 	private NsTemplateInfo getNsTemplateInfo(String nstID) throws NotExistingEntityException {
 		NsTemplateInfo nstInfo;
 		nstInfoRepository.findByNsTemplateId(nstID).isPresent();
@@ -134,7 +137,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 	            	log.debug("Added NsTemplate info for NsTemplate with name " + nstName + " and version " + nstVersion);
 	            } else if (filterPars.isEmpty()) {
 	            	nstInfos = getAllNsTemplateInfos();
-	            	log.debug("Addes all the NTSs info available in DB.");
+	            	log.debug("Adds all the NTSs info available in DB.");
 	            }
 	            return new QueryNsTemplateResponse(nstInfos);
 	        } else {
@@ -170,7 +173,14 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		nstRepository.delete(nst);
 		log.debug("Removed NsTemplate from DB.");
     }
-    
+
+
+    private void areNsstIdValid(List <String >nsstIds) throws MalformattedElementException {
+    	for(String nsstId: nsstIds){
+			if(!nsstRepository.findByNsstId(nsstId).isPresent())
+				throw new MalformattedElementException("NSST with UUID "+nsstId+" not available into DB");
+		}
+	}
 
     private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException, MalformattedElementException {
     	String nstVersion =nst.getNstVersion();
@@ -183,8 +193,15 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 			log.error(logErrorStr);
 			throw new AlreadyExistingEntityException(logErrorStr);
 		}
-    	
-    	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+		NST target = null;
+		if(nst.getNsstList().size()>0){
+			target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstList());
+			target.setSliceType(nst.getSliceType());
+		}
+	else {
+			areNsstIdValid(nst.getNsstIds());
+			target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getSliceType());
+		}
 		if(nst.getPpFunctionList().size()>0){
 			target.setPpFunctionList(nst.getPpFunctionList());
 		}
