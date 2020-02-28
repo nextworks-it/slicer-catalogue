@@ -48,6 +48,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbForwardingPathHop;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbForwardingPathHopRepository;
@@ -81,6 +82,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	@Autowired
 	private NfvoCatalogueService nfvoCatalogueService;
 	
+	@Autowired
+	private VsDescriptorCatalogueService vsDescriptorCatalogueService;
+	
 	public VsBlueprintCatalogueService() {	}
 	
 	@Override
@@ -88,7 +92,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Processing request to onboard a new VS blueprint");
 		request.isValid();
-		String vsbId = storeVsBlueprint(request.getVsBlueprint());
+		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner());
 		
 		VsBlueprintInfo vsBlueprintInfo;
 		try {
@@ -155,6 +159,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		//VSB_ID
 		//3. Site
 		//SITE
+		//4. VS Blueprint ID and tenant ID
+		//VSB_ID and TENANT_ID --> This modifies the list of associated VSD to visualize only the ones visible to that VSD
+		//5. Tenant ID
+		//TENANT_ID --> This modifies the list of associated VSD to visualize only the ones visible to that VSD
         //No attribute selector is supported at the moment
 		
 		List<VsBlueprintInfo> vsbs = new ArrayList<>();
@@ -180,6 +188,21 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
             	VsBlueprintInfo vsb = getVsBlueprintInfo(vsbName, vsbVersion);
             	vsbs.add(vsb);
             	log.debug("Added VSB info for VSB with name " + vsbName + " and version " + vsbVersion);
+            } else if (fp.size() == 2 && fp.containsKey("VSB_ID") && fp.containsKey("TENANT_ID")) {
+            	String vsbId = fp.get("VSB_ID");
+            	String tenantId = fp.get("TENANT_ID");
+            	VsBlueprintInfo origVsb = getVsBlueprintInfo(vsbId);
+            	VsBlueprintInfo vsb = postProcessVsb(origVsb, tenantId);
+            	vsbs.add(vsb);
+            	log.debug("Added VSB info for VSB with ID " + vsbId + " filtering VSDs for tenant " + tenantId);
+            } else if (fp.size() == 1 && fp.containsKey("TENANT_ID")) {
+            	String tenantId = fp.get("TENANT_ID");
+            	List<VsBlueprintInfo> origVsbs = getAllVsBlueprintInfos();
+            	for (VsBlueprintInfo x : origVsbs) {
+            		VsBlueprintInfo vsb = postProcessVsb(x, tenantId);
+            		vsbs.add(vsb);
+            	}
+            	log.debug("Added all the VSB info available in DB filtering VSDs for tenant " + tenantId);
             } else if (fp.isEmpty()) {
             	vsbs = getAllVsBlueprintInfos();
             	log.debug("Addes all the VSB info available in DB.");
@@ -189,6 +212,29 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
             log.error("Received query VS Bluepring with attribute selector. Not supported at the moment.");
             throw new MethodNotImplementedException("Received query VS Blueprint with attribute selector. Not supported at the moment.");
         }
+	}
+	
+	private VsBlueprintInfo postProcessVsb(VsBlueprintInfo origVsb, String tenantId) {
+		List<String> origVsdIds = origVsb.getActiveVsdId();
+		VsBlueprintInfo targetVsb = origVsb;
+		targetVsb.removeAllVsds();
+		for (String s : origVsdIds) {
+			try {
+				QueryVsDescriptorResponse rp = vsDescriptorCatalogueService.queryVsDescriptor(
+						new GeneralizedQueryRequest(
+								BlueprintCatalogueUtilities.buildVsDescriptorFilter(s, tenantId),
+								null
+						)
+				);
+				if (rp != null) {
+					log.debug("VS descriptor with ID " + s + " found for tenant " + tenantId + ". Adding VSD ID into VSB info.");
+					targetVsb.addVsd(s);
+				}
+			} catch (Exception e) {
+				log.debug("Descriptor with ID " + s + " not found for tenant " + tenantId);
+			}
+		}
+		return targetVsb;
 	}
 	
 	@Override
@@ -205,7 +251,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throw new FailedOperationException("There are some VSDs associated to the VS Blueprint. Impossible to remove it.");
 		}
 		
-		vsBlueprintInfoRepository.delete(vsbi.getId());
+		vsBlueprintInfoRepository.delete(vsbi);
 		log.debug("Removed VSB info from DB.");
 		VsBlueprint vsb = getVsBlueprint(vsBlueprintId);
 		vsBlueprintRepository.delete(vsb);
@@ -230,7 +276,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		log.debug("Removed VSD " + vsdId + " from blueprint " + vsBlueprintId);
 	}
 	
-	private String storeVsBlueprint(VsBlueprint vsBlueprint) throws AlreadyExistingEntityException {
+	private String storeVsBlueprint(VsBlueprint vsBlueprint, String owner) throws AlreadyExistingEntityException {
 		log.debug("Onboarding VS blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion());
 		if ( (vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ||
 				(vsBlueprintRepository.findByNameAndVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ) {
@@ -277,7 +323,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			log.debug("Added connectivity services in VS blueprint " + vsbIdString);
 		}
 		
-		VsBlueprintInfo vsBlueprintInfo = new VsBlueprintInfo(vsbIdString, vsBlueprint.getVersion(), vsBlueprint.getName());
+		VsBlueprintInfo vsBlueprintInfo = new VsBlueprintInfo(vsbIdString, vsBlueprint.getVersion(), vsBlueprint.getName(), owner);
 		vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
 		log.debug("Added VS Blueprint Info with ID " + vsbIdString);
 		

@@ -15,6 +15,7 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprint;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
@@ -22,6 +23,8 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 public class OnboardTestCaseBlueprintRequest implements InterfaceMessage {
 
 	private TestCaseBlueprint testCaseBlueprint;
+
+	private String owner;
 	
 	public OnboardTestCaseBlueprintRequest() {	}
 	
@@ -29,8 +32,16 @@ public class OnboardTestCaseBlueprintRequest implements InterfaceMessage {
 		this.testCaseBlueprint = testCaseBlueprint;
 	}
 
-	
-	
+
+	@JsonIgnore
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
 	/**
 	 * @return the testCaseBlueprint
 	 */

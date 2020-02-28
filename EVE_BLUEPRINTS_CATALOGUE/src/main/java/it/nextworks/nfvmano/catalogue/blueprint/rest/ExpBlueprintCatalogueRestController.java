@@ -24,6 +24,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.ExpBlueprintCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
@@ -31,10 +32,13 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -61,21 +65,11 @@ public class ExpBlueprintCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
-	}
-
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
+	@Autowired
+	private AuthService authService;
 
 	public ExpBlueprintCatalogueRestController() { }
 
@@ -91,28 +85,29 @@ public class ExpBlueprintCatalogueRestController {
 	@RequestMapping(value = "/expblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createExpBlueprint(@RequestBody OnboardExpBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a EXP blueprint.");
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-			if (!user.equals(adminTenant)) {
-				log.warn("Request refused as tenant {} is not admin.", user);
-				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-			}
-			try {
-				String expBlueprintId = expBlueprintCatalogueService.onboardExpBlueprint(request);
-				return new ResponseEntity<String>(expBlueprintId, HttpStatus.CREATED);
-			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			} catch (AlreadyExistingEntityException e) {
-				log.error("EXP Blueprint already existing");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
-			} catch (Exception e) {
-				log.error("Internal exception");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		String user = authService.getUserFromAuth(auth);
+		if (!keycloakEnabled&&!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin.", user);
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		request.setOwner(user);
+		try {
+			String expBlueprintId = expBlueprintCatalogueService.onboardExpBlueprint(request);
+			return new ResponseEntity<String>(expBlueprintId, HttpStatus.CREATED);
+		} catch (MalformattedElementException e) {
+			log.error("Malformatted request"+e.getMessage());
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (AlreadyExistingEntityException e) {
+			log.error("EXP Blueprint already existing");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 	}
 
@@ -128,32 +123,36 @@ public class ExpBlueprintCatalogueRestController {
 	@RequestMapping(value = "/expblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllExpBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String vsbId, Authentication auth) {
 		log.debug("Received request to retrieve all the EXP blueprints.");
+
+		//jb: disabled authentication control in order to allow certain hosts to retrieve information without
+		//being authenticated
+		/*
 		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+		}*/
 
-			try {
-				if ((id == null) && (vsbId == null)) {
-					QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(new Filter(), null));
-					return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
-				} else if (id != null) {
-					QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(id), null));
-					return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
-				} else if (vsbId != null) {
-					QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId), null));
-					return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
-				} else return new ResponseEntity<String>("Not acceptable query parameter", HttpStatus.BAD_REQUEST);
-			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			} catch (NotExistingEntityException e) {
-				log.error("EXP Blueprints not found");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-			} catch (Exception e) {
-				log.error("Internal exception");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		try {
+			if ((id == null) && (vsbId == null)) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(new Filter(), null));
+				return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
+			} else if (id != null) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(id), null));
+				return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
+			} else if (vsbId != null) {
+				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId), null));
+				return new ResponseEntity<List<ExpBlueprintInfo>>(response.getExpBlueprintInfo(), HttpStatus.OK);
+			} else return new ResponseEntity<String>("Not acceptable query parameter", HttpStatus.BAD_REQUEST);
+		} catch (MalformattedElementException e) {
+			log.error("Malformatted request"+e.getMessage());
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (NotExistingEntityException e) {
+			log.error("EXP Blueprints not found");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 
 	}
@@ -170,7 +169,7 @@ public class ExpBlueprintCatalogueRestController {
 	public ResponseEntity<?> getExpBlueprint(@PathVariable String expbId, Authentication auth) {
 
 			log.debug("Received request to retrieve EXP blueprint with ID " + expbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -178,7 +177,7 @@ public class ExpBlueprintCatalogueRestController {
 				QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(expbId), null));
 				return new ResponseEntity<ExpBlueprintInfo>(response.getExpBlueprintInfo().get(0), HttpStatus.OK);
 			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
+				log.error("Malformatted request"+e.getMessage());
 				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 			} catch (NotExistingEntityException e) {
 				log.error("EXP Blueprints not found");
@@ -200,28 +199,30 @@ public class ExpBlueprintCatalogueRestController {
 	})
 	@RequestMapping(value = "/expblueprint/{expbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteExpBlueprint(@PathVariable String expbId, Authentication auth) {
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-			if (!user.equals(adminTenant)) {
-				log.warn("Request refused as tenant {} is not admin.", user);
-				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-			}
-			try {
-				expBlueprintCatalogueService.deleteExpBlueprint(expbId);
-				return new ResponseEntity<>(HttpStatus.OK);
-			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			} catch (NotExistingEntityException e) {
-				log.error("EXP Blueprints not found");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-			} catch (Exception e) {
-				log.error("Internal exception");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+		String user = authService.getUserFromAuth(auth);
+        if (!keycloakEnabled&&!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin and keycloak is not enabled.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+
+
+        try {
+            expBlueprintCatalogueService.deleteExpBlueprint(expbId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (MalformattedElementException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotExistingEntityException e) {
+            log.error("EXP Blueprints not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Internal exception");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
 
 	}

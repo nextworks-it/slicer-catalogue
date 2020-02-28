@@ -23,8 +23,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Inheritance;
 
 @Embeddable
-@Inheritance
-@DiscriminatorColumn(name="METRIC_T")
+//@Inheritance
+//@DiscriminatorColumn(name="METRIC_T")
 public class Metric implements DescriptorInformationElement {
 
 
@@ -122,10 +122,12 @@ public class Metric implements DescriptorInformationElement {
 
     }
 
+    /*
     enum MetricCollectionType {
         CUMULATIVE,
         DELTA,
         GAUGE
     }
+    */
 
 }

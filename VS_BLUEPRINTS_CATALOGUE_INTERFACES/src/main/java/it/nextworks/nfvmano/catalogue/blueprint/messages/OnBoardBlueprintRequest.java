@@ -29,6 +29,7 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 
 	private List<Nsd> nsds = new ArrayList<>();
 	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
+	private String owner;
 	
 	public OnBoardBlueprintRequest() { }
 	
@@ -78,6 +79,15 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
 		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid(); 
 		for (Nsd nsd : nsds) nsd.isValid();
+	}
+
+	@JsonIgnore
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

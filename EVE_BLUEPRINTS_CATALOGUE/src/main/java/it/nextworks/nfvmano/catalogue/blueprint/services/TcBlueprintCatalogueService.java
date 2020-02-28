@@ -25,11 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.TestCaseBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardTestCaseBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryTestCaseBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryTestCaseDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintRepository;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
@@ -51,6 +53,9 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 	@Autowired
 	private TestCaseBlueprintInfoRepository testCaseBlueprintInfoRepository;
 	
+	@Autowired
+	private TcDescriptorCatalogueService tcDescriptorCatalogueService;
+	
 	public TcBlueprintCatalogueService() {	}
 
 	@Override
@@ -60,7 +65,7 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 		request.isValid();
 		
 		TestCaseBlueprint tcb = request.getTestCaseBlueprint();
-		String testCaseBlueprintId = storeTestCaseBlueprint(tcb);
+		String testCaseBlueprintId = storeTestCaseBlueprint(tcb, request.getOwner());
 		return testCaseBlueprintId;
 	}
 
@@ -93,6 +98,21 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
             	TestCaseBlueprintInfo tcbi = getTestCaseBlueprintInfo(tcbName, tcbVersion);
             	tcbInfos.add(tcbi);
             	log.debug("Added Test Case Blueprint info for TCB with name " + tcbName + " and version " + tcbVersion);
+        	} else if (fp.size() == 2 && fp.containsKey("TCB_ID") && fp.containsKey("TENANT_ID")) { 
+        		String tcbId = fp.get("TCB_ID");
+        		String tenantId = fp.get("TENANT_ID");
+        		TestCaseBlueprintInfo origTcb = getTestCaseBlueprintInfo(tcbId);
+        		TestCaseBlueprintInfo tcbi = postProcessTcb(origTcb, tenantId);
+        		tcbInfos.add(tcbi);
+            	log.debug("Added Test Case Blueprint info for TCB ID " + tcbId + " filtering TCDs associated to tenant " + tenantId);
+        	} else if (fp.size() == 1 && fp.containsKey("TENANT_ID")) {
+        		String tenantId = fp.get("TENANT_ID");
+        		List<TestCaseBlueprintInfo> origTcbInfos = getAllTestCaseBlueprintInfos();
+        		for (TestCaseBlueprintInfo t : origTcbInfos) {
+        			TestCaseBlueprintInfo tcbi = postProcessTcb(t, tenantId);
+        			tcbInfos.add(tcbi);
+        		}
+        		log.debug("Added all the TCB info available in DB filtering TCDs for tenant " + tenantId);
         	} else if (fp.isEmpty()) {
         		tcbInfos = getAllTestCaseBlueprintInfos();
             	log.debug("Addes all the VSB info available in DB.");
@@ -104,6 +124,29 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
         }
 	}
 
+	private TestCaseBlueprintInfo postProcessTcb(TestCaseBlueprintInfo origTcb, String tenantId) {
+		List<String> origTcdIds = origTcb.getActiveTcdId();
+		TestCaseBlueprintInfo targetTcb = origTcb;
+		targetTcb.removeAllTcds();;
+		for (String s : origTcdIds) {
+			try {
+				QueryTestCaseDescriptorResponse rp = tcDescriptorCatalogueService.queryTestCaseDescriptor(
+						new GeneralizedQueryRequest(
+								EveportalCatalogueUtilities.buildTestCaseDescriptorFilterFromId(s, tenantId),
+								null
+						)
+				);
+				if (rp != null) {
+					log.debug("TC descriptor with ID " + s + " found for tenant " + tenantId + ". Adding TCD ID into TCB info.");
+					targetTcb.addTcd(s);
+				}
+			} catch (Exception e) {
+				log.debug("TC Descriptor with ID " + s + " not found for tenant " + tenantId);
+			}
+		}
+		return targetTcb;
+	}
+	
 	@Override
 	public void deleteTestCaseBlueprint(String testCaseBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
@@ -119,7 +162,7 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 			throw new FailedOperationException("There are some test case descriptors associated to the Test Case Blueprint. Impossible to remove it.");
 		}
 		
-		testCaseBlueprintInfoRepository.delete(tcbi.getId());
+		testCaseBlueprintInfoRepository.delete(tcbi);
 		log.debug("Removed test case blueprint info from DB.");
 		TestCaseBlueprint tcb = getTestCaseBlueprint(testCaseBlueprintId);
 		testCaseBlueprintRepository.delete(tcb);
@@ -169,7 +212,7 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 		return tcbis;
 	}
 	
-	private String storeTestCaseBlueprint(TestCaseBlueprint tcb) throws AlreadyExistingEntityException {
+	private String storeTestCaseBlueprint(TestCaseBlueprint tcb, String owner) throws AlreadyExistingEntityException {
 		
 		log.debug("Onboarding test case blueprint with name " + tcb.getName() + " and version " + tcb.getVersion());
 		
@@ -194,7 +237,7 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
         testCaseBlueprintRepository.saveAndFlush(target);
         log.debug("Added Test Case Blueprint with ID " + tcbIdString);
         
-        TestCaseBlueprintInfo tcbInfo = new TestCaseBlueprintInfo(tcbIdString, tcb.getVersion(), tcb.getName());
+        TestCaseBlueprintInfo tcbInfo = new TestCaseBlueprintInfo(tcbIdString, tcb.getVersion(), tcb.getName(), owner);
         testCaseBlueprintInfoRepository.saveAndFlush(tcbInfo);
         log.debug("Added Test Case Blueprint Info with ID " + tcbIdString);
 

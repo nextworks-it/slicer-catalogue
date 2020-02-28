@@ -20,6 +20,7 @@ import java.util.List;
 
 public class NfvNsInstantiationInfo {
 
+	private String nstId;
 	private String nfvNsdId;
 	private String nsdVersion;
 	private String deploymentFlavourId;
@@ -29,6 +30,7 @@ public class NfvNsInstantiationInfo {
 	public NfvNsInstantiationInfo() {
 		
 	}
+	
 	/**
 	 * Constructor
 	 * 
@@ -50,6 +52,34 @@ public class NfvNsInstantiationInfo {
 		if (domainIds != null) this.domainIds = domainIds;
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param nstId NST ID
+	 * @param nfvNsdId NSD ID
+	 * @param nsdVersion NSD version
+	 * @param deploymentFlavourId NS Deployment Flavour ID
+	 * @param instantiationLevelId NS Instantiation Level ID
+	 * @param domains list of domains where the NFV NS should be instantiated
+	 */
+	public NfvNsInstantiationInfo(String nstId,
+			String nfvNsdId,
+			String nsdVersion,
+			String deploymentFlavourId,
+			String instantiationLevelId,
+			List<String> domainIds) {
+		this.nstId=nstId;
+		this.nfvNsdId = nfvNsdId;
+		this.nsdVersion = nsdVersion;
+		this.deploymentFlavourId = deploymentFlavourId;
+		this.instantiationLevelId = instantiationLevelId;
+		if (domainIds != null) this.domainIds = domainIds;
+	}
+	
+	
+	public void setNstId(String nstId) {
+		this.nstId = nstId;
+	}
 	public void setNfvNsdId(String nfvNsdId) {
 		this.nfvNsdId = nfvNsdId;
 	}
@@ -68,6 +98,9 @@ public class NfvNsInstantiationInfo {
 	
 	
 
+	public String getNstId() {
+		return nstId;
+	}
 	/**
 	 * @return the domainIds
 	 */

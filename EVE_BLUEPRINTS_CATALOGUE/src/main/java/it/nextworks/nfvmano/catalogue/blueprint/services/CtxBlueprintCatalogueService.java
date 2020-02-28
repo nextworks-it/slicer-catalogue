@@ -16,10 +16,12 @@
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.CtxBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
@@ -68,6 +70,9 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 
 	@Autowired
 	private CtxBlueprintInfoRepository ctxBlueprintInfoRepository;
+	
+	@Autowired
+	private CtxDescriptorCatalogueService ctxDescriptorCatalogueService;
 
 	@Autowired
 	private VsComponentRepository vsComponentRepository;
@@ -83,7 +88,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		log.debug("Process CtxBlueprint Onboard request");
 		request.isValid();
 		CtxBlueprint ctxBlueprint = request.getCtxBlueprint();
-		String ctxBlueprintId = storeCtxBlueprint(ctxBlueprint);
+		String ctxBlueprintId = storeCtxBlueprint(ctxBlueprint, request.getOwner());
 		
 		CtxBlueprintInfo ctxBlueprintInfo;
 		try {
@@ -145,6 +150,10 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		//CTXB_NAME & CTXB_VERSION
 		//2. Context Blueprint ID
 		//CTXB_ID
+		//3. Tenant ID
+		//TENANT_ID
+		//4. Context Blueprint ID and Tenant ID
+		//CTXB_ID && TENANT_ID 
         //No attribute selector is supported at the moment
 		
 		List<CtxBlueprintInfo> ctxbs = new ArrayList<>();
@@ -164,6 +173,21 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
             	CtxBlueprintInfo ctxb = getContextBlueprintInfo(ctxbName, ctxbVersion);
             	ctxbs.add(ctxb);
             	log.debug("Added Context Blueprint info for CTXB with name " + ctxbName + " and version " + ctxbVersion);
+            } else if (fp.size() == 2 && fp.containsKey("CTXB_ID") && fp.containsKey("TENANT_ID")) {
+            	String ctxbId = fp.get("CTXB_ID");
+            	String tenantId = fp.get("TENANT_ID");
+            	CtxBlueprintInfo origCtxb = getContextBlueprintInfo(ctxbId);
+            	CtxBlueprintInfo ctxb = postProcessCtxb(origCtxb, tenantId);
+            	ctxbs.add(ctxb);
+            	log.debug("Added Context Blueprint info for CTXB ID " + ctxbId + " with ctxD filtered for tenant " + tenantId);
+            } else if (fp.size() == 1 && fp.containsKey("TENANT_ID")) {
+            	String tenantId = fp.get("TENANT_ID");
+            	List<CtxBlueprintInfo> origCtxbs = getAllContextBlueprintInfos();
+            	for (CtxBlueprintInfo x : origCtxbs) {
+            		CtxBlueprintInfo ctxb = postProcessCtxb(x, tenantId);
+            		ctxbs.add(ctxb);
+            	}
+            	log.debug("Added all the VSB info available in DB filtering VSDs for tenant " + tenantId);
             } else if (fp.isEmpty()) {
             	ctxbs = getAllContextBlueprintInfos();
             	log.debug("Addes all the VSB info available in DB.");
@@ -174,6 +198,29 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
             throw new MethodNotImplementedException("Received query Context Blueprint with attribute selector. Not supported at the moment.");
         }
 		
+	}
+	
+	private CtxBlueprintInfo postProcessCtxb(CtxBlueprintInfo origCtxb, String tenantId) {
+		List<String> origCtxdIds = origCtxb.getActiveCtxdId();
+		CtxBlueprintInfo targetCtxb = origCtxb;
+		targetCtxb.removeAllCtxd();
+		for (String s : origCtxdIds) {
+			try {
+				QueryCtxDescriptorResponse rp = ctxDescriptorCatalogueService.queryCtxDescriptor(
+						new GeneralizedQueryRequest(
+								EveportalCatalogueUtilities.buildCtxDescriptorFilter(s, tenantId),
+								null
+						)
+				);
+				if (rp != null) {
+					log.debug("CTX descriptor with ID " + s + " found for tenant " + tenantId + ". Adding CTXD ID into CTXB info.");
+					targetCtxb.addCtxd(s);
+				}
+			} catch (Exception e) {
+				log.debug("CTX Descriptor with ID " + s + " not found for tenant " + tenantId);
+			}
+		}
+		return targetCtxb;
 	}
 	
 	@Override
@@ -191,7 +238,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 			throw new FailedOperationException("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
 		}
 		
-		ctxBlueprintInfoRepository.delete(ctxbi.getId());
+		ctxBlueprintInfoRepository.delete(ctxbi);
 		log.debug("Removed context blueprint info from DB.");
 		CtxBlueprint ctxb = getContextBlueprint(ctxBlueprintId);
 		ctxBlueprintRepository.delete(ctxb);
@@ -217,7 +264,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		log.debug("Removed Context Descriptor " + cxtDescriptorId + " from Context Blueprint " + ctxBlueprintId);
 	}
 
-	private String storeCtxBlueprint(CtxBlueprint ctxBlueprint) throws AlreadyExistingEntityException {
+	private String storeCtxBlueprint(CtxBlueprint ctxBlueprint, String owner) throws AlreadyExistingEntityException {
         log.debug("Onboarding CTX blueprint with name " + ctxBlueprint.getName() + " and version " + ctxBlueprint.getVersion());
         if ( (ctxBlueprintInfoRepository.findByNameAndCtxBlueprintVersion(ctxBlueprint.getName(), ctxBlueprint.getVersion()).isPresent()) ||
                 (ctxBlueprintRepository.findByNameAndVersion(ctxBlueprint.getName(), ctxBlueprint.getVersion()).isPresent()) ) {
@@ -269,7 +316,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 			log.debug("Added connectivity services in VS blueprint " + ctxbIdString);
 		}
 		
-        CtxBlueprintInfo ctxBlueprintInfo = new CtxBlueprintInfo(ctxbIdString, ctxBlueprint.getVersion(), ctxBlueprint.getName());
+        CtxBlueprintInfo ctxBlueprintInfo = new CtxBlueprintInfo(ctxbIdString, ctxBlueprint.getVersion(), ctxBlueprint.getName(), owner);
         ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
         log.debug("Added Context Blueprint Info with ID " + ctxbIdString);
 

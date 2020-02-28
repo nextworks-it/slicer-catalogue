@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>2.0.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -63,6 +63,12 @@
             <artifactId>VsBlueprintsCatalogue</artifactId>
             <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>NsTemplatesCatalogue</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
         
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
@@ -75,7 +81,23 @@
             <artifactId>EveBlueprintsCatalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
-        
+
+
+        <!-- Keycloak dependencies -->
+
+        <!-- Keycloak client to retrieve user roles -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>6.0.1</version>
+        </dependency>
+
+        <!-- Rest controller configuration -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>6.0.1</version>
+        </dependency>
 <!--
         <dependency>
 			<groupId>it.nextworks.nfvmano</groupId>

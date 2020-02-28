@@ -44,6 +44,21 @@ public class BlueprintCatalogueUtilities {
         return new Filter(filterParams);
     }
     
+    public static Filter buildTenantFilter(String tenantId) {
+        //TENANT_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("TENANT_ID", tenantId);
+        return new Filter(filterParams);
+    }
+    
+    public static Filter buildVsBlueprintFilter(String vsbId, String tenantId) {
+        //VSB_ID && TENANT_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("VSB_ID", vsbId);
+        filterParams.put("TENANT_ID", tenantId);
+        return new Filter(filterParams);
+    }
+    
     public static Filter buildVsDescriptorFilter(String vsdId, String tenantId) {
         //VSD_ID & TENANT_ID
         Map<String, String> filterParams = new HashMap<>();

@@ -19,11 +19,14 @@ import io.swagger.annotations.Api;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxDescriptorResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.CtxDescriptorCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.sebastian.admin.MgmtCatalogueUtilities;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +52,8 @@ public class CtxDescriptorCatalogueRestController {
 	private CtxDescriptorCatalogueService ctxDescriptorCatalogueService;
 
 
-
+	@Autowired
+	private AuthService authService;
 
 	@Value("${catalogue.admin}")
 	private String adminTenant;
@@ -57,21 +61,10 @@ public class CtxDescriptorCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
-	}
 
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
 	
 	public CtxDescriptorCatalogueRestController() { } 
 	
@@ -102,26 +95,38 @@ public class CtxDescriptorCatalogueRestController {
 	@RequestMapping(value = "/ctxdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllCtxDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the CTX descriptors.");
+		//jb: disabled authentication control in order to allow certain hosts to retrieve information without
+		//being authenticated
+		/*
 		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
-			try {
-				String user = getUserFromAuth(auth);
-				QueryCtxDescriptorResponse response = ctxDescriptorCatalogueService.queryCtxDescriptor(
-						new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
+		}*/
+		try {
+			String user = authService.getUserFromAuth(auth);
+			QueryCtxDescriptorResponse response;
+			if(user!=null){
+				response = ctxDescriptorCatalogueService.queryCtxDescriptor(new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
 				);
-				return new ResponseEntity<List<CtxDescriptor>>(response.getCtxDescriptors(), HttpStatus.OK);
-			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			} catch (NotExistingEntityException e) {
-				log.error("CTX Blueprints not found");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-			} catch (Exception e) {
-				log.error("Internal exception");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}else{
+				//return all
+				response = ctxDescriptorCatalogueService.queryCtxDescriptor( new GeneralizedQueryRequest(null, null));
+
 			}
+
+
+
+			return new ResponseEntity<List<CtxDescriptor>>(response.getCtxDescriptors(), HttpStatus.OK);
+		} catch (MalformattedElementException e) {
+			log.error("Malformatted request");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (NotExistingEntityException e) {
+			log.error("CTX Blueprints not found");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 
 	}
@@ -129,11 +134,11 @@ public class CtxDescriptorCatalogueRestController {
 	@RequestMapping(value = "/ctxdescriptor/{ctxdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getCtxDescriptor(@PathVariable String ctxdId, Authentication auth) {
 		log.debug("Received request to retrieve CTX descriptor with ID " + ctxdId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
+		String user = authService.getUserFromAuth(auth);
 
 
 			try {

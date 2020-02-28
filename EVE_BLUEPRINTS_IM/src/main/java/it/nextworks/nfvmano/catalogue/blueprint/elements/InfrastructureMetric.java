@@ -15,14 +15,22 @@
  */
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
-import javax.persistence.DiscriminatorValue;
+
 import javax.persistence.Embeddable;
 
+import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+
 @Embeddable
-@DiscriminatorValue("INFRASTRUCTURE")
-public class InfrastructureMetric extends Metric {
+//@DiscriminatorValue("INFRASTRUCTURE")
+public class InfrastructureMetric implements DescriptorInformationElement {
 	
 	private InfrastructureMetricType iMetricType;
+	private String metricId;
+    private String name;
+    private MetricCollectionType metricCollectionType;
+    private String unit;
+    private String interval;
 
 	public InfrastructureMetric() {
 		// JPA only
@@ -35,9 +43,50 @@ public class InfrastructureMetric extends Metric {
 			String interval,
 			String topic,
 			InfrastructureMetricType iMetricType) {
-        super(metricId, name, metricCollectionType, unit, interval);
+		this.metricId = metricId;
+        this.name = name;
+        this.metricCollectionType = metricCollectionType;
+        this.unit = unit;
+        this.interval = interval;
         this.iMetricType = iMetricType;
     }
+
+	
+	
+	/**
+	 * @return the metricId
+	 */
+	public String getMetricId() {
+		return metricId;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the metricCollectionType
+	 */
+	public MetricCollectionType getMetricCollectionType() {
+		return metricCollectionType;
+	}
+
+	/**
+	 * @return the unit
+	 */
+	public String getUnit() {
+		return unit;
+	}
+
+	/**
+	 * @return the interval
+	 */
+	public String getInterval() {
+		return interval;
+	}
 
 	/**
 	 * @return the iMetricType
@@ -46,6 +95,18 @@ public class InfrastructureMetric extends Metric {
 		return iMetricType;
 	}
 	
-	
+	@Override
+    public void isValid() throws MalformattedElementException {
+
+        if(metricId == null || metricId.equals(""))
+            throw new MalformattedElementException("Metric without metricId");
+        if(name == null || name.equals(""))
+            throw new MalformattedElementException("Metric without name");
+        if(unit == null || unit.equals(""))
+            throw new MalformattedElementException("Metric without unit");
+        if(metricCollectionType == null)
+            throw new MalformattedElementException("Metric without MetricCollectionType");
+
+    }
 
 }

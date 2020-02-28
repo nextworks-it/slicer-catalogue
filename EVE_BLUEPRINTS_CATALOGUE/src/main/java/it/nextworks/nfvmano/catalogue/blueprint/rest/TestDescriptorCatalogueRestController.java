@@ -17,6 +17,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.rest;
 
 import java.util.List;
 
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,21 +61,11 @@ public class TestDescriptorCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
-	}
-
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
+	@Autowired
+	private AuthService authService;
 	
 	public TestDescriptorCatalogueRestController() { }
 	
@@ -88,16 +78,27 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllTestCaseDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the TC descriptors.");
+
+		//jb: disabled authentication control in order to allow certain hosts to retrieve information without
+		//being authenticated
+		/*
 		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
-		String user = getUserFromAuth(auth);
+		}*/
+		String user = authService.getUserFromAuth(auth);
 		try {
+			QueryTestCaseDescriptorResponse response;
+			if(user!=null){
+				response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
+						new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
+				);
+			}else{
+				response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
+						new GeneralizedQueryRequest(null, null)
+				);
+			}
 
-			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(
-					new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
-			);
 			return new ResponseEntity<List<TestCaseDescriptor>>(response.getTestCaseDescriptors(), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -118,11 +119,11 @@ public class TestDescriptorCatalogueRestController {
 	@RequestMapping(value = "/testcasedescriptor/{tcdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getTcDescriptor(@PathVariable String tcdId, Authentication auth) {
 		log.debug("Received request to retrieve Test case descriptor with ID " + tcdId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
+		String user = authService.getUserFromAuth(auth);
 		try {
 
 			QueryTestCaseDescriptorResponse response = tcDescriptorCatalogueService.queryTestCaseDescriptor(

@@ -127,7 +127,7 @@ public class CtxBlueprintRepositoryTest {
         target.setBlueprintId(ctxbIdString);
         //log.debug("Added CTX Blueprint Info with ID " + ctxbIdString);
 
-        CtxBlueprintInfo ctxBlueprintInfo = new CtxBlueprintInfo(ctxbIdString, ctxBlueprint.getVersion(), ctxBlueprint.getName());
+        CtxBlueprintInfo ctxBlueprintInfo = new CtxBlueprintInfo(ctxbIdString, ctxBlueprint.getVersion(), ctxBlueprint.getName(),"admin");
         ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
 
         return ctxbIdString;

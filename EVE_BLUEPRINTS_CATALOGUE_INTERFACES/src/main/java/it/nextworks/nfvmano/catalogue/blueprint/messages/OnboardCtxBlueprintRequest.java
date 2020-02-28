@@ -15,6 +15,7 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
@@ -25,6 +26,8 @@ import java.util.List;
 public class OnboardCtxBlueprintRequest extends OnBoardBlueprintRequest {
 
 	private CtxBlueprint ctxBlueprint;
+
+
 	
 	public OnboardCtxBlueprintRequest() { }
 	
@@ -53,5 +56,6 @@ public class OnboardCtxBlueprintRequest extends OnBoardBlueprintRequest {
 		if (ctxBlueprint == null) throw new MalformattedElementException("Onboard CTX blueprint request without CTX blueprint");
 		else ctxBlueprint.isValid();
 	}
+
 
 }

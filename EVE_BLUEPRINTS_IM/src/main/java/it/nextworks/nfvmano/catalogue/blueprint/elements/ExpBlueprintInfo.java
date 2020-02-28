@@ -39,7 +39,8 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	private String expBlueprintId;
 	private String expBlueprintVersion;
 	private String name;
-	
+	private String owner;
+
 	@Transient
 	private ExpBlueprint expBlueprint;
 	
@@ -62,11 +63,13 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	 * @param expBlueprintId
 	 * @param expBlueprintVersion
 	 * @param name
+	 * @param owner
 	 */
-	public ExpBlueprintInfo(String expBlueprintId, String expBlueprintVersion, String name) {
+	public ExpBlueprintInfo(String expBlueprintId, String expBlueprintVersion, String name, String owner) {
 		this.expBlueprintId = expBlueprintId;
 		this.expBlueprintVersion = expBlueprintVersion;
 		this.name = name;
+		this.owner = owner;
 	}
 
 
@@ -147,5 +150,10 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	
 	public String getName() {
 		return name;
+	}
+
+	@JsonIgnore
+	public String getOwner() {
+		return owner;
 	}
 }

@@ -23,8 +23,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.sebastian.admin.MgmtCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsDescriptorCatalogueService;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,27 +70,16 @@ public class VsDescriptorCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
-	}
+	@Autowired
+	private AuthService authService;
 
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
 	
 	public VsDescriptorCatalogueRestController() { }
 
 
-	//Commented this since the VSDs of the Experiments are created from the ExpDs
-	/*
 	@ApiOperation(value = "Onboard a new Vertical Service Descriptor")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "The ID of the created Vertical Service Descriptor.", response = String.class),
@@ -102,7 +94,7 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsDescriptor(@RequestBody OnboardVsDescriptorRequest request, Authentication auth) {
 		log.debug("Received request to create a VS descriptor.");
-		String user = getUserFromAuth(auth);
+		String user = authService.getUserFromAuth(auth);
 		if (!request.getTenantId().equals(user)) {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -120,7 +112,7 @@ public class VsDescriptorCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	*/
+	
 
 	@ApiOperation(value = "Query ALL the Vertical Service Descriptor")
 	@ApiResponses(value = {
@@ -129,12 +121,12 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsDescriptors(Authentication auth) {
 		log.debug("Received request to retrieve all the VS descriptors.");
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			String user = getUserFromAuth(auth);
+			String user = authService.getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
 					new GeneralizedQueryRequest(MgmtCatalogueUtilities.buildTenantFilter(user), null)
 			);
@@ -161,12 +153,12 @@ public class VsDescriptorCatalogueRestController {
 	@RequestMapping(value = "/vsdescriptor/{vsdId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsDescriptor(@PathVariable String vsdId, Authentication auth) {
 		log.debug("Received request to retrieve VS descriptor with ID " + vsdId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			String user = getUserFromAuth(auth);
+			String user = authService.getUserFromAuth(auth);
 			QueryVsDescriptorResponse response = vsDescriptorCatalogueService.queryVsDescriptor(
 					new GeneralizedQueryRequest(
 							BlueprintCatalogueUtilities.buildVsDescriptorFilter(vsdId, user),
@@ -187,8 +179,6 @@ public class VsDescriptorCatalogueRestController {
 	}
 	
 
-	//Commented this since the VSDs of the Experiments are created from the ExpDs
-	/*
 	@ApiOperation(value = "Delete a Vertical Service Descriptor with the given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
@@ -200,7 +190,7 @@ public class VsDescriptorCatalogueRestController {
 	public ResponseEntity<?> deleteVsDescriptor(@PathVariable String vsdId, Authentication auth) {
 		log.debug("Received request to delete VS descriptor with ID " + vsdId);
 		try {
-			String user = getUserFromAuth(auth);
+			String user = authService.getUserFromAuth(auth);
 			vsDescriptorCatalogueService.deleteVsDescriptor(vsdId, user);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (MalformattedElementException e) {
@@ -215,7 +205,7 @@ public class VsDescriptorCatalogueRestController {
 		}
 	}
 
-	 */
+	
 
 	
 }

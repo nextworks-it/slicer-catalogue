@@ -16,6 +16,14 @@ public class EveportalCatalogueUtilities {
         return new Filter(filterParams);
     }
     
+    public static Filter buildCtxBlueprintFilterWithTenant(String ctxbId, String tenantId) {
+        //CTXB_ID && TENANT_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("CTXB_ID", ctxbId);
+        filterParams.put("TENANT_ID", tenantId);
+        return new Filter(filterParams);
+    }
+    
     public static Filter buildCtxBlueprintFilter(String name, String version) {
         //CTXB_ID
         Map<String, String> filterParams = new HashMap<>();
@@ -52,6 +60,21 @@ public class EveportalCatalogueUtilities {
         //TCB_ID
         Map<String, String> filterParams = new HashMap<>();
         filterParams.put("TCB_ID", tcbId);
+        return new Filter(filterParams);
+    }
+    
+    public static Filter buildTenantFilter(String tenantId) {
+        //TENANT_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("TENANT_ID", tenantId);
+        return new Filter(filterParams);
+    }
+    
+    public static Filter buildTestCaseBlueprintFilterFromIdAndTenant(String tcbId, String tenantId) {
+        //TCB_ID && TENANT_ID
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("TCB_ID", tcbId);
+        filterParams.put("TENANT_ID", tenantId);
         return new Filter(filterParams);
     }
     

@@ -9,8 +9,8 @@
 
     ],
     "sites": [
-      "test_site_1",
-      "test_site_2"
+      "ITALY_TURIN",
+      "GREECE_ATHENS"
 
     ],
     "kpis": [
@@ -26,7 +26,7 @@
     "metrics": [{
         "name":"test_metric",
         "metricId":"test_metric",
-        "metricType": "LOST_PKT",
+        "iMetricType": "LOST_PKT",
         "metricCollectionType": "DELTA",
         "unit": "packets",
         "interval": "60s"
@@ -41,7 +41,7 @@
 
       ],
 
-  "expTranslationRules": [
+  "translationRules": [
     {
       "input": [
         {

@@ -17,6 +17,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.rest;
 
 import java.util.List;
 
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +42,6 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardTestCaseBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryTestCaseBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.services.TcBlueprintCatalogueService;
-import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
@@ -62,24 +61,15 @@ public class TestBlueprintCatalogueRestController {
 	@Autowired
 	private TcBlueprintCatalogueService tcBlueprintCatalogueService;
 
-	@Value("${authentication.enable}")
-	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
-	}
 
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
+	@Autowired
+	private AuthService authService;
 
-	}
+
 	public TestBlueprintCatalogueRestController() {	}
 	
 	@ApiOperation(value = "Onboard a new Test Case Blueprint.")
@@ -90,15 +80,16 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createTestCaseBlueprint(@RequestBody OnboardTestCaseBlueprintRequest request, Authentication auth) {
 		log.debug("Received request to create a Test case blueprint.");
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-		if (!user.equals(adminTenant)) {
+		String user = authService.getUserFromAuth(auth);
+		if (!keycloakEnabled&&!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+		request.setOwner(user);
 		try {
 			String testCaseBlueprintId = tcBlueprintCatalogueService.onboardTestCaseBlueprint(request);
 			return new ResponseEntity<String>(testCaseBlueprintId, HttpStatus.CREATED);
@@ -121,13 +112,19 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllTestCaseBlueprints(Authentication auth) {
 		log.debug("Received request to retrieve all the Test case blueprints.");
+		//jb: disabled authentication control in order to allow certain hosts to retrieve information without
+		//being authenticated
+		/*
 		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+		}*/
 
 		try {
-			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
+			String user = authService.getUserFromAuth(auth);
+			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(
+					new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTenantFilter(user), null)
+					); 
 			return new ResponseEntity<List<TestCaseBlueprintInfo>>(response.getTestCaseBlueprints(), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -148,13 +145,16 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getTcBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to retrieve test case blueprint with ID " + tcbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 
 		try {
-			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTestCaseBlueprintFilterFromId(tcbId), null));
+			String user = authService.getUserFromAuth(auth);
+			QueryTestCaseBlueprintResponse response = tcBlueprintCatalogueService.queryTestCaseBlueprint(
+					new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTestCaseBlueprintFilterFromIdAndTenant(tcbId, user), null)
+					);
 			return new ResponseEntity<TestCaseBlueprintInfo>(response.getTestCaseBlueprints().get(0), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -175,15 +175,16 @@ public class TestBlueprintCatalogueRestController {
 	@RequestMapping(value = "/testcaseblueprint/{tcbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteTestCaseBlueprint(@PathVariable String tcbId, Authentication auth) {
 		log.debug("Received request to delete Test case blueprint with ID " + tcbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-		if (!user.equals(adminTenant)) {
+		String user = authService.getUserFromAuth(auth);
+		if (!keycloakEnabled&&!user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+
 		try {
 			tcBlueprintCatalogueService.deleteTestCaseBlueprint(tcbId); 
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

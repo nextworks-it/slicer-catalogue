@@ -129,7 +129,12 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
 			} else 	if (fp.size() == 2 && fp.containsKey("TCD_ID") && fp.containsKey("TENANT_ID")) {
             	String tcdId = fp.get("TCD_ID");
             	String tenantId = fp.get("TENANT_ID");
-            	Optional<TestCaseDescriptor> tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorIdAndTenantId(tcdId, tenantId);
+				Optional<TestCaseDescriptor> tcdOpt = null;
+				if (tenantId.equals(adminTenant)) {
+					tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorId(tcdId);
+				} else {
+					tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorIdAndTenantId(tcdId, tenantId);
+				}
             	if (!(tcdOpt.isPresent())) {
             		log.error("Test case descriptor with ID " + tcdId + " not found in DB.");
             		throw new NotExistingEntityException("Test case descriptor with ID " + tcdId + " not found in DB.");

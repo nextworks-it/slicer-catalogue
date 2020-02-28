@@ -39,6 +39,7 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	private String ctxBlueprintId;
 	private String ctxBlueprintVersion;
 	private String name;
+	private String owner;
 
 	@Transient
 	private CtxBlueprint ctxBlueprint;
@@ -61,11 +62,13 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	 * @param ctxBlueprintId
 	 * @param ctxBlueprintVersion
 	 * @param name
+	 * @param owner
 	 */
-	public CtxBlueprintInfo(String ctxBlueprintId, String ctxBlueprintVersion, String name) {
+	public CtxBlueprintInfo(String ctxBlueprintId, String ctxBlueprintVersion, String name, String owner) {
 		this.ctxBlueprintId = ctxBlueprintId;
 		this.ctxBlueprintVersion = ctxBlueprintVersion;
 		this.name = name;
+		this.owner=owner;
 	}
 
 
@@ -130,6 +133,10 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	}
 
 
+	public String getOwner() {
+		return owner;
+	}
+
 	public void addCtxd(String ctxdId) {
 		if (!(activeCtxdId.contains(ctxdId)))
 			activeCtxdId.add(ctxdId);
@@ -142,6 +149,10 @@ public class CtxBlueprintInfo implements InterfaceInformationElement {
 	
 	public void addNsdInfoId(String nsdInfoId) {
 		onBoardedNsdInfoId.add(nsdInfoId);
+	}
+	
+	public void removeAllCtxd() {
+		this.activeCtxdId = new ArrayList<String>();
 	}
 	
 	@Override

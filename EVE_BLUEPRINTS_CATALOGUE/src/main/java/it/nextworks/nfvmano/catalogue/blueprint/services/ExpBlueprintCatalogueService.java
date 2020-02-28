@@ -94,7 +94,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		request.isValid();
 		ExpBlueprint expB = request.getExpBlueprint();
         verifyExperimentBlueprintDependencies(expB);
-        String experimentId = storeExpBlueprint(expB);
+        String experimentId = storeExpBlueprint(expB, request.getOwner());
         
         ExpBlueprintInfo expBlueprintInfo;
 		try {
@@ -296,7 +296,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		return expBInfos;
 	}
 
-	private String storeExpBlueprint(ExpBlueprint expBlueprint) throws AlreadyExistingEntityException {
+	private String storeExpBlueprint(ExpBlueprint expBlueprint , String owner) throws AlreadyExistingEntityException {
 
         log.debug("Onboarding EXP blueprint with name " + expBlueprint.getName() + " and version " + expBlueprint.getVersion());
         if ( (expBlueprintInfoRepository.findByNameAndExpBlueprintVersion(expBlueprint.getName(), expBlueprint.getVersion()).isPresent())) {
@@ -335,7 +335,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 			}
 		}
 		
-        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(target.getExpBlueprintId(), target.getVersion(), target.getName());
+        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(target.getExpBlueprintId(), target.getVersion(), target.getName(), owner);
         expBlueprintInfoRepository.saveAndFlush(expbInfo);
         log.debug("Added Experiment Blueprint Info with ID " + expbIdString);
 

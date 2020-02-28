@@ -23,8 +23,8 @@ import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryCtxBlueprintResponse;
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.CtxBlueprintCatalogueService;
-import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,28 +52,15 @@ public class CtxBlueprintCatalogueRestController {
 	@Autowired
 	private CtxBlueprintCatalogueService ctxBlueprintCatalogueService;
 
-
-	@Value("${authentication.enable}")
-	private boolean authenticationEnable;
+	@Value("${keycloak.enabled}")
+	private boolean keycloakEnabled;
 
 	@Value("${catalogue.admin}")
 	private String adminTenant;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
 
-	}
-
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
+	@Autowired
+	private AuthService authService;
 
 	public CtxBlueprintCatalogueRestController() { }
 
@@ -94,16 +80,17 @@ public class CtxBlueprintCatalogueRestController {
 		//TODO: To be improved once the final authentication platform is in place.
 
 		//This was added to allow disabling the authentication system for testing purposes.
-		if (!validateAuthentication(auth)){
+		if (!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
+		String user = authService.getUserFromAuth(auth);
 
-		if (!user.equals(adminTenant)) {
-			log.warn("Request refused as tenant {} is not admin.", user);
+		if (!keycloakEnabled&&!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin and keycloak not enabled.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+		request.setOwner(user);
 		try {
 			String ctxBlueprintId = ctxBlueprintCatalogueService.onboardCtxBlueprint(request);
 			return new ResponseEntity<String>(ctxBlueprintId, HttpStatus.CREATED);
@@ -131,15 +118,22 @@ public class CtxBlueprintCatalogueRestController {
 	@RequestMapping(value = "/ctxblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllCtxBlueprints(Authentication auth) {
 		log.debug("Received request to retrieve all the CTX blueprints.");
+
+        //jb: disabled authentication control in order to allow certain hosts to retrieve information without
+        //being authenticated
+		/*
 		if(!validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-		}
+		}*/
 
 
 
 		try {
-			QueryCtxBlueprintResponse response = ctxBlueprintCatalogueService.queryCtxBlueprint(new GeneralizedQueryRequest(new Filter(), null));
+			String user = authService.getUserFromAuth(auth);
+			QueryCtxBlueprintResponse response = ctxBlueprintCatalogueService.queryCtxBlueprint(
+					new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildTenantFilter(user), null)
+					);
 			return new ResponseEntity<List<CtxBlueprintInfo>>(response.getCtxBlueprintInfos(), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -166,15 +160,16 @@ public class CtxBlueprintCatalogueRestController {
 	@RequestMapping(value = "/ctxblueprint/{ctxbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getCtxBlueprint(@PathVariable String ctxbId, Authentication auth) {
 		log.debug("Received request to retrieve CTX blueprint with ID " + ctxbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 
 
 		try {
-
-			QueryCtxBlueprintResponse response = ctxBlueprintCatalogueService.queryCtxBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildCtxBlueprintFilter(ctxbId), null));
+			String user = authService.getUserFromAuth(auth);
+			QueryCtxBlueprintResponse response = ctxBlueprintCatalogueService.queryCtxBlueprint(
+					new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildCtxBlueprintFilterWithTenant(ctxbId, user), null));
 			return new ResponseEntity<CtxBlueprintInfo>(response.getCtxBlueprintInfos().get(0), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -200,28 +195,28 @@ public class CtxBlueprintCatalogueRestController {
 	@RequestMapping(value = "/ctxblueprint/{ctxbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteCtxBlueprint(@PathVariable String ctxbId, Authentication auth) {
 		log.debug("Received request to delete CTX blueprint with ID " + ctxbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-			String user = getUserFromAuth(auth);
-			if (!user.equals(adminTenant)) {
-				log.warn("Request refused as tenant {} is not admin.", user);
-				return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-			}
-			try {
-				ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxbId);
-				return new ResponseEntity<>(HttpStatus.OK);
-			} catch (MalformattedElementException e) {
-				log.error("Malformatted request");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			} catch (NotExistingEntityException e) {
-				log.error("CTX Blueprints not found");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-			} catch (Exception e) {
-				log.error("Internal exception");
-				return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+        String user = authService.getUserFromAuth(auth);
+        if (!keycloakEnabled&&!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin and keycloak is not enabled", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxbId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (MalformattedElementException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotExistingEntityException e) {
+            log.error("CTX Blueprints not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Internal exception");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
 
 	}

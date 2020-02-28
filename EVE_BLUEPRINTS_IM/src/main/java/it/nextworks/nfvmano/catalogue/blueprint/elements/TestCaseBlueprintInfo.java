@@ -45,6 +45,7 @@ public class TestCaseBlueprintInfo implements InterfaceInformationElement{
 	private String testCaseBlueprintId;
 	private String version;
 	private String name;
+	private String owner;
 	
 	@Transient
 	private TestCaseBlueprint testCaseBlueprint;
@@ -64,10 +65,12 @@ public class TestCaseBlueprintInfo implements InterfaceInformationElement{
 	 * @param testCaseBlueprintId ID of the test case blueprint
 	 * @param version version of the test case blueprint
 	 * @param name name of the test case blueprint
+	 * @param owner owner user of the test case blueprint
 	 */
 	public TestCaseBlueprintInfo(String testCaseBlueprintId,
 			String version, 
-			String name) {
+			String name,
+								 String owner) {
 		this.testCaseBlueprintId = testCaseBlueprintId;
 		this.version = version;
 		this.name = name;
@@ -118,6 +121,10 @@ public class TestCaseBlueprintInfo implements InterfaceInformationElement{
 	}
 
 
+	@JsonIgnore
+	public String getOwner() {
+		return owner;
+	}
 
 	/**
 	 * @return the name
@@ -155,6 +162,10 @@ public class TestCaseBlueprintInfo implements InterfaceInformationElement{
 			activeTcdId.remove(tcdId);
 	}
 
+	public void removeAllTcds() {
+		this.activeTcdId = new ArrayList<String>();
+	}
+	
 
 	@Override
 	public void isValid() throws MalformattedElementException {

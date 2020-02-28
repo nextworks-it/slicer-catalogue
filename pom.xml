@@ -16,6 +16,9 @@
       <module>EVE_BLUEPRINTS_CATALOGUE</module>
       <module>TranslatorServiceInterface</module>
       <module>TranslatorService</module>
+      <module>NS_TEMPLATES_IM</module>
+      <module>NS_TEMPLATES_CATALOGUE_INTERFACES</module>
+      <module>NS_TEMPLATES_CATALOGUE</module>
       <module>EVE_CATALOGUE_APP</module>
     </modules>
 

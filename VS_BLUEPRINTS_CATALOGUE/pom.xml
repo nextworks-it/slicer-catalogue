@@ -90,6 +90,18 @@
 			<artifactId>NfvoCatalogueService</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		<!--dependency to retrieve user data from keycloak -->
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-core</artifactId>
+			<version>6.0.1</version>
+		</dependency>		
+		<dependency>
+			<groupId>it.nextworks.nfvmano</groupId>
+			<artifactId>NfvManoLibsDescriptors</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+
+		</dependency>
 	</dependencies>
 
 

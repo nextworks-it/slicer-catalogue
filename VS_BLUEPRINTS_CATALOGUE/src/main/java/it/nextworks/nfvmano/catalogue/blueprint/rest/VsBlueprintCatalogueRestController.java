@@ -23,7 +23,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsBlueprintCatalogueService;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,21 +72,12 @@ public class VsBlueprintCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	private  String getUserFromAuth(Authentication auth) {
-		if(authenticationEnable){
-			Object principal = auth.getPrincipal();
-			if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
-				throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
-			}
-			return ((UserDetails) principal).getUsername();
-		}else return adminTenant;
 
-	}
+    @Value("${keycloak.enabled}")
+    private boolean keycloakEnabled;
 
-	private  boolean validateAuthentication(Authentication auth){
-		return !authenticationEnable || auth!=null;
-
-	}
+	@Autowired
+	private AuthService authService;
 
 	public VsBlueprintCatalogueRestController() { }
 	
@@ -99,17 +93,20 @@ public class VsBlueprintCatalogueRestController {
 
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsBlueprint(@RequestBody OnBoardVsBlueprintRequest request, Authentication auth) {
-		log.debug("Received request to create a VS blueprint.");
 
-		if(!validateAuthentication(auth)){
+	    //SecurityConfig should only allow this REST call to certain roles if keycloack enabled
+	    log.debug("Received request to create a VS blueprint.");
+
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-		if (!user.equals(adminTenant)) {
-			log.warn("Request refused as tenant {} is not admin.", user);
+		String user = authService.getUserFromAuth(auth);
+		if (!keycloakEnabled&&!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin and keycloak not enabled.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
+		request.setOwner(user);
 		try {
 			String vsBlueprintId = vsBlueprintCatalogueService.onBoardVsBlueprint(request);
 			return new ResponseEntity<String>(vsBlueprintId, HttpStatus.CREATED);
@@ -135,16 +132,17 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.GET)
 	public ResponseEntity<?> getAllVsBlueprints(@RequestParam(required = false) String id, @RequestParam(required = false) String site, Authentication auth) {
 		log.debug("Received request to retrieve all the VS blueprints.");
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
+			String user = authService.getUserFromAuth(auth);
 			if ((id == null) && (site == null)) {
-				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(new Filter(), null)); 
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildTenantFilter(user), null)); 
 				return new ResponseEntity<List<VsBlueprintInfo>>(response.getVsBlueprintInfo(), HttpStatus.OK);
 			} else if (id != null) {
-				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(id), null));
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(id, user), null));
 				return new ResponseEntity<VsBlueprintInfo>(response.getVsBlueprintInfo().get(0), HttpStatus.OK);
 			} else if (site != null) {
 				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildSiteFilter(site), null));
@@ -173,12 +171,13 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to retrieve VS blueprint with ID " + vsbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId), null));
+			String user = authService.getUserFromAuth(auth);
+			QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(vsbId, user), null));
 			return new ResponseEntity<VsBlueprintInfo>(response.getVsBlueprintInfo().get(0), HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
@@ -202,13 +201,13 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint/{vsbId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteVsBlueprint(@PathVariable String vsbId, Authentication auth) {
 		log.debug("Received request to delete VS blueprint with ID " + vsbId);
-		if(!validateAuthentication(auth)){
+		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		String user = getUserFromAuth(auth);
-		if (!user.equals(adminTenant)) {
-			log.warn("Request refused as tenant {} is not admin.", user);
+		String user = authService.getUserFromAuth(auth);
+		if (!keycloakEnabled&& !user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin and keycloak is not enabled.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {

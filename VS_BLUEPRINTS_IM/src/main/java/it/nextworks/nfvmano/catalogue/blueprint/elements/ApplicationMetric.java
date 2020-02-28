@@ -15,16 +15,21 @@
  */
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
-import javax.persistence.DiscriminatorValue;
+
 import javax.persistence.Embeddable;
 
+import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 @Embeddable
-@DiscriminatorValue("APPLICATION")
-public class ApplicationMetric extends Metric {
+public class ApplicationMetric implements DescriptorInformationElement {
 
 	private String topic;
+	private String metricId;
+    private String name;
+    private MetricCollectionType metricCollectionType;
+    private String unit;
+    private String interval;
 	
 	public ApplicationMetric() {
 		// JPA only
@@ -36,8 +41,53 @@ public class ApplicationMetric extends Metric {
 			String unit, 
 			String interval,
 			String topic) {
-        super(metricId, name, metricCollectionType, unit, interval);
+        //super(metricId, name, metricCollectionType, unit, interval);
+		this.metricId = metricId;
+        this.name = name;
+        this.metricCollectionType = metricCollectionType;
+        this.unit = unit;
+        this.interval = interval;
         this.topic = topic;
+    }
+	
+	public String getMetricId() {
+        return metricId;
+    }
+
+    public void setMetricId(String metricId) {
+        this.metricId = metricId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public MetricCollectionType getMetricCollectionType() {
+        return metricCollectionType;
+    }
+
+    public void setMetricCollectionType(MetricCollectionType metricCollectionType) {
+        this.metricCollectionType = metricCollectionType;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getInterval() {
+        return interval;
+    }
+
+    public void setInterval(String interval) {
+        this.interval = interval;
     }
 
 	/**
@@ -49,9 +99,17 @@ public class ApplicationMetric extends Metric {
 	
 	@Override
     public void isValid() throws MalformattedElementException {
-		super.isValid();
+		
 		if(topic == null || topic.equals(""))
             throw new MalformattedElementException("Application metric without topic");
+		if(metricId == null || metricId.equals(""))
+            throw new MalformattedElementException("Metric without metricId");
+        if(name == null || name.equals(""))
+            throw new MalformattedElementException("Metric without name");
+        if(unit == null || unit.equals(""))
+            throw new MalformattedElementException("Metric without unit");
+        if(metricCollectionType == null)
+            throw new MalformattedElementException("Metric without MetricCollectionType");
 	}
 
 }

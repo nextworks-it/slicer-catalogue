@@ -100,11 +100,12 @@ public class ExpBlueprintCatalogueTest {
     
     @Test
     public void expBlueprintOnboardTest(){
+        /*
         when(expBlueprintInfoRepository.findByNameAndExpBlueprintVersion(anyString(), anyString())).thenReturn(Optional.empty());
 
         when(vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(anyString(), anyString())).thenReturn(Optional.empty());
 
-/*
+
 
         VsBlueprint testVsBlueprint = new VsBlueprint("1",
                         null,
