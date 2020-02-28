@@ -20,16 +20,18 @@ export class ExperimentsExecuteDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.expExecForm = this._formBuilder.group({
-      selectedAction: ['', Validators.required]
+      selectedAction: ['', Validators.required],
+      executionName: ['']
     });
-  } 
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
+
   confirmSelection(): void {
-    this.dialogRef.close(this.expExecForm.get('selectedAction').value);
+    this.dialogRef.close(this.expExecForm);
   }
 
 }

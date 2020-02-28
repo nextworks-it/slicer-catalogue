@@ -30,7 +30,7 @@ export class DescriptorsESchedulerComponent implements OnInit {
   end_date: string;
 
   constructor(private _formBuilder: FormBuilder,
-    private router: Router, 
+    private router: Router,
     private descriptorsExpService: DescriptorsExpService,
     private blueprintsExpService: BlueprintsExpService,
     private experimentService: ExperimentsService) { }
@@ -47,10 +47,10 @@ export class DescriptorsESchedulerComponent implements OnInit {
   }
 
   getExpDescriptors() {
-    this.descriptorsExpService.getExpDescriptors().subscribe((expDescriptorsInfos: ExpDescriptorInfo[]) => 
+    this.descriptorsExpService.getExpDescriptors().subscribe((expDescriptorsInfos: ExpDescriptorInfo[]) =>
       {
         //console.log(expDescriptorsInfos);
-        
+
         for (var i = 0; i < expDescriptorsInfos.length; i++) {
           this.expDescriptors.push({value: expDescriptorsInfos[i]['expDescriptorId'], viewValue: expDescriptorsInfos[i]['name'], item: expDescriptorsInfos[i]});
         }
@@ -91,14 +91,14 @@ export class DescriptorsESchedulerComponent implements OnInit {
   }
 
   scheduleExperiment() {
-    var name = this.scheduleFormGroup.get('name').value;
+    var executionName = this.scheduleFormGroup.get('name').value;
     var expDescriptorId = this.scheduleFormGroup.get('expDescriptorId').value;
     var startDate = this.scheduleFormGroup.get('timeSlotStart').value;
     var endDate = this.scheduleFormGroup.get('timeSlotEnd').value;
     var targetSite = this.scheduleFormGroup.get('targetSite').value
 ;
     var scheduleExperimentRequest = JSON.parse('{}');
-    scheduleExperimentRequest['name'] = name;
+    scheduleExperimentRequest['experimentName'] = executionName;
     scheduleExperimentRequest['experimentDescriptorId'] = expDescriptorId;
     scheduleExperimentRequest['proposedTimeSlot'] = {};
     scheduleExperimentRequest['proposedTimeSlot']['startTime'] = startDate;
@@ -107,7 +107,7 @@ export class DescriptorsESchedulerComponent implements OnInit {
 
     console.log(JSON.stringify(scheduleExperimentRequest, null, 4));
 
-    this.experimentService.postExperiment(scheduleExperimentRequest)
+    this.experimentService.postExperiment(scheduleExperimentRequest, '/experiments')
           .subscribe(experimentId => {
             console.log("Experiment with id " + experimentId)
             if (experimentId != null) {

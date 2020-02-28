@@ -4,7 +4,7 @@
             <ng-template matStepLabel>General Information</ng-template>
             <h4>Experiment Blueprint</h4>
             <mat-form-field appearance="outline" color=primary class="data-full-width">
-                <input matInput id="name" placeholder="Blueprint Id" required formControlName="bpIdCtrl">
+                <input matInput id="id" placeholder="Blueprint Id" required formControlName="bpIdCtrl">
             </mat-form-field>
             <mat-form-field appearance="outline" color=primary class="data-full-width">
                 <input matInput id="name" placeholder="Blueprint Name" required formControlName="bpNameCtrl" (change)="onNameGiven($event);">

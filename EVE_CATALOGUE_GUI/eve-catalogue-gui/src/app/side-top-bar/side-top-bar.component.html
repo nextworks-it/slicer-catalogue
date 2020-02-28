@@ -1,3 +1,4 @@
+
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="side" opened="false">
     <mat-toolbar><span class="title">Catalogue</span>
@@ -44,21 +45,76 @@
         <button mat-menu-item routerLink="/nfv_ns">NSD</button>
         <button mat-menu-item routerLink="/nfv_vnf">VNF Package</button>
         <button mat-menu-item routerLink="/nfv_pnf">PNFD</button>
-      </mat-menu -->  
+      </mat-menu -->
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content class="sidenav-container">
     <mat-toolbar color="primary">
       <!--button mat-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button-->
       <a href="https://www.5g-eve.eu/" target="_blank"><img src="assets/images/logo_5geve_white_120.png"></a>
-      <span class="title" style="margin-left: 10px;"><a routerLink="/" >5G EVE Portal</a></span>
+      <span class="title" style="margin-left: 10px;">
+        <a routerLink="/portal_home" *ngIf="logged">5G EVE Portal</a>
+        <a *ngIf="!logged" class="disabled">5G EVE Portal</a>
+      </span>
 
       <!-- This fills the remaining space of the current row -->
       <span class="fill-remaining-space"></span>
-
+      <!--
       <span><a href="http://www.nextworks.it/" target="_blank"><img src="assets/images/logo_nextworks_150.png"></a></span>
+      -->
     </mat-toolbar>
     <!-- Add Content Here -->
     <router-outlet></router-outlet>
-  </mat-sidenav-content>
+
+    <mat-toolbar color="primary" class="footer" style="height:auto" >
+      <!-- <div mat-line style="width: 11%;" ></div> -->
+      <div mat-line style="width: 50%; margin-top: 1%;" >
+
+        <div mat-line *ngFor="let info of footerInfo"  style="font-size: 13px;">
+          <div mat-line style="line-height: 13px;">
+            <a href="{{info.link}}" target="_blank" style="font-size: 14px; font-weight: bold; margin: 5px 0 5px 0;" class="icon_social_link">{{info.title}} </a><span> | {{info.context}}</span>
+            <!-- <p class="text_in_footer">{{info.context}}</p> -->
+          </div>
+        </div>
+      </div>
+      <div mat-line  style="width: 10%;">
+        <div mat-line style="width: 25%;" >
+          <a href="https://5g-eve-support.slack.com" target="_blank" class="icon_social_link"  >
+          <span class="iconify icon_social" data-icon="mdi-slack" data-inline="false" style="width: 27px;" ></span>
+        <!-- <p class="text_in_footer" style="margin-top: 5%;">slack</p> -->
+        </a>
+      &nbsp;&nbsp;&nbsp;
+      <a href="https://github.com/5GEVE" target="_blank" class="icon_social_link" style="font-size: 10px;" >
+      <span class="iconify icon_social" data-icon="mdi-github-circle" data-inline="false" style="width: 27px;"></span>
+      <!-- <p class="text_in_footer" style="margin-top: 5%;">github</p> -->
+      </a>
+      </div>
+
+      <div mat-line style="width: 25%;" >
+        <a href="https://twitter.com/5G_EVE" target="_blank" class="icon_social_link" >
+        <span class="iconify icon_social" data-icon="mdi-twitter-circle" data-inline="false" style="width: 27px;"></span>
+        <!-- <p class="text_in_footer" style="margin-top: 5%;">project news</p> -->
+        </a>
+        &nbsp;&nbsp;&nbsp;
+
+      <a href="https://www.youtube.com/channel/UCALtt9NDmjt3_GTVNEC-ErQ" target="_blank" class="icon_social_link" >
+      <span class="iconify icon_social" data-icon="mdi-youtube" data-inline="false" style="width: 27px;"></span>
+      <!-- <p class="text_in_footer" style="margin-top: 5%;">youtube</p> -->
+      </a>
+     </div>
+    </div>
+    <div mat-line style="width: 40%;" >
+
+       <!-- <div mat-line style="width: 100%;float: left; bottom:0; " >
+
+      </div> -->
+      <div mat-line style="float: left">
+        <img src="assets/images/eu.png" class="logo_footer" width="15%">
+        <p class="text_in_footer" style="margin-top:-5px;">
+        5G EVE <a href="www.5g-eve.eu" target="_blank" style="color: rgba(255, 255, 255, 0.7);">(www.5g-eve.eu)</a> project has received funding from the European Horizon 2020 Programme for research, technological development and demonstration under grant agreement n° 815074
+      </p>
+    </div>
+</div>
+</mat-toolbar>
+</mat-sidenav-content>
 </mat-sidenav-container>

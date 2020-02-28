@@ -1,8 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
-import { VERSION } from '@angular/material';
 
 @Component({
   selector: 'app-side-top-bar',
@@ -11,27 +7,29 @@ import { VERSION } from '@angular/material';
 })
 export class SideTopBarComponent implements OnInit {
 
-  version = VERSION;
+  logged: boolean;
+
   btns: any[] = [];
+  footerInfo=[
+    {"title":"5G EVE Portal",
+    "link":"https://portal.5g-eve.eu",
+    "context":"Portal to design, manage and monitor experiments over the 5G EVE end-to-end facility infrastructures."},
+    {"title":"5G EVE Wiki",
+    "link":"http://wiki.5g-eve.eu",
+    "context":"Documentation for experimenters and developers operating on 5G EVE."},
+    {"title":"Report Issues",
+    "link":"https://portal.5g-eve.eu/bugzilla",
+    "context":"Issues tracker for 5G EVE experimenters."}
+  ];
 
   ngOnInit(): void {
-    for (let i = 1; i <= 10; i++) {
-      const item = { id: i, name: `Person ${i}`, email: `person${i}@gmail.com` };
-
-      this.btns.push(item);
+    if (localStorage.getItem('logged') && localStorage.getItem('logged') == 'true') {
+      this.logged = true;
+    } else {
+      this.logged = false;
     }
   }
 
-  onOpenMenu(menu: any): void {
-    console.log(menu);
-  }
-
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
-
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor() {}
 
 }

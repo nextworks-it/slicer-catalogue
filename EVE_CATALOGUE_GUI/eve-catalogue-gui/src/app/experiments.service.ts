@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { MessageService } from './message.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExperimentInfo } from './experiments/experiment-info';
 import { environment } from './environments/environments';
+import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +17,20 @@ export class ExperimentsService {
 
   httpOptions = {
     headers: new HttpHeaders(
-      { 'Content-Type': 'application/json' })
+      { 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      })
   };
 
-  constructor(private http: HttpClient, private messageService: MessageService, private _snackBar: MatSnackBar) { }
+  constructor(private http: HttpClient,
+    private authService: AuthService,
+    private router: Router) { }
 
   getExperiments(): Observable<ExperimentInfo[]> {
     return this.http.get<ExperimentInfo[]>(this.baseUrl + this.experimentInfoUrl, this.httpOptions)
       .pipe(
         tap(_ => console.log('fetched experimentInfos - SUCCESS')),
-        catchError(this.handleError<ExperimentInfo[]>('getExperiments', []))
+        catchError(this.authService.handleError<ExperimentInfo[]>('getExperiments', []))
       );
   }
 
@@ -41,73 +45,46 @@ export class ExperimentsService {
     return this.http.get<ExperimentInfo[]>(this.baseUrl + this.experimentInfoUrl + requestParams, this.httpOptions)
       .pipe(
         tap(_ => console.log('fetched experimentInfos - SUCCESS')),
-        catchError(this.handleError<ExperimentInfo[]>('getExperiment', []))
+        catchError(this.authService.handleError<ExperimentInfo[]>('getExperiment', []))
       );
   }
 
-  postExperiment(expRequest: Object): Observable<String> {
+  postExperiment(expRequest: Object, redirection: string): Observable<String> {
     return this.http.post(this.baseUrl + this.experimentInfoUrl, expRequest, this.httpOptions)
       .pipe(
-        tap((experimentId: String) => this.log(`created Experiment w/ id=${experimentId}`, 'SUCCESS')),
-        catchError(this.handleError<String>('postExperiment'))
+        tap((experimentId: String) => 
+        {
+          this.authService.log(`created Experiment w/ id=${experimentId}`, 'SUCCESS', false);
+          this.router.navigate([redirection]).then(() => {
+            window.location.reload();
+          });
+        }
+        ),
+        catchError(this.authService.handleError<String>('postExperiment'))
       );
   }
 
   deleteExperiment(experimentId: string): Observable<String> {
     return this.http.delete(this.baseUrl + this.experimentInfoUrl + '/' + experimentId, this.httpOptions)
     .pipe(
-      tap((result: String) => this.log(`deleted Experiment w/ id=${experimentId}`, 'SUCCESS')),
-      catchError(this.handleError<String>('deleteExperiment'))
+      tap((result: String) => this.authService.log(`deleted Experiment w/ id=${experimentId}`, 'SUCCESS', true)),
+      catchError(this.authService.handleError<String>('deleteExperiment'))
     );
   }
 
   changeExperimentStatus(changeStatusRequest: Object): Observable<String> {
     return this.http.put(this.baseUrl + this.experimentInfoUrl + '/' + changeStatusRequest['experimentId'] + '/status', changeStatusRequest, this.httpOptions)
     .pipe(
-      tap((result: String) => this.log(`changed status for Experiment w/ id=${changeStatusRequest['experimentId']}`, 'SUCCESS')),
-      catchError(this.handleError<String>('changeExperimentStatus'))
+      tap((result: String) => this.authService.log(`changed status for Experiment w/ id=${changeStatusRequest['experimentId']}`, 'SUCCESS', true)),
+      catchError(this.authService.handleError<String>('changeExperimentStatus'))
     )
   }
 
   executeExperimentAction(actionRequest: Object, action: string): Observable<String> {
     return this.http.post(this.baseUrl + this.experimentInfoUrl + '/' + actionRequest['experimentId'] + '/action/' + action, actionRequest, this.httpOptions)
     .pipe(
-      tap((result: String) => this.log(`executed action ${action} on Experiment w/ id=${actionRequest['experimentId']}`, 'SUCCESS')),
-      catchError(this.handleError<String>('executeExperimentAction'))
+      tap((result: String) => this.authService.log(`executed action ${action} on Experiment w/ id=${actionRequest['experimentId']}`, 'SUCCESS', true)),
+      catchError(this.authService.handleError<String>('executeExperimentAction'))
     )
-  }
-  
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`, 'FAILED');
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
-  /** Log a BlueprintsVSService message with the MessageService */
-  private log(message: string, action: string) {
-    this.messageService.add(`ExperimentsService: ${message}`);
-    this.openSnackBar(`ExperimentsService: ${message}`, action);
-    if (message.indexOf('created') < 0)
-      window.location.reload();
-  }
-
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 5000,
-    });
   }
 }

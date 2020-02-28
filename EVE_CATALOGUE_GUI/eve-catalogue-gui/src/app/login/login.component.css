@@ -1,0 +1,61 @@
+.full-width-table {
+    width: 100%;
+}
+    
+.margin-all {
+    margin: 5px;
+}
+
+.registration-div {
+    float: left;
+    margin-top: 2%;
+    width: 30%;
+    height: 80%;
+    margin-left:8%; 
+    /*margin-right:5%;*/
+    background: #424242;
+    padding: 30px;
+    text-align: center;
+}
+
+.rules-div {
+    /*float: right;*/
+    margin-top: 2%;
+    width: 30%;
+    height: 80%;
+    margin-left:35%;
+    margin-right:35%;
+    background: #424242;
+    padding: 30px;
+    text-align: center;
+}
+
+.rules-form {
+    min-width: 300px;
+    max-width: 600px;
+    width: 100%;
+    align-content: center;
+    text-align: center;
+}
+
+.rules-full-width {
+    width: 100%;
+}
+
+td {
+    padding-right: 8px;
+}
+
+.margin-top {
+    margin-top: 30px;
+}
+
+a {
+    font-weight: bold;
+    color: #00ACC1;
+}
+
+a:hover {
+    color: white;
+    cursor: pointer;
+}

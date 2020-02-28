@@ -44,7 +44,7 @@
                         </mat-form-field-->
                         <mat-form-field appearance="outline" class="rules-full-width">
                             <mat-label>NS Instantiation Level Id</mat-label>
-                            <mat-select formControlName="nsInstLevel" name="nsInstLevel" (selectionChange)="onNsInstLevelSelected($event);">
+                            <mat-select formControlName="nsInstLevel" name="nsInstLevel">
                                 <mat-option *ngFor="let instLevel of instLevels" [value]="instLevel.nsLevelId">
                                     {{instLevel.nsLevelId}}
                                 </mat-option>

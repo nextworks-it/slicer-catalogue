@@ -16,7 +16,7 @@ export interface ExperimentsDetailsItemKV {
  */
 export class ExperimentsDetailsDataSource extends DataSource<ExperimentsDetailsItemKV> {
   data: ExperimentsDetailsItemKV[] = [];
-  paginator: MatPaginator;
+  //paginator: MatPaginator;
   sort: MatSort;
 
   constructor(data: ExperimentsDetailsItemKV[]) {
@@ -34,12 +34,12 @@ export class ExperimentsDetailsDataSource extends DataSource<ExperimentsDetailsI
     // stream for the data-table to consume.
     const dataMutations = [
       observableOf(this.data),
-      this.paginator.page,
+      //this.paginator.page,
       this.sort.sortChange
     ];
 
     return merge(...dataMutations).pipe(map(() => {
-      return this.getPagedData(this.getSortedData([...this.data]));
+      return this.getSortedData([...this.data]);
     }));
   }
 
@@ -53,10 +53,10 @@ export class ExperimentsDetailsDataSource extends DataSource<ExperimentsDetailsI
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: ExperimentsDetailsItemKV[]) {
+  /*private getPagedData(data: ExperimentsDetailsItemKV[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
-  }
+  }*/
 
   /**
    * Sort the data (client-side). If you're using server-side sorting,

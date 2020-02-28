@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UsersService, User } from '../users.service';
+import { AuthService } from '../auth.service';
+
 
 @Component({
   selector: 'app-portal-home',
@@ -8,9 +11,17 @@ import { Router } from '@angular/router';
 })
 export class PortalHomeComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  username: string = '';
+  roles: string = ''; 
+
+  constructor(private router: Router,
+    private usersService: UsersService,
+    private authService: AuthService) { }
 
   ngOnInit() {
+    this.username = localStorage.getItem('username');
+    this.roles = this.getRoles();
+    console.log(this.roles);
   }
 
   goTo(path: string) {
@@ -27,6 +38,14 @@ export class PortalHomeComponent implements OnInit {
       localStorage.setItem('role', 'SITE_MANAGER');
     }
     this.router.navigate([path]);
+  }
+
+  logout() {
+    this.authService.logout('/login').subscribe(tokenInfo => console.log(JSON.stringify(tokenInfo, null, 4)));
+  }
+
+  getRoles() {
+    return localStorage.getItem('roles');
   }
 
 }

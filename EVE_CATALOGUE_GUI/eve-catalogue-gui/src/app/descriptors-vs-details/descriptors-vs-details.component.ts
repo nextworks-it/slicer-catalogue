@@ -50,10 +50,12 @@ export class DescriptorsVsDetailsComponent implements OnInit {
         });
         this.tableData.push({key: "QoS", value: values});
 
-        this.tableData.push({key: "Service Creation Time", value: [vsDescriptorInfo['sla']['serviceCreationTime']]});
-        this.tableData.push({key: "Availability Coverage", value: [vsDescriptorInfo['sla']['availabilityCoverage']]});
-        this.tableData.push({key: "Low Cost", value: [vsDescriptorInfo['sla']['lowCostRequired']]});
-
+        if (vsDescriptorInfo['sla']) {
+          this.tableData.push({key: "Service Creation Time", value: [vsDescriptorInfo['sla']['serviceCreationTime']]});
+          this.tableData.push({key: "Availability Coverage", value: [vsDescriptorInfo['sla']['availabilityCoverage']]});
+          this.tableData.push({key: "Low Cost", value: [vsDescriptorInfo['sla']['lowCostRequired']]});
+        }
+        
         this.dataSource = new DescriptorsVsDetailsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

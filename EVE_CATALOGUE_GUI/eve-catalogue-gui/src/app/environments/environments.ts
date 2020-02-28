@@ -4,9 +4,10 @@
 ​
 export const environment = {
     production: false,
-    portalBaseUrl: 'http://localhost:8082/portal/catalogue/',
-    lcmBaseUrl: 'http://localhost:8083/portal/elm/',
-    apiUrl: 'http://localhost:4200',
+    portalBaseUrl: 'http://10.20.8.9:8082/portal/catalogue/',
+    lcmBaseUrl: 'http://10.20.8.9:8084/portal/elm/',
+    rbacBaseUrl: 'http://10.20.8.19:8090/portal/rbac/', /*portal/rbac/*/
+    apiUrl: 'http://localhost',
     backServerUrl: ''
 };
 ​

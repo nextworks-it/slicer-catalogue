@@ -1,6 +1,10 @@
 <mat-toolbar style="background-color: transparent;">
+    <span><button mat-button [matMenuTriggerFor]="user_menu"><mat-icon>person</mat-icon> {{username}} <mat-icon>keyboard_arrow_down</mat-icon></button></span>
+    <mat-menu #user_menu="matMenu">
+        <button mat-menu-item (click)="logout();">Logout</button>
+    </mat-menu>
     <span><button mat-button (click)="goTo();"><mat-icon>home</mat-icon> Home </button></span>
-    <span>
+    <span *ngIf="getRole().indexOf('DESIGNER') >= 0;">
         <button mat-button [matMenuTriggerFor]="blueprints_menu">
             Blueprints <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
@@ -10,7 +14,10 @@
             Descriptors <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
     </span>
-    <span><button mat-button (click)="backClicked();"><mat-icon>arrow_back</mat-icon> Back </button></span>
+    <span><button mat-button (click)="backClicked();"><mat-icon>arrow_back</mat-icon> Back </button></span>    
+    <span class="fill-remaining-space"></span>
+    <span *ngIf="getRole().indexOf('DESIGNER') >= 0;"><img src="../../assets/images/kd-ic-sdk-green.png" class="logo"></span>
+    <span *ngIf="getRole().indexOf('EXPERIMENTER') >= 0;"><img src="../../assets/images/kd-ic-slicer-amber.png" class="logo"></span>
     <!--span>
         <button mat-button [matMenuTriggerFor]="nfv_menu">
             NFV <mat-icon>keyboard_arrow_down</mat-icon>

@@ -28,7 +28,7 @@ import { LoginComponent } from './login/login.component';
 
 
 export const AppRoutes: Routes = [
-    { path: '', redirectTo: '/portal_home', pathMatch: 'full' },
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'portal_home', component: PortalHomeComponent },
     { path: 'design_experiment', component: DashboardComponent },
     { path: 'request_experiment', component: ExperimentSwitchComponent },

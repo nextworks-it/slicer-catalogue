@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
+import { UsersService, User } from '../users.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-experiment-sub-toolbar',
@@ -9,10 +11,15 @@ import {Location} from '@angular/common';
 })
 export class ExperimentSubToolbarComponent implements OnInit {
 
+  username: string = '';
+
   constructor(private router: Router,
-    private _location: Location) { }
+    private _location: Location,
+    private usersService: UsersService,
+    private authService: AuthService) { }
 
   ngOnInit() {
+    this.username = localStorage.getItem('username');
   }
 
   goTo() {
@@ -31,5 +38,9 @@ export class ExperimentSubToolbarComponent implements OnInit {
 
   getRole() {
     return localStorage.getItem('role');
+  }
+
+  logout() {
+    this.authService.logout('/login').subscribe(tokenInfo => console.log(JSON.stringify(tokenInfo, null, 4)));
   }
 }

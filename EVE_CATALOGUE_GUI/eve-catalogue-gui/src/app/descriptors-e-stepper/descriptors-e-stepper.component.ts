@@ -176,7 +176,7 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['experimentBlueprintId'] = this.firstFormGroup.get('expBlueprintId').value;
     onBoardExpRequest['name'] = this.firstFormGroup.get('expDescName').value;
     onBoardExpRequest['version'] = this.firstFormGroup.get('expDescVersion').value;
-    onBoardExpRequest['tenantId'] = "admin";
+    onBoardExpRequest['tenantId'] = localStorage.getItem('username');
     onBoardExpRequest['kpiThresholds'] = {};
 
     if (this.expBlueprint['kpis']) {

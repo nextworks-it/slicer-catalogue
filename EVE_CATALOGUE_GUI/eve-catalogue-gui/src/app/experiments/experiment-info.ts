@@ -1,3 +1,5 @@
+import { Execution } from './execution';
+
 export class ExperimentInfo {
     experimentId: string;
     tenantId: string;
@@ -11,7 +13,6 @@ export class ExperimentInfo {
         stopTime: string;
     };
     nfvNsInstanceId: string;
-    executionId: string;
-    executionStatus: string;
-    errorMessage: string;
+    name: string;
+    executions: Execution[];
 }

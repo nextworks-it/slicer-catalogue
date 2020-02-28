@@ -9,10 +9,12 @@ import { ExperimentsService } from '../experiments.service';
 import { Router } from '@angular/router';
 import { ExperimentsMgmtDialogComponent } from '../experiments-mgmt-dialog/experiments-mgmt-dialog.component';
 import { ExperimentsExecuteDialogComponent } from '../experiments-execute-dialog/experiments-execute-dialog.component';
+import { ExperimentsResultsDialogComponent } from '../experiments-results-dialog/experiments-results-dialog.component';
 
 export interface DialogData {
   expId: string;
   expStatus: string;
+  expExecutions: Object[];
 }
 
 @Component({
@@ -99,14 +101,14 @@ export class ExperimentsComponent implements OnInit {
     private experimentsService: ExperimentsService) { }
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.tableData);    
+    this.dataSource = new MatTableDataSource(this.tableData);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.getExperiments();
   }
 
   getExperiments() {
-    this.experimentsService.getExperiments().subscribe((experimentInfos: ExperimentInfo[]) => 
+    this.experimentsService.getExperiments().subscribe((experimentInfos: ExperimentInfo[]) =>
       {
         //console.log(expDescriptorsInfos);
         this.tableData = experimentInfos;
@@ -143,7 +145,7 @@ export class ExperimentsComponent implements OnInit {
 
   onStatusSelected(event: any) {
     var selectedState = event.value;
-    this.dataSource.filter = selectedState.trim();   
+    this.dataSource.filter = selectedState.trim();
   }
 
   deleteExperiment(expId: string) {
@@ -155,9 +157,9 @@ export class ExperimentsComponent implements OnInit {
     this.dataSource.filter = selectedSite.trim();
   }
 
-  clearFilter() {    
+  clearFilter() {
     this.dataSource.filter = '';
-  }  
+  }
 
   getRole() {
     return localStorage.getItem('role');
@@ -166,7 +168,7 @@ export class ExperimentsComponent implements OnInit {
   openMgmtDialog(expId: string, expStatus: string) {
     const dialogRef = this.dialog.open(ExperimentsMgmtDialogComponent, {
       width: '30%',
-      data: {expId: expId, expStatus: expStatus}
+      data: {expId: expId, expStatus: expStatus, expExecutions: []}
     });
 
     dialogRef.afterClosed().subscribe(selectedStatus => {
@@ -186,18 +188,40 @@ export class ExperimentsComponent implements OnInit {
   openExecDialog(expId: string, expStatus: string) {
     const dialogRef = this.dialog.open(ExperimentsExecuteDialogComponent, {
       width: '30%',
-      data: {expId: expId, expStatus: expStatus}
+      data: {expId: expId, expStatus: expStatus, expExecutions: []}
     });
 
-    dialogRef.afterClosed().subscribe(selectedAction => {      
-      if (selectedAction) {
+    dialogRef.afterClosed().subscribe(formContent => {
+      if (formContent) {
         //console.log('Selected Status: ' + selectedAction);
         var actionRequest = {};
         actionRequest['experimentId'] = expId;
-
+        actionRequest['executionName'] = formContent.get('executionName').value;
         console.log('changeStatusRequest: ' + JSON.stringify(actionRequest, null, 4));
 
-        this.experimentsService.executeExperimentAction(actionRequest, selectedAction).subscribe();
+        this.experimentsService.executeExperimentAction(actionRequest, formContent.get('selectedAction').value).subscribe();
+      }
+    });
+  }
+
+  openResultsDialog(expId: string, expStatus: string, expExecutions: Object[]) {
+    const dialogRef = this.dialog.open(ExperimentsResultsDialogComponent, {
+      width: '30%',
+      data: {expId: expId, expStatus: expStatus, expExecutions: expExecutions}
+    });
+
+    dialogRef.afterClosed().subscribe(selectedExecution => {
+      if (selectedExecution) {
+        console.log('Selected Execution: ' + selectedExecution);
+
+        var resultsUrl = '';
+        for (var i = 0; i < expExecutions.length; i++){
+          if (expExecutions[i]['executionId'] == selectedExecution) {
+            resultsUrl = expExecutions[i]['reportUrl'];
+          }
+        }
+
+        window.open(resultsUrl, "_blank");
       }
     });
   }

@@ -74,6 +74,7 @@ import { SitesSwitchComponent } from './sites-switch/sites-switch.component';
 import { ExperimentSubToolbarComponent } from './experiment-sub-toolbar/experiment-sub-toolbar.component';
 import { ExperimentsMgmtDialogComponent } from './experiments-mgmt-dialog/experiments-mgmt-dialog.component';
 import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/experiments-execute-dialog.component';
+import { ExperimentsResultsDialogComponent } from './experiments-results-dialog/experiments-results-dialog.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +114,8 @@ import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/
     SitesSwitchComponent,
     ExperimentSubToolbarComponent,
     ExperimentsMgmtDialogComponent,
-    ExperimentsExecuteDialogComponent
+    ExperimentsExecuteDialogComponent,
+    ExperimentsResultsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -155,7 +157,8 @@ import { ExperimentsExecuteDialogComponent } from './experiments-execute-dialog/
   ],
   entryComponents: [
     ExperimentsMgmtDialogComponent,
-    ExperimentsExecuteDialogComponent
+    ExperimentsExecuteDialogComponent,
+    ExperimentsResultsDialogComponent
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]

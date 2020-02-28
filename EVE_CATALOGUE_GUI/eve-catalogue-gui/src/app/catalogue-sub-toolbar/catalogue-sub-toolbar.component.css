@@ -24,3 +24,14 @@ button {
 .drop-down-menu {
     background-image: linear-gradient(grey, #00ACC1);
 }
+
+.logo {
+    width: 30%;
+    margin-top: 3%;
+    margin-right: 1%;
+    float: right;
+}
+
+.margin-right {
+    margin-right: 2%;
+}

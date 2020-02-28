@@ -6,6 +6,7 @@ export const environment = {
     production: true,
     portalBaseUrl: 'http://10.30.8.33:8082/portal/catalogue/',
     lcmBaseUrl: 'http://10.30.8.33:8083/portal/elm/',
+    rbacBaseUrl: 'http://localhost:8888/portal/rbac/',
     apiUrl: 'http://10.30.8.33',
     backServerUrl: ''
 };

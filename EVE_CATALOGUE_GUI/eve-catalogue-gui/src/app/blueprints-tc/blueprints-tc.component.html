@@ -92,12 +92,12 @@
                     <tr>
                         <td>
                             <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                                <input matInput #nsdId placeholder="Description" formControlName="description" required>
-                            </mat-form-field>
-                            <mat-form-field appearance="outline" color=primary class="rules-full-width">
                                 <input matInput #nsdVersion placeholder="Name" formControlName="name" required>
                             </mat-form-field>
                             <mat-form-field appearance="outline" color=primary class="rules-full-width">
+                              <input matInput #nsdId placeholder="Description" formControlName="description" required>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline" color=primary class="rules-full-width">
                                 <input matInput #nsFlavourId placeholder="Version" formControlName="version" required>
                             </mat-form-field>
                             <mat-form-field appearance="outline" color=primary class="rules-full-width">
@@ -110,7 +110,7 @@
                     <tr>
                         <h4>User Parameters</h4>
                         <div formArrayName="user_items" *ngFor="let user_item of tcFormGroup.get('user_items').controls; let i=index">
-                            <div [formGroupName]="i">                        
+                            <div [formGroupName]="i">
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
@@ -141,7 +141,7 @@
                     <tr>
                         <h4>Infrastructure Parameters</h4>
                         <div formArrayName="infra_items" *ngFor="let infra_item of tcFormGroup.get('infra_items').controls; let i=index">
-                            <div [formGroupName]="i">                        
+                            <div [formGroupName]="i">
                                 <h5>Param {{i + 1}}</h5>
                                 <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
@@ -178,4 +178,3 @@
         </div>
     </mat-tab>
 </mat-tab-group>
-  

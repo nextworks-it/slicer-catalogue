@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Experiment w/ Id: {{data.expId}} - Executions Results</h1>
+<mat-dialog-content [formGroup]="expResultsForm">
+    <mat-form-field>
+        <mat-label>Execution</mat-label>
+        <mat-select formControlName="selectedExecution">
+            <mat-option *ngFor="let exec of data.expExecutions" [value]="exec.executionId">{{exec.executionId}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button color="warn" (click)="onNoClick()">Close</button>
+    <button mat-raised-button color="accent" (click)="confirmSelection()" cdkFocusInitial>Submit</button>
+</mat-dialog-actions>
