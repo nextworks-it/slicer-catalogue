@@ -16,8 +16,10 @@
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
@@ -26,7 +28,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 
 	private VsBlueprint vsBlueprint;
-	
+	private List<OnBoardVnfPackageRequest> vnfPackages = new ArrayList<>();
 	public OnBoardVsBlueprintRequest() { }
 	
 	/**
@@ -38,8 +40,9 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	 */
 	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint, 
 			List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules) {
+			List<VsdNsdTranslationRule> translationRules,  List<OnBoardVnfPackageRequest> vnfPackages) {
 		super(nsds, translationRules);
+		if(vnfPackages!=null) this.vnfPackages= vnfPackages;
 		this.vsBlueprint = vsBlueprint;
 	}
 
@@ -53,8 +56,17 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		super.isValid();
+		for (OnBoardVnfPackageRequest vnf : vnfPackages) vnf.isValid();
 		if (vsBlueprint == null) throw new MalformattedElementException("Onboard VS blueprint request without VS blueprint");
 		else vsBlueprint.isValid();
 	}
+
+	/**
+	 * @return the vnfPackages
+	 */
+	public List<OnBoardVnfPackageRequest> getVnfPackages() {
+		return vnfPackages;
+	}
+
 
 }

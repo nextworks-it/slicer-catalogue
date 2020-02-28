@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
@@ -29,23 +30,27 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 
 	private List<Nsd> nsds = new ArrayList<>();
 	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
+
 	private String owner;
 	
 	public OnBoardBlueprintRequest() { }
-	
+
+
 	/**
-	 * Constructor 
-	 * 
+	 * Constructor
+	 *
 	 * @param nsds
 	 * @param translationRules
+	 *
 	 */
 	public OnBoardBlueprintRequest(List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules) {
+								   List<VsdNsdTranslationRule> translationRules) {
 		if (nsds != null) this.nsds = nsds;
 		if (translationRules != null) this.translationRules = translationRules;
+
 	}
 
-	
+
 	/**
 	 * @return the nsds
 	 */
@@ -59,7 +64,9 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	public List<VsdNsdTranslationRule> getTranslationRules() {
 		return translationRules;
 	}
-	
+
+
+
 	@JsonIgnore
 	public void setBlueprintIdInTranslationRules(String blueprintId) {
 		for (VsdNsdTranslationRule tr : translationRules) 
@@ -77,7 +84,8 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	public void isValid() throws MalformattedElementException {
 		//if (nsds.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without NSD");
 		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
-		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid(); 
+		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
+
 		for (Nsd nsd : nsds) nsd.isValid();
 	}
 

@@ -23,14 +23,13 @@ import java.util.Map;
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.QueryNsdResponse;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
@@ -106,6 +105,24 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		log.debug("Processing NFV descriptors");
 		try {
+			log.debug("Storing VNF packages");
+			List<OnBoardVnfPackageRequest> vnfPackages = request.getVnfPackages();
+			for (OnBoardVnfPackageRequest vnfR : vnfPackages) {
+				try {
+					OnBoardVnfPackageResponse vnfReply = nfvoCatalogueService.onBoardVnfPackage(vnfR);
+					String vnfPackageId = vnfReply.getOnboardedVnfPkgInfoId();
+					log.debug("Added VNF package for VNF " + vnfR.getName() +
+							", version " + vnfR.getVersion() + ", provider " + vnfR.getProvider() + " in NFVO catalogue. VNF package ID: " + vnfPackageId);
+					vsBlueprintInfo.addVnfPackageInfoId(vnfPackageId);
+				} catch (AlreadyExistingEntityException e) {
+					log.debug("The VNF package is already present in the NFVO catalogue. Retrieving its ID.");
+					QueryOnBoardedVnfPkgInfoResponse r =
+							nfvoCatalogueService.queryVnfPackageInfo(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVnfPackageInfoFilter(vnfR.getName(), vnfR.getVersion(), vnfR.getProvider()), null));
+					String oldVnfPackageId = r.getQueryResult().get(0).getOnboardedVnfPkgInfoId();
+					log.debug("Retrieved VNF package ID: " + oldVnfPackageId);
+					vsBlueprintInfo.addVnfPackageInfoId(oldVnfPackageId);
+				}
+			}
 			log.debug("Storing NSDs");
 			List<Nsd> nsds = request.getNsds();
 			for (Nsd nsd : nsds) {
