@@ -20,11 +20,12 @@ Catalogue capable of storing and  versioning:
 
 ### Used Libraries (should be manually installed)
 
-| Lib | REPOSITORY |
-| ------ | ------ |
-| NFV IFA LIBS -- feat-librefactor -- | [README](https://github.com/nextworks-it/nfv-ifa-libs/tree/feat-librefactor) |
+| Lib | REPOSITORY | INSTALL COMMAND |
+| ------ | ------ | ------- |
+| NFV IFA LIBS -- feat-librefactor -- | [README](https://github.com/nextworks-it/nfv-ifa-libs/tree/feat-librefactor) | mvn clean install |
+| NFV SOL LIBS | [README](https://github.com/nextworks-it/nfv-sol-libs/) | ./install_nfv_sol_libs.sh  |
 | SLICER IDENTITY MANAGEMENT | [README](https://github.com/nextworks-it/slicer-identity-mgmt) |
-
+| NFVO DRIVERS | https://github.com/nextworks-it/nfvo-drivers | mvn clean install |
 
 ### Configuration
 For properly configuring the 5GEVE Portal Catalogue, the [application.properties](https://github.com/nextworks-it/slicer-catalogue/blob/5geve-release/EVE_CATALOGUE_APP/src/main/resources/application.properties) file has to be modified according to the environment where the catalogue is deployed. See instructions at [HOWTOCONFIGURE](https://github.com/nextworks-it/slicer-catalogue/blob/5geve-release/HOWTOCONFIGURE.md
