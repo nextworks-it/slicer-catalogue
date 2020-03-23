@@ -70,6 +70,11 @@ public class DomainCatalogueService implements DomainCatalogueInterface {
 		return domains;
 	}
 
+	public List<Domain> getDomainsByName(String name) {
+		List<Domain> domains = domainRepository.findDomainByName(name);
+		return domains;
+	}
+
 
 	public Long onBoardDomain(Domain domain) throws MalformattedElementException, AlreadyExistingEntityException {
     	domain.isValid();

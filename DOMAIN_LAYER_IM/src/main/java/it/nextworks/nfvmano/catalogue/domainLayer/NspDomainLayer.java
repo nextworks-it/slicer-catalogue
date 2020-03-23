@@ -11,4 +11,13 @@ public class NspDomainLayer extends DomainLayer {
         super(domainLayerId, DomainLayerType.NETWORK_SLICE_PROVIDER);
         this.nspNbiType=nspNbiType;
     }
+
+
+    public NspNbiType getNspNbiType() {
+        return nspNbiType;
+    }
+
+    public void setNspNbiType(NspNbiType nspNbiType) {
+        this.nspNbiType = nspNbiType;
+    }
 }

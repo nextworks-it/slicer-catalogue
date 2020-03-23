@@ -11,4 +11,5 @@ public class VerticalDomainLayer extends DomainLayer {
         super(domainLayerId, DomainLayerType.VERTICAL_SERVICE_PROVIDER);
         this.dspType=dspType;
     }
+
 }
