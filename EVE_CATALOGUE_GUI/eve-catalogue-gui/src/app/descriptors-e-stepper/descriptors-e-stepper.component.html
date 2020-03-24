@@ -1,3 +1,4 @@
+<div style="background: transparent; padding: 30px; padding-bottom: 10%;">
 <mat-horizontal-stepper [linear]="isLinear" #stepper class=full-width-table>
     <mat-step [stepControl]="firstFormGroup">
         <form [formGroup]="firstFormGroup" class="rules-form">
@@ -15,7 +16,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" color=primary class="rules-full-width">
                 <input matInput #descVersion placeholder="Version" formControlName="expDescVersion" required>
-            </mat-form-field>            
+            </mat-form-field>
             <div class="margin-top">
                 <button mat-raised-button matStepperNext color="primary" class="margin-all">Next</button>
             </div>
@@ -35,11 +36,11 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title>QoS Parameters</mat-panel-title>
                 </mat-expansion-panel-header>
-                <div *ngFor="let param of vsBlueprint['parameters']; let i=index">                        
+                <div *ngFor="let param of vsBlueprint['parameters']; let i=index">
                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
                         <mat-label>{{param.parameterId}}</mat-label>
-                        <input matInput [id]="'qos_' + param.parameterId">
-                    </mat-form-field>                      
+                        <input matInput [id]="'qos_' + param.parameterId" required formControlName="qosParam">
+                    </mat-form-field>
                 </div>
             </mat-expansion-panel>
             <div class="margin-top"></div>
@@ -122,11 +123,11 @@
     <mat-step [stepControl]="thirdFormGroup">
         <form [formGroup]="thirdFormGroup" class="rules-form">
             <ng-template matStepLabel>KPIs</ng-template>
-            <div *ngFor="let metric of expBlueprint['kpis']; let i=index">                        
+            <div *ngFor="let metric of expBlueprint['kpis']; let i=index">
                 <mat-form-field appearance="outline" color=primary class="rules-full-width">
                     <mat-label>{{metric.name}}</mat-label>
                     <input matInput [id]="'metric_' + metric.kpiId">
-                </mat-form-field>                      
+                </mat-form-field>
             </div>
             <div class="margin-top">
                 <button mat-raised-button matStepperPrevious color="primary" class="margin-all">Back</button>
@@ -142,11 +143,11 @@
                     <mat-expansion-panel-header>
                         <mat-panel-title>{{ctx.viewValue}}</mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div *ngFor="let param of ctx.item['parameters']; let i=index">                        
+                    <div *ngFor="let param of ctx.item['parameters']; let i=index">
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
                             <mat-label>{{param.parameterId}}</mat-label>
                             <input matInput id={{param.parameterId}}>
-                        </mat-form-field>                      
+                        </mat-form-field>
                     </div>
                 </mat-expansion-panel>
             </div>
@@ -165,19 +166,13 @@
                         <mat-panel-title>{{tc.viewValue}}</mat-panel-title>
                     </mat-expansion-panel-header>
                     <h4>User Parameters</h4>
-                    <div *ngFor="let param of tc.item['userParameters'] | keyvalue">                        
+                    <div *ngFor="let param of tc.item['userParameters'] | keyvalue">
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
                             <mat-label>{{param.key}}</mat-label>
                             <input matInput [id]="'user_' + param.key">
-                        </mat-form-field>                      
+                        </mat-form-field>
                     </div>
-                    <h4>Infrastructure Parameters</h4>
-                    <div *ngFor="let param of tc.item['infrastructureParameters'] | keyvalue">                        
-                        <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <mat-label>{{param.key}}</mat-label>
-                            <input matInput [id]="'infra_' + param.key">
-                        </mat-form-field>                      
-                    </div>
+
                 </mat-expansion-panel>
             </div>
             <div class="margin-top">
@@ -187,4 +182,5 @@
             </div>
         </form>
     </mat-step>
-</mat-horizontal-stepper>
+  </mat-horizontal-stepper>
+</div>

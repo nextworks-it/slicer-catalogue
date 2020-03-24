@@ -48,7 +48,7 @@ export class BlueprintsEStepperComponent implements OnInit {
     {value: 'FRANCE_RENNES', viewValue: 'Rennes, France'},
     {value: 'FRANCE_NICE', viewValue: 'Nice, France'}
   ];
-  
+
   metricTypes: String[] = [
     "LOST_PKT",
     "RECEIVED_PKT",
@@ -107,7 +107,7 @@ export class BlueprintsEStepperComponent implements OnInit {
       bpIdCtrl: ['', Validators.required],
       bpNameCtrl: ['', Validators.required],
       bpVersionCtrl: ['', Validators.required],
-      bpDescriptionCtrl: ['', Validators.required]
+      bpDescriptionCtrl: ['']
     });
     this.firstFormGroup = this._formBuilder.group({
       selectSiteCtrl: ['', Validators.required],
@@ -137,16 +137,16 @@ export class BlueprintsEStepperComponent implements OnInit {
 
   createItem(): FormGroup {
     return this._formBuilder.group({
-      parameterId: '', 
-      minValue: '', 
+      parameterId: '',
+      minValue: '',
       maxValue: ''
     });
   }
 
   createMetricItem(): FormGroup {
     return this._formBuilder.group({
-      iMetricType: '', 
-      interval: '', 
+      iMetricType: '',
+      interval: '',
       metricCollectionType: '',
       metricId: '',
       name: '',
@@ -156,8 +156,8 @@ export class BlueprintsEStepperComponent implements OnInit {
 
   createKPIItem(): FormGroup {
     return this._formBuilder.group({
-      formula: '', 
-      interval: '', 
+      formula: '',
+      interval: '',
       metricIds: '',
       kpiId: '',
       name: '',
@@ -227,7 +227,7 @@ export class BlueprintsEStepperComponent implements OnInit {
       if (this.ctxbs[i]['obj']['blueprintId'] == event.value) {
         for (var j = 0; j < this.ctxbs[i]['obj']['parameters'].length; j++) {
           this.translationParams.push(this.ctxbs[i]['obj']['parameters'][j]);
-        }        
+        }
         console.log(this.translationParams);
       }
     }
@@ -253,9 +253,9 @@ export class BlueprintsEStepperComponent implements OnInit {
 
         this.fourthFormGroup.get('nsdIdCtrl').setValue(this.nsdObj['nsdIdentifier']);
         this.fourthFormGroup.get('nsdVersionCtrl').setValue(this.nsdObj['version']);
-        
+
         this.dfs = this.nsdObj['nsDf'];
-        
+
         //this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
         //this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
     });
@@ -278,7 +278,7 @@ export class BlueprintsEStepperComponent implements OnInit {
       if (this.instLevels[i]['nsLevelId'] == selectedInstLevel) {
 
       }
-    }  
+    }
   }
 
   onParameterGiven(event: any) {
@@ -302,7 +302,7 @@ export class BlueprintsEStepperComponent implements OnInit {
   }
 
   getVsBlueprints() {
-    this.blueprintsVsService.getVsBlueprints().subscribe((vsBlueprintInfos: VsBlueprintInfo[]) => 
+    this.blueprintsVsService.getVsBlueprints().subscribe((vsBlueprintInfos: VsBlueprintInfo[]) =>
       {
         for (var i = 0; i < vsBlueprintInfos.length; i++) {
           this.vsbs.push({value: vsBlueprintInfos[i]['vsBlueprintId'], viewValue: vsBlueprintInfos[i]['vsBlueprint']['description'], sites: vsBlueprintInfos[i]['vsBlueprint']['compatibleSites'], obj: vsBlueprintInfos[i]['vsBlueprint']});
@@ -441,6 +441,6 @@ export class BlueprintsEStepperComponent implements OnInit {
 
         this.blueprintsExpService.postExpBlueprint(onBoardExpRequest)
         .subscribe(expBlueprintId => console.log("EXP Blueprint with id " + expBlueprintId));
-    });   
+    });
   }
 }

@@ -6,6 +6,10 @@ import { ExperimentsDetailsDataSource, ExperimentsDetailsItemKV } from './experi
 import { ExperimentsService } from '../experiments.service';
 import { ExperimentInfo } from '../experiments/experiment-info';
 import { Execution } from '../experiments/execution';
+import { ExpDescriptorInfo } from '../descriptors-e/exp-descriptor-info';
+import { DescriptorsExpService } from '../descriptors-exp.service';
+
+
 
 @Component({
   selector: 'app-experiments-details',
@@ -28,7 +32,7 @@ export class ExperimentsDetailsComponent implements OnInit {
   displayedColumns = ['key', 'value'];
   executionsColumns = ['id', 'state', 'reportUrl', 'tcr'];
 
-  constructor(private experimentsService: ExperimentsService) { }
+  constructor(private experimentsService: ExperimentsService, private  descriptorsExpService: DescriptorsExpService) { }
 
   ngOnInit() {
     var expId = localStorage.getItem('expId');
@@ -38,18 +42,25 @@ export class ExperimentsDetailsComponent implements OnInit {
 
   getExperiment(expId: string) {
     this.experimentsService.getExperiment(expId, null).subscribe((experimentInfos: ExperimentInfo[]) => {
-      console.log(experimentInfos);
+      this.descriptorsExpService.getExpDescriptors().subscribe((expDescriptorInfo: ExpDescriptorInfo[]) => {
+//      console.log(experimentInfos);
       this.experiment = experimentInfos[0];
-      //this.tableData.push({key: "Id", value: [this.experiment.experimentId]});
-      if (this.getRole().indexOf('SITE_MANAGER') >= 0) {
-        this.tableData.push({key: "Tenant Id", value: [this.experiment.tenantId]});
-        this.tableData.push({key: "Ticket Id", value: [this.experiment.lcTicketId]});
-        this.tableData.push({key: "Open Ticket Ids", value: this.experiment.openTicketIds});
-      }
       this.tableData.push({key: "Name", value: [this.experiment.name]});
       this.tableData.push({key: "Status", value: [this.experiment.status]});
-      this.tableData.push({key: "Experiment Descriptor Id", value: [this.experiment.experimentDescriptorId]});
+
+      for(var i = 0; i < expDescriptorInfo.length; i++){
+        if (this.experiment.experimentDescriptorId === expDescriptorInfo[i]['expDescriptorId']){
+          this.tableData.push({key: "Experiment Descriptor", value: [expDescriptorInfo[i]['name']]});
+        }
+      }
+
       this.tableData.push({key: "Target Sites", value: this.experiment.targetSites});
+      //this.tableData.push({key: "Id", value: [this.experiment.experimentId]});
+      if (this.getRole().indexOf('SITE_MANAGER') >= 0) {
+        if(this.experiment.tenantId != null){this.tableData.push({key: "Tenant Id", value: [this.experiment.tenantId]});}
+        if(this.experiment.lcTicketId != null){this.tableData.push({key: "Ticket Id", value: [this.experiment.lcTicketId]});}
+        if(this.experiment.openTicketIds != null && this.experiment.openTicketIds.length > 0){this.tableData.push({key: "Open Ticket Ids", value: this.experiment.openTicketIds});}
+      }
       var startDate = new Date(0);
       startDate.setUTCSeconds(parseInt(this.experiment.timeslot.startTime));
       var stopDate = new Date(0);
@@ -64,6 +75,7 @@ export class ExperimentsDetailsComponent implements OnInit {
       //this.dataSource.paginator = this.paginator;
       this.table.dataSource = this.dataSource;
     });
+  });
   }
 
   getRole() {

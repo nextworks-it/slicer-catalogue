@@ -1,7 +1,7 @@
 .full-width-table {
     width: 100%;
 }
-    
+
 .margin-all {
     margin: 5px;
 }
@@ -9,10 +9,16 @@
     margin-top: 2%;
     width: 50%;
     height: 80%;
-    margin-left:25%; 
+    margin-left:25%;
     margin-right:25%;
     background: #424242;
     padding: 30px;
+}
+
+.startingDate, .endingDate{
+  display: none;
+  color: red;
+  font-weight: bolder;
 }
 
 .rules-form {

@@ -4,7 +4,7 @@
 </mat-toolbar>
 <mat-tab-group [selectedIndex]="2">
     <mat-tab label="View">
-        <div style="background: transparent; padding: 30px;">
+        <div style="background: transparent; padding: 30px; padding-bottom: 10%;">
             <table mat-table class="full-width-table" matSort aria-label="Elements">
                 <!-- Id Column -->
                 <ng-container matColumnDef="id">
@@ -84,7 +84,7 @@
         </div>
     </mat-tab>
     <mat-tab label="Onboard">
-        <div style="background: transparent; padding: 30px;">
+        <div style="background: transparent; padding: 30px; padding-bottom: 10%;">
             <div class="rules-div">
             <form [formGroup]="tcFormGroup" class="rules-form">
                 <h3>Create Test Case</h3>
@@ -95,7 +95,7 @@
                                 <input matInput #nsdVersion placeholder="Name" formControlName="name" required>
                             </mat-form-field>
                             <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                              <input matInput #nsdId placeholder="Description" formControlName="description" required>
+                              <input matInput #nsdId placeholder="Description" formControlName="description">
                           </mat-form-field>
                           <mat-form-field appearance="outline" color=primary class="rules-full-width">
                                 <input matInput #nsFlavourId placeholder="Version" formControlName="version" required>
@@ -148,11 +148,11 @@
                                         <input matInput placeholder="Name" formControlName="infraParamName">
                                     </mat-form-field>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <mat-form-field appearance="outline" color=primary class="rules-full-width">
                                         <input matInput placeholder="Value" formControlName="infraParamValue">
                                     </mat-form-field>
-                                </td>
+                                </td> -->
                             </div>
                         </div>
                     </tr>

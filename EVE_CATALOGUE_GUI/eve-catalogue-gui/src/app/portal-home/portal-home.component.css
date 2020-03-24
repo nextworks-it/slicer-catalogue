@@ -13,7 +13,7 @@
 .grid-table {
     margin-top: 2%;
     width:50%;
-    height: 80%;
+    height: 70%;
     margin-left:25%;
     margin-right:25%;
 }
@@ -25,6 +25,8 @@
     font-size: larger;
     font-weight: bold;
 }
+
+
 
 .mat-toolbar.mat-primary {
     position: sticky;

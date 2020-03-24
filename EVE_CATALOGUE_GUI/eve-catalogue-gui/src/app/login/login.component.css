@@ -1,7 +1,7 @@
 .full-width-table {
     width: 100%;
 }
-    
+
 .margin-all {
     margin: 5px;
 }
@@ -10,8 +10,8 @@
     float: left;
     margin-top: 2%;
     width: 30%;
-    height: 80%;
-    margin-left:8%; 
+    /*height: 80%;
+*/    margin-left:8%;
     /*margin-right:5%;*/
     background: #424242;
     padding: 30px;
@@ -22,7 +22,7 @@
     /*float: right;*/
     margin-top: 2%;
     width: 30%;
-    height: 80%;
+    /*height: 80%;*/
     margin-left:35%;
     margin-right:35%;
     background: #424242;

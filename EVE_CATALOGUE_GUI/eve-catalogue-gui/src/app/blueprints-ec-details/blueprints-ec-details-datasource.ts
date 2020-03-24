@@ -1,5 +1,4 @@
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
@@ -16,7 +15,6 @@ export interface BlueprintsCtxDetailsItemKV {
  */
 export class BlueprintsEcDetailsDataSource extends DataSource<BlueprintsCtxDetailsItemKV> {
   data: BlueprintsCtxDetailsItemKV[] = []
-  paginator: MatPaginator;
   sort: MatSort;
 
   constructor(data: BlueprintsCtxDetailsItemKV[]) {
@@ -34,12 +32,11 @@ export class BlueprintsEcDetailsDataSource extends DataSource<BlueprintsCtxDetai
     // stream for the data-table to consume.
     const dataMutations = [
       observableOf(this.data),
-      this.paginator.page,
       this.sort.sortChange
     ];
 
     return merge(...dataMutations).pipe(map(() => {
-      return this.getPagedData(this.getSortedData([...this.data]));
+      return this.getSortedData([...this.data]);
     }));
   }
 
@@ -53,10 +50,10 @@ export class BlueprintsEcDetailsDataSource extends DataSource<BlueprintsCtxDetai
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: BlueprintsCtxDetailsItemKV[]) {
-    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    return data.splice(startIndex, this.paginator.pageSize);
-  }
+  // private getPagedData(data: BlueprintsCtxDetailsItemKV[]) {
+  //   const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+  //   return data.splice(startIndex, this.paginator.pageSize);
+  // }
 
   /**
    * Sort the data (client-side). If you're using server-side sorting,
@@ -71,7 +68,7 @@ export class BlueprintsEcDetailsDataSource extends DataSource<BlueprintsCtxDetai
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
           case 'key':  return compare(a.key, b.key, isAsc);
-          
+
 	default: return 0;
       }
     });

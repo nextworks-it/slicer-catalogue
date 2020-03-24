@@ -7,6 +7,7 @@ export const environment = {
     portalBaseUrl: 'http://10.30.8.33:8082/portal/catalogue/',
     lcmBaseUrl: 'http://10.30.8.33:8083/portal/elm/',
     rbacBaseUrl: 'http://localhost:8888/portal/rbac/',
+    ibnBaseUrl: 'http://10.20.8.39:8080/Intent/IntentPage.jsp',
     apiUrl: 'http://10.30.8.33',
     backServerUrl: ''
 };

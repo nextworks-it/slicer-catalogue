@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTable } from '@angular/material';
+import { MatSort, MatTable } from '@angular/material';
 import { BlueprintsCtxDetailsItemKV, BlueprintsEcDetailsDataSource } from './blueprints-ec-details-datasource';
 import { BlueprintsEcService } from '../blueprints-ec.service';
 import { EcbDetailsService } from '../ecb-details.service';
@@ -10,7 +10,7 @@ import { CtxBlueprintInfo } from '../blueprints-ec/ctx-blueprint-info';
   templateUrl: './blueprints-ec-details.component.html',
   styles: [`
     app-blueprints-graph {
-      height: 100vh;
+      height: 70vh;
       float: left;
       width: 100%;
       position: relative;
@@ -20,7 +20,6 @@ export class BlueprintsEcDetailsComponent implements OnInit {
 
   node_name: string;
 
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<BlueprintsCtxDetailsItemKV>;
   dataSource: BlueprintsEcDetailsDataSource;
@@ -48,21 +47,20 @@ export class BlueprintsEcDetailsComponent implements OnInit {
   }
 
   getCtxBlueprint(ctxbId: string) {
-    this.blueprintsEcService.getCtxBlueprint(ctxbId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) => 
+    this.blueprintsEcService.getCtxBlueprint(ctxbId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) =>
       {
         //console.log(vsBlueprintInfo);
         var ctxBlueprint = ctxBlueprintInfo['ctxBlueprint'];
-
+        this.tableData.push({key: "Name", value: [ctxBlueprint['name']]});
         this.tableData.push({key: "Id", value: [ctxBlueprint['blueprintId']]});
         this.tableData.push({key: "Version", value: [ctxBlueprint['version']]});
-        this.tableData.push({key: "Name", value: [ctxBlueprint['name']]});
         this.tableData.push({key: "Description", value: [ctxBlueprint['description']]});
         var values = [];
 
         for (var i = 0; i < ctxBlueprint['parameters'].length; i++) {
           values.push(ctxBlueprint['parameters'][i]['parameterName']);
         }
-        this.tableData.push({key: "Parameters", value: values});
+        this.tableData.push({key: "Configuration options", value: values});
 
         values = [];
 
@@ -86,16 +84,16 @@ export class BlueprintsEcDetailsComponent implements OnInit {
           values.push(ctxBlueprint['compatibleSites'][i]);
         }
         this.tableData.push({key: "Compatible Sites", value: values});
-
+/*
         values = [];
 
         for (var i = 0; i < ctxBlueprintInfo['activeCtxdId'].length; i++) {
           values.push(ctxBlueprintInfo['activeCtxdId'][i]);
         }
         this.tableData.push({key: "Active Ctxds", value: values});
-      
+*/
         var atomicComponentsCps = [];
-      
+
         for (var i = 0; i < atomicComponents.length; i++) {
           this.graphData.nodes.push(
             { data: { id: atomicComponents[i]['componentId'], name: atomicComponents[i]['componentId'], weight: 70, colorCode: 'white', shapeType: 'ellipse' }, classes: 'bottom-center vnf' }
@@ -114,7 +112,7 @@ export class BlueprintsEcDetailsComponent implements OnInit {
             );
           }
         }
-        
+
         var connectivityServices = ctxBlueprint['connectivityServices'];
 
         for (var i = 0; i < connectivityServices.length; i++) {
@@ -131,7 +129,7 @@ export class BlueprintsEcDetailsComponent implements OnInit {
               }
             }
           }
-          
+
           for (var j = 0; j < sapCps.length; j++) {
             if (connectivityServices[i]['endPointIds'].includes(sapCps[j])) {
               this.graphData.edges.push(
@@ -147,7 +145,6 @@ export class BlueprintsEcDetailsComponent implements OnInit {
         this.ecbDetailsService.updateCTXBGraph(this.graphData);
         this.dataSource = new BlueprintsEcDetailsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
         this.table.dataSource = this.dataSource;
       });
   }

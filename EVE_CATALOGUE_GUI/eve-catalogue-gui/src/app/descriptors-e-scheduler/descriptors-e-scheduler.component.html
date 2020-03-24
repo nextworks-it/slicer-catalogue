@@ -2,7 +2,7 @@
 <mat-toolbar style="background: transparent;">
     <span style="margin-left: 15px;"><h1 class="mat-h1">Schedule a New Experiment</h1></span>
 </mat-toolbar>
-<div style="background: transparent; padding: 30px;">
+<div style="background: transparent; padding: 30px; padding-bottom: 10%;">
     <div class="rules-div">
         <form [formGroup]="scheduleFormGroup" class="rules-form">
             <mat-form-field appearance="outline" color=primary class="rules-full-width">
@@ -28,20 +28,26 @@
                 <tr>
                     <td>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput [matDatepicker]="start_picker" (dateChange)="getStartDate($event.value)" placeholder="Start date" formControlName="timeSlotStart">
+                            <input matInput [matDatepicker]="start_picker" (dateChange)="getStartDate($event.value)" placeholder="Start date" formControlName="timeSlotStart" requested>
                             <mat-datepicker-toggle matSuffix [for]="start_picker"></mat-datepicker-toggle>
                             <mat-datepicker #start_picker></mat-datepicker>
                         </mat-form-field>
                     </td>
                     <td>
                         <mat-form-field appearance="outline" color=primary class="rules-full-width">
-                            <input matInput [matDatepicker]="end_picker" (dateChange)="getEndDate($event.value)" placeholder="End date" formControlName="timeSlotEnd">
+                            <input matInput [matDatepicker]="end_picker" (dateChange)="getEndDate($event.value)" placeholder="End date" formControlName="timeSlotEnd" requested>
                             <mat-datepicker-toggle matSuffix [for]="end_picker"></mat-datepicker-toggle>
                             <mat-datepicker #end_picker></mat-datepicker>
                         </mat-form-field>
                     </td>
                 </tr>
+                <tr>
+                  <td><p class="startingDate"></p></td>
+                  <td><p class="endingDate"></p></td>
+                </tr>
             </table>
+
+
             <div class="margin-top">
                 <button mat-raised-button color="accent" class="margin-all" (click)="scheduleExperiment();">Submit</button>
             </div>

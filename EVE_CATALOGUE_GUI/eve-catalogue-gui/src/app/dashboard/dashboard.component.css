@@ -2,18 +2,18 @@
   margin-top: 2%;
   width:50%;
   height: 80%;
-  margin-left:25%; 
+  margin-left:25%;
   margin-right:25%;
 }
 
 .fill-remaining-space {
-  /* This fills the remaining space, by using flexbox. 
+  /* This fills the remaining space, by using flexbox.
       Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
 
 .grid-card {
-  width: 85%; 
+  width: 85%;
   height: 45%;
   color: white;
   font-weight: bold;
@@ -45,8 +45,8 @@
 }
 
 .card-image {
-  height: auto; 
-  width: auto; 
-  max-width: 50px; 
+  height: auto;
+  width: auto;
+  max-width: 50px;
   max-height: 50px;
 }

@@ -43,12 +43,13 @@ export class BlueprintsVsStepperComponent implements OnInit {
       nsInstLevel: ['', Validators.required],
       items: this._formBuilder.array([this.createItem()])
     });
+
   }
 
   createItem(): FormGroup {
     return this._formBuilder.group({
-      parameterId: '', 
-      minValue: '', 
+      parameterId: '',
+      minValue: '',
       maxValue: ''
     });
   }
@@ -108,9 +109,9 @@ export class BlueprintsVsStepperComponent implements OnInit {
 
         this.thirdFormGroup.get('nsdId').setValue(this.nsdObj['nsdIdentifier']);
         this.thirdFormGroup.get('nsdVersion').setValue(this.nsdObj['version']);
-        
+
         this.dfs = this.nsdObj['nsDf'];
-        
+
         //this.fourthFormGroup.get('nsFlavourIdCtrl').setValue(nsdObj['nsDf'][0]['nsDfId']);
         //this.fourthFormGroup.get('nsInstLevelIdCtrl').setValue(nsdObj['nsDf'][0]['nsInstantiationLevel'][0]['nsLevelId']);
     });
@@ -124,9 +125,11 @@ export class BlueprintsVsStepperComponent implements OnInit {
         this.instLevels = this.nsdObj['nsDf'][i]['nsInstantiationLevel'];
       }
     }
+    alert(this.instLevels);
   }
 
   createOnBoardVsBlueprintRequest(blueprints: File[], nsds: File[]) {
+    if(!this.thirdFormGroup.invalid){
     var onBoardVsRequest = JSON.parse('{}');
     onBoardVsRequest['nsds'] = [];
     onBoardVsRequest['translationRules'] = [];
@@ -186,6 +189,7 @@ export class BlueprintsVsStepperComponent implements OnInit {
           this.blueprintsVsService.postVsBlueprint(onBoardVsRequest)
           .subscribe(vsBlueprintId => console.log("VS Blueprint with id " + vsBlueprintId));
       });
-    }      
+    }
+  }
   }
 }

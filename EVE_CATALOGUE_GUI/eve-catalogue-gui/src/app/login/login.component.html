@@ -1,5 +1,5 @@
-<div style="background: transparent; padding: 30px; min-height: auto">
-    <mat-expansion-panel class="rules-div" [expanded]="true">
+<div style="background: transparent; padding-bottom: 10%; min-height: auto;">
+   <mat-expansion-panel class="rules-div" [expanded]="true">
         <mat-expansion-panel-header>
             <mat-panel-title>
               User Login
@@ -20,10 +20,7 @@
                 <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
             </mat-form-field>
-            <!--mat-form-field appearance="outline" color=primary class="rules-full-width">
-                <input matInput #password placeholder="Password" formControlName="password" required>
-                <mat-icon matSuffix (click)="login();">visibility</mat-icon>
-            </!--mat-form-field-->
+
             <div class="margin-top">
                 <button mat-raised-button color="accent" class="margin-all" (click)="login();">Submit</button>
             </div>
@@ -78,13 +75,13 @@
             </div>
         </form>
     </mat-expansion-panel>
-    <!--div class="registration-div">
+    <!-- <div class="registration-div">
 
-    </div-->
-    <!--mat-divider [vertical]="true"></mat-divider-->
-    <!--div class="rules-div">
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="rules-div">
+    </div>
+  -->
 
-    </div-->
+
 </div>
-
-

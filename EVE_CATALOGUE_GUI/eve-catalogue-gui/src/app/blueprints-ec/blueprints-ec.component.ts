@@ -23,11 +23,12 @@ export class BlueprintsEcComponent implements OnInit {
   idToCtxdIds: Map<string, Map<string, string>> = new Map();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'ctxds', 'buttons'];
+//  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'ctxds', 'buttons'];
+  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'buttons'];
 
-  constructor(private blueprintsEcService: BlueprintsEcService, 
+  constructor(private blueprintsEcService: BlueprintsEcService,
     private ecbDetailsService: EcbDetailsService,
-    private descriptorsEcService: DescriptorsEcService, 
+    private descriptorsEcService: DescriptorsEcService,
     private router: Router) { }
 
   ngOnInit() {
@@ -36,7 +37,7 @@ export class BlueprintsEcComponent implements OnInit {
   }
 
   getEcBlueprints(): void {
-    this.blueprintsEcService.getCtxBlueprints().subscribe((ctxBlueprintInfos: CtxBlueprintInfo[]) => 
+    this.blueprintsEcService.getCtxBlueprints().subscribe((ctxBlueprintInfos: CtxBlueprintInfo[]) =>
       {
         //console.log(ctxBlueprintInfos);
         this.ctxBlueprintInfos = ctxBlueprintInfos;

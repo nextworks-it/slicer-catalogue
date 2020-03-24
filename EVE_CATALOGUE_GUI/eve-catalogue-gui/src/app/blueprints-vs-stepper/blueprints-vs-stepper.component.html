@@ -33,8 +33,8 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline" class="rules-full-width">
                             <mat-label>NS Flavour Id</mat-label>
-                            <mat-select formControlName="nsFlavourId" name="nsFlavourId" (selectionChange)="onNsDfSelected($event);">
-                                <mat-option *ngFor="let df of dfs" [value]="df.nsDfId">
+                            <mat-select formControlName="nsFlavourId" name="nsFlavourId" required (selectionChange)="onNsDfSelected($event);">
+                                <mat-option *ngFor="let df of dfs" [value]="df.nsDfId" >
                                     {{df.nsDfId}}
                                 </mat-option>
                             </mat-select>
@@ -44,8 +44,8 @@
                         </mat-form-field-->
                         <mat-form-field appearance="outline" class="rules-full-width">
                             <mat-label>NS Instantiation Level Id</mat-label>
-                            <mat-select formControlName="nsInstLevel" name="nsInstLevel">
-                                <mat-option *ngFor="let instLevel of instLevels" [value]="instLevel.nsLevelId">
+                            <mat-select formControlName="nsInstLevel" name="nsInstLevel" required>
+                                <mat-option *ngFor="let instLevel of instLevels" [value]="instLevel.nsLevelId" >
                                     {{instLevel.nsLevelId}}
                                 </mat-option>
                             </mat-select>
@@ -60,7 +60,7 @@
                 <tr>
                     <h4>Parameters</h4>
                     <div formArrayName="items" *ngFor="let item of thirdFormGroup.get('items').controls; let i=index">
-                        <div [formGroupName]="i">                        
+                        <div [formGroupName]="i">
                             <h5>Param {{i + 1}}</h5>
                             <td>
                                 <mat-form-field appearance="outline" color=primary class="rules-full-width">

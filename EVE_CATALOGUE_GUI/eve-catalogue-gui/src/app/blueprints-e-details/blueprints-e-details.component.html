@@ -2,7 +2,7 @@
 <mat-toolbar style="background: transparent;">
     <span style="margin-left: 15px;"><h1 class="mat-h1">Experiment Blueprint Details</h1></span>
 </mat-toolbar>
-<div style="background: transparent; padding: 30px;">
+<div style="background: transparent; padding: 30px; padding-bottom: 10%;">
     <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- KEY Column -->
         <ng-container matColumnDef="key">
@@ -20,12 +20,6 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <mat-paginator #paginator
-        [length]="dataSource?.data.length"
-        [pageIndex]="0"
-        [pageSize]="50"
-        [pageSizeOptions]="[25, 50, 100, 250]"
-        style="background: transparent;">
-    </mat-paginator>
+
 </div>
-        
+

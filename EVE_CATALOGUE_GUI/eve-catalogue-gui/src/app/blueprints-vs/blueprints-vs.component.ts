@@ -23,7 +23,8 @@ export class BlueprintsVsComponent implements OnInit {
   idToVsdIds: Map<string, Map<string, string>> = new Map();
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'vsds', 'buttons'];
+//  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'vsds', 'buttons'];
+  displayedColumns = ['id', 'name', 'version', 'description', 'conf_params', 'buttons'];
 
   constructor(private blueprintsVsService: BlueprintsVsService,
     private vsbDetailsService: VsbDetailsService,
@@ -36,11 +37,11 @@ export class BlueprintsVsComponent implements OnInit {
   }
 
   getVsBlueprints(): void {
-    this.blueprintsVsService.getVsBlueprints().subscribe((vsBlueprintInfos: VsBlueprintInfo[]) => 
+    this.blueprintsVsService.getVsBlueprints().subscribe((vsBlueprintInfos: VsBlueprintInfo[]) =>
       {
         //console.log(vsBlueprintInfos);
         this.vsBlueprintInfos = vsBlueprintInfos;
-        
+
         for (var i = 0; i < vsBlueprintInfos.length; i++) {
           this.idToVsdIds.set(vsBlueprintInfos[i]['vsBlueprintId'], new Map());
           for (var j = 0; j < vsBlueprintInfos[i]['activeVsdId'].length; j++) {

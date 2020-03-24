@@ -1,4 +1,6 @@
 <app-experiment-sub-toolbar></app-experiment-sub-toolbar>
+<div style="background: transparent; padding: 30px; padding-bottom: 10%;">
+
 <mat-toolbar style="background: transparent;">
     <span style="margin-left: 15px;"><h1 class="mat-h1">Experiment Details</h1></span>
     <!--span style="margin-left: 20px;"> {{experiment.experimentId}}</span-->
@@ -25,7 +27,6 @@
         <button mat-menu-item *ngIf="experiment.status == 'ACCEPTED'">Set Ready</button>
     </mat-menu-->
 </mat-toolbar>
-<div style="background: transparent; padding: 30px; min-height: auto;">
     <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- KEY Column -->
         <ng-container matColumnDef="key">

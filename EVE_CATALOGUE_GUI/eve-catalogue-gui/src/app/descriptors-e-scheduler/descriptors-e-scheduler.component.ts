@@ -21,13 +21,13 @@ export interface ViewValue {
 export class DescriptorsESchedulerComponent implements OnInit {
 
   scheduleFormGroup: FormGroup;
-  timeSlotStart = new FormControl((new Date()).toISOString());
-  timeSlotEnd = new FormControl((new Date()).toISOString());
+  timeSlotStart = '';
+  timeSlotEnd = '';
 
   expDescriptors: ViewValue[] = [];
   availableSites: string[] = [];
-  start_date: string;
-  end_date: string;
+  start_date: string = '';
+  end_date: string = '';
 
   constructor(private _formBuilder: FormBuilder,
     private router: Router,
@@ -39,8 +39,8 @@ export class DescriptorsESchedulerComponent implements OnInit {
     this.scheduleFormGroup = this._formBuilder.group({
       name: ['', Validators.required],
       expDescriptorId: ['', Validators.required],
-      timeSlotStart: ['', Validators.required],
-      timeSlotEnd: ['', Validators.required],
+      timeSlotStart: [undefined, Validators.required],
+      timeSlotEnd: [undefined, Validators.required],
       targetSite: ['', Validators.required]
     });
     this.getExpDescriptors();
@@ -61,21 +61,37 @@ export class DescriptorsESchedulerComponent implements OnInit {
     const data = event;
     const formattedDate = data.getDate() + '-' + (data.getMonth() + 1) + '-' + data.getFullYear();
     this.start_date = formattedDate;
-    //console.log(this.start_date);
+    this.validateDates();
   }
 
   getEndDate(event: any) {
     const data = event;
     const formattedDate = data.getDate() + '-' + (data.getMonth() + 1) + '-' + data.getFullYear();
     this.end_date = formattedDate;
-    //console.log(this.end_date);
+    this.validateDates();
+  }
+
+
+  validateDates(){
+    var date = new Date();
+    var todayDate = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+    if ( (this.start_date !== undefined && this.start_date !== '') && (this.end_date !== undefined && this.end_date !== '')){
+      if (this.start_date > this.end_date){
+        alert("An event should start before it ends");
+        this.scheduleFormGroup.get('timeSlotStart').reset();
+        console.log(this.start_date);
+      } else if (todayDate > this.end_date){
+        alert("Ending date cannot be in the past");
+        this.scheduleFormGroup.get('timeSlotEnd').reset();
+      }
+    }
   }
 
   onExpDSelected(event: any) {
     var selectedDescriptor = event.value;
 
     for (var i = 0; i < this.expDescriptors.length; i++) {
-      if (this.expDescriptors[i]['value'] == selectedDescriptor) {
+      if (this.expDescriptors[i]['value'] === selectedDescriptor) {
         var expD = this.expDescriptors[i].item;
         var expBId = expD['expBlueprintId'];
         this.getExpBlueprint(expBId);
@@ -91,12 +107,15 @@ export class DescriptorsESchedulerComponent implements OnInit {
   }
 
   scheduleExperiment() {
+    if(!this.scheduleFormGroup.invalid){
     var executionName = this.scheduleFormGroup.get('name').value;
     var expDescriptorId = this.scheduleFormGroup.get('expDescriptorId').value;
     var startDate = this.scheduleFormGroup.get('timeSlotStart').value;
     var endDate = this.scheduleFormGroup.get('timeSlotEnd').value;
-    var targetSite = this.scheduleFormGroup.get('targetSite').value
-;
+    var targetSite = this.scheduleFormGroup.get('targetSite').value;
+
+    endDate.setHours(23,59,59,999);
+
     var scheduleExperimentRequest = JSON.parse('{}');
     scheduleExperimentRequest['experimentName'] = executionName;
     scheduleExperimentRequest['experimentDescriptorId'] = expDescriptorId;
@@ -114,5 +133,6 @@ export class DescriptorsESchedulerComponent implements OnInit {
               this.router.navigate(['/experiments']);
             }
           });
+   }
   }
 }

@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { VsDescriptorInfo } from './descriptors-vs/vs-descriptor-info';
 import { environment } from './environments/environments';
 import { AuthService } from './auth.service';
+import { VsBlueprintInfo } from './blueprints-vs/vs-blueprint-info';
 
 @Injectable({
   providedIn: 'root'
@@ -39,4 +40,5 @@ export class DescriptorsVsService {
         catchError(this.authService.handleError<VsDescriptorInfo>('getVsBlueprint'))
       );
   }
+
 }

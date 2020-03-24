@@ -44,12 +44,9 @@ export class DescriptorsEStepperComponent implements OnInit {
   ];
 
   ssTypes: String[] = [
-    "NONE",
     "EMBB",
     "URLLC",
-    "M_IOT",
-    "ENTERPRISE",
-    "NFV_IAAS"
+    "M_IOT"
   ];
 
   priorityTypes: String[] = [
@@ -91,6 +88,7 @@ export class DescriptorsEStepperComponent implements OnInit {
       vsDescName: ['', Validators.required],
       vsDescVersion: ['', Validators.required],
       managementType: [''],
+      qosParam: ['', Validators.required],
       ssType: [''],
       isPublic: [false]/*,
       priorityType: ['', Validators.required],
@@ -112,7 +110,7 @@ export class DescriptorsEStepperComponent implements OnInit {
   }
 
   getExpBlueprints() {
-    this.blueprintsExpService.getExpBlueprints().subscribe((expBlueprintInfos: ExpBlueprintInfo[]) => 
+    this.blueprintsExpService.getExpBlueprints().subscribe((expBlueprintInfos: ExpBlueprintInfo[]) =>
       {
         for (var i = 0; i < expBlueprintInfos.length; i++) {
           this.expBlueprints.push({value: expBlueprintInfos[i]['expBlueprintId'], viewValue: expBlueprintInfos[i]['expBlueprint']['description'], item: expBlueprintInfos[i]['expBlueprint']});
@@ -144,7 +142,7 @@ export class DescriptorsEStepperComponent implements OnInit {
   }
 
   getVsBlueprint(vsBlueprintId: string) {
-    this.blueprintsVsService.getVsBlueprint(vsBlueprintId).subscribe((vsBlueprintInfo: VsBlueprintInfo) => 
+    this.blueprintsVsService.getVsBlueprint(vsBlueprintId).subscribe((vsBlueprintInfo: VsBlueprintInfo) =>
       {
         this.vsBlueprint = vsBlueprintInfo['vsBlueprint'];
         //console.log(this.vsBlueprint);
@@ -152,16 +150,16 @@ export class DescriptorsEStepperComponent implements OnInit {
   }
 
   getCtxBlueprint(ctxBlueprintId: string) {
-    this.blueprintsCtxService.getCtxBlueprint(ctxBlueprintId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) => 
-      { 
+    this.blueprintsCtxService.getCtxBlueprint(ctxBlueprintId).subscribe((ctxBlueprintInfo: CtxBlueprintInfo) =>
+      {
         this.ctxBlueprints.push({value: ctxBlueprintInfo['ctxBlueprintId'], viewValue: ctxBlueprintInfo['ctxBlueprint']['description'], item: ctxBlueprintInfo['ctxBlueprint']});
         //console.log(this.ctxBlueprints);
       });
   }
 
   getTcBlueprint(tcBlueprintId: string) {
-    this.blueprintsTcService.getTcBlueprint(tcBlueprintId).subscribe((tcBlueprintInfo: TcBlueprintInfo) => 
-      { 
+    this.blueprintsTcService.getTcBlueprint(tcBlueprintId).subscribe((tcBlueprintInfo: TcBlueprintInfo) =>
+      {
         this.tcBlueprints.push({value: tcBlueprintInfo['testCaseBlueprintId'], viewValue: tcBlueprintInfo['testCaseBlueprint']['description'], item: tcBlueprintInfo['testCaseBlueprint']});
         //console.log(this.tcBlueprints);
       });
@@ -191,7 +189,7 @@ export class DescriptorsEStepperComponent implements OnInit {
       tempCtx['blueprintId'] = this.ctxBlueprints[i].value;
       tempCtx['parameters'] = {}
       for (var j = 0; j < this.ctxBlueprints[i]['item']['parameters'].length; j++) {
-        tempCtx['parameters'][this.ctxBlueprints[i]['item']['parameters'][j]['parameterId']] = 
+        tempCtx['parameters'][this.ctxBlueprints[i]['item']['parameters'][j]['parameterId']] =
         this.document.getElementById(this.ctxBlueprints[i]['item']['parameters'][j]['parameterId']).value;
       }
       onBoardExpRequest['contextDetails'].push(tempCtx);
@@ -201,12 +199,16 @@ export class DescriptorsEStepperComponent implements OnInit {
     onBoardExpRequest['vsDescriptor']['version'] = this.secondFormGroup.get('vsDescVersion').value;
     onBoardExpRequest['vsDescriptor']['vsBlueprintId'] = this.vsBlueprint['blueprintId'];
     onBoardExpRequest['vsDescriptor']['sst'] = this.secondFormGroup.get('ssType').value;
-    onBoardExpRequest['vsDescriptor']['managementType'] = this.secondFormGroup.get('managementType').value;
+    if (this.secondFormGroup.get('managementType').value === '') {
+      onBoardExpRequest['vsDescriptor']['managementType'] = "PROVIDER_MANAGED";
+    } else {
+      onBoardExpRequest['vsDescriptor']['managementType'] = this.secondFormGroup.get('managementType').value;
+    }
 
     var qosParameters = {};
 
     for (var i = 0; i < this.vsBlueprint['parameters'].length; i++) {
-      qosParameters[this.vsBlueprint['parameters'][i]['parameterId']] = 
+      qosParameters[this.vsBlueprint['parameters'][i]['parameterId']] =
         this.document.getElementById('qos_' + this.vsBlueprint['parameters'][i]['parameterId']).value;
     }
 
@@ -241,13 +243,14 @@ export class DescriptorsEStepperComponent implements OnInit {
           tempTc['parameters'][key] = this.document.getElementById("user_" + key).value;
         }
       }
-      
+      /*
       if (this.tcBlueprints[i]['item']['infrastructureParameters']) {
-        let infraParams = new Map(Object.entries(this.tcBlueprints[i]['item']['infrastructureParameters']));   
+        let infraParams = new Map(Object.entries(this.tcBlueprints[i]['item']['infrastructureParameters']));
         for (let key of infraParams.keys()) {
           tempTc['parameters'][key] = this.document.getElementById("infra_" + key).value;
         }
       }
+      */
       onBoardExpRequest['testCaseConfiguration'].push(tempTc);
     }
 

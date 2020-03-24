@@ -4,7 +4,7 @@
 </mat-toolbar>
 <mat-tab-group [selectedIndex]="2">
   <mat-tab label="View">
-    <div style="background: transparent; padding: 30px;">
+    <div style="background: transparent; padding: 30px; padding-bottom: 10%;">
       <table mat-table class="full-width-table" matSort aria-label="Elements">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
@@ -32,7 +32,7 @@
 
         <!-- Configurable Parameters Column -->
         <ng-container matColumnDef="conf_params">
-          <th mat-header-cell *matHeaderCellDef>Configurable Parameters</th>
+          <th mat-header-cell *matHeaderCellDef>Configuration options</th>
           <td mat-cell *matCellDef="let row">
             <tr *ngFor="let param of row.ctxBlueprint.parameters"><td> - {{param.parameterName}}</td></tr>
           </td>
@@ -72,7 +72,7 @@
     </div>
   </mat-tab>
   <mat-tab label="Onboard">
-    <div style="background: transparent; padding: 30px;">
+    <div style="background: transparent; padding: 30px; padding-bottom: 10%;" >
       <app-blueprints-ec-stepper></app-blueprints-ec-stepper>
     </div>
   </mat-tab>

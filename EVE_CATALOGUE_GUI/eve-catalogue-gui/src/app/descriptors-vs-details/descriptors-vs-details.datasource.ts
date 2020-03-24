@@ -1,5 +1,4 @@
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
@@ -16,7 +15,6 @@ export interface DescriptorsVsDetailsItemKV {
  */
 export class DescriptorsVsDetailsDataSource extends DataSource<DescriptorsVsDetailsItemKV> {
   data: DescriptorsVsDetailsItemKV[] = [];
-  paginator: MatPaginator;
   sort: MatSort;
 
   constructor(data: DescriptorsVsDetailsItemKV[]) {
@@ -34,12 +32,11 @@ export class DescriptorsVsDetailsDataSource extends DataSource<DescriptorsVsDeta
     // stream for the data-table to consume.
     const dataMutations = [
       observableOf(this.data),
-      this.paginator.page,
       this.sort.sortChange
     ];
 
     return merge(...dataMutations).pipe(map(() => {
-      return this.getPagedData(this.getSortedData([...this.data]));
+      return this.getSortedData([...this.data]);
     }));
   }
 
@@ -53,10 +50,10 @@ export class DescriptorsVsDetailsDataSource extends DataSource<DescriptorsVsDeta
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: DescriptorsVsDetailsItemKV[]) {
-    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    return data.splice(startIndex, this.paginator.pageSize);
-  }
+  // private getPagedData(data: DescriptorsVsDetailsItemKV[]) {
+  //   const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+  //   return data.splice(startIndex, this.paginator.pageSize);
+  // }
 
   /**
    * Sort the data (client-side). If you're using server-side sorting,

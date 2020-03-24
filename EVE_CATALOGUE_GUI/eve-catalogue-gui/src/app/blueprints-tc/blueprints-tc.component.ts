@@ -27,16 +27,16 @@ export class BlueprintsTcComponent implements OnInit {
   tcFormGroup: FormGroup;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name', 'version', 'description', /*'script',*/ 'user_params', 'infra_params', 'tcds', 'buttons'];
+  displayedColumns = ['id', 'name', 'version', 'description', /*'script',*/ 'user_params', 'infra_params',/* 'tcds',*/ 'buttons'];
 
-  constructor(private _formBuilder: FormBuilder, 
+  constructor(private _formBuilder: FormBuilder,
     private blueprintsTcService: BlueprintsTcService,
-    private descriptorsTcService: DescriptorsTcService, 
+    private descriptorsTcService: DescriptorsTcService,
     private router: Router) { }
 
   ngOnInit() {
     this.tcFormGroup = this._formBuilder.group({
-      description: ['', Validators.required],
+      description: [''],
       name: ['', Validators.required],
       version: ['', Validators.required],
       script: ['', Validators.required],
@@ -49,14 +49,14 @@ export class BlueprintsTcComponent implements OnInit {
 
   createUserItem(): FormGroup {
     return this._formBuilder.group({
-      userParamName: '', 
+      userParamName: '',
       userParamValue: ''
     });
   }
 
   createInfraItem(): FormGroup {
     return this._formBuilder.group({
-      infraParamName: '', 
+      infraParamName: '',
       infraParamValue: ''
     });
   }
@@ -82,7 +82,7 @@ export class BlueprintsTcComponent implements OnInit {
   }
 
   getTcBlueprints(): void {
-    this.blueprintsTcService.getTcBlueprints().subscribe((tcBlueprintInfos: TcBlueprintInfo[]) => 
+    this.blueprintsTcService.getTcBlueprints().subscribe((tcBlueprintInfos: TcBlueprintInfo[]) =>
       {
         //console.log(tcBlueprintInfos);
         this.tcBlueprintInfos = tcBlueprintInfos;
@@ -120,50 +120,53 @@ export class BlueprintsTcComponent implements OnInit {
   }
 
   createOnBoardTcBlueprintRequest() {
-    var onBoardTcRequest = JSON.parse('{}');
-    var testCaseBlueprint = JSON.parse('{}');
+    if(! this.tcFormGroup.invalid){
+      var onBoardTcRequest = JSON.parse('{}');
+      var testCaseBlueprint = JSON.parse('{}');
 
-    var description = this.tcFormGroup.get('description').value;
-    var name = this.tcFormGroup.get('name').value;
-    var script = this.tcFormGroup.get('script').value;
-    var version = this.tcFormGroup.get('version').value;
+      var description = this.tcFormGroup.get('description').value;
+      var name = this.tcFormGroup.get('name').value;
+      var script = this.tcFormGroup.get('script').value;
+      var version = this.tcFormGroup.get('version').value;
 
-    testCaseBlueprint['description'] = description;
-    testCaseBlueprint['name'] = name;
-    testCaseBlueprint['script'] = script;
-    testCaseBlueprint['version'] = version;
+      testCaseBlueprint['description'] = description;
+      testCaseBlueprint['name'] = name;
+      testCaseBlueprint['script'] = script;
+      testCaseBlueprint['version'] = version;
 
-    var userParams = this.tcFormGroup.controls.user_items as FormArray;
-    var user_controls = userParams.controls;
-    var userParamsMap = JSON.parse('{}');
+      var userParams = this.tcFormGroup.controls.user_items as FormArray;
+      var user_controls = userParams.controls;
+      var userParamsMap = JSON.parse('{}');
 
-    for (var j = 0; j < user_controls.length; j++) {
-      //console.log(user_controls[j].value);
-      if ((user_controls[j].value)['userParamName'] != "") {
-        userParamsMap[(user_controls[j].value)['userParamName']] = (user_controls[j].value)['userParamValue'];
+      for (var j = 0; j < user_controls.length; j++) {
+        //console.log(user_controls[j].value);
+        if ((user_controls[j].value)['userParamName'] != "") {
+          userParamsMap[(user_controls[j].value)['userParamName']] = (user_controls[j].value)['userParamValue'];
+        }
       }
+
+      testCaseBlueprint['userParameters'] = userParamsMap;
+
+      var infraParams = this.tcFormGroup.controls.infra_items as FormArray;
+      var infra_controls = infraParams.controls;
+      var infraParamsMap = JSON.parse('{}');
+
+      for (var j = 0; j < infra_controls.length; j++) {
+        //console.log(infra_controls[j].value);
+        if ((infra_controls[j].value)['infraParamName'] != "") {
+          infraParamsMap[(infra_controls[j].value)['infraParamName']] = (infra_controls[j].value)['infraParamValue'];
+        }
+      }
+
+      testCaseBlueprint['infrastructureParameters'] = infraParamsMap;
+
+      onBoardTcRequest['testCaseBlueprint'] = testCaseBlueprint;
+
+      console.log("OnboardTcRequest:" + JSON.stringify(onBoardTcRequest, null, 4));
+
+      this.blueprintsTcService.postTcBlueprint(onBoardTcRequest)
+      .subscribe(tcBlueprintId => console.log("TC Blueprint with id " + tcBlueprintId));
     }
 
-    testCaseBlueprint['userParameters'] = userParamsMap;
-
-    var infraParams = this.tcFormGroup.controls.infra_items as FormArray;
-    var infra_controls = infraParams.controls;
-    var infraParamsMap = JSON.parse('{}');
-
-    for (var j = 0; j < infra_controls.length; j++) {
-      //console.log(infra_controls[j].value);
-      if ((infra_controls[j].value)['infraParamName'] != "") {
-        infraParamsMap[(infra_controls[j].value)['infraParamName']] = (infra_controls[j].value)['infraParamValue'];
-      }
-    }
-
-    testCaseBlueprint['infrastructureParameters'] = infraParamsMap;
-
-    onBoardTcRequest['testCaseBlueprint'] = testCaseBlueprint;
-
-    console.log("OnboardTcRequest:" + JSON.stringify(onBoardTcRequest, null, 4));
-
-    this.blueprintsTcService.postTcBlueprint(onBoardTcRequest)
-    .subscribe(tcBlueprintId => console.log("TC Blueprint with id " + tcBlueprintId));
   }
 }

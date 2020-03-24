@@ -24,7 +24,7 @@ export class DescriptorsVsComponent implements OnInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'name', 'vsBlueprintId', 'sst', 'managementType', 'buttons'];
 
-  constructor(private descriptorsVsService: DescriptorsVsService, 
+  constructor(private descriptorsVsService: DescriptorsVsService,
     private blueprintsVsService: BlueprintsVsService,
     private router: Router) {}
 
@@ -34,7 +34,7 @@ export class DescriptorsVsComponent implements OnInit {
   }
 
   getVsDescriptors() {
-    this.descriptorsVsService.getVsDescriptors().subscribe((vsDescriptorsInfos: VsDescriptorInfo[]) => 
+    this.descriptorsVsService.getVsDescriptors().subscribe((vsDescriptorsInfos: VsDescriptorInfo[]) =>
       {
         //console.log(vsDescriptorsInfos);
         this.tableData = vsDescriptorsInfos;
@@ -42,7 +42,7 @@ export class DescriptorsVsComponent implements OnInit {
         for (var i = 0; i < vsDescriptorsInfos.length; i ++) {
           this.idToVsbId.set(vsDescriptorsInfos[i]['vsDescriptorId'], new Map());
           this.getVsBlueprint(vsDescriptorsInfos[i]['vsDescriptorId'], vsDescriptorsInfos[i]['vsBlueprintId']);
-        }        
+        }
 
         this.dataSource = new DescriptorsVsDataSource(this.tableData);
         this.dataSource.sort = this.sort;
