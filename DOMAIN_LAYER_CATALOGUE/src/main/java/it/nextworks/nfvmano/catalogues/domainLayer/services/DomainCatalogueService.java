@@ -79,10 +79,11 @@ public class DomainCatalogueService implements DomainCatalogueInterface {
 	public Long onBoardDomain(Domain domain) throws MalformattedElementException, AlreadyExistingEntityException {
     	domain.isValid();
 		if(domainRepository.findByDomainId(domain.getDomainId()).isPresent()){
-			throw new AlreadyExistingEntityException("Domain with name " + domain.getName() + "and description " +domain.getDescription()+ "already available into DB.");
+			throw new AlreadyExistingEntityException("Domain with name " + domain.getName() + " and description " +domain.getDescription()+ " already available into DB.");
 		}
-
 		Domain domainTarget = domainRepository.saveAndFlush(domain);
+		domainTarget.setDomainId(String.valueOf(domainTarget.getId()));
+		domainRepository.saveAndFlush(domainTarget);
 		return domainTarget.getId();
 	}
 }

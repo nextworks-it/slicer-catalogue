@@ -109,6 +109,7 @@ public class NsTemplateCatalogueRestController {
         try {
             QueryNsTemplateResponse response = nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildNsTemplateFilter(nstId), null));
             return new ResponseEntity<NsTemplateInfo>(response.getNsTemplateInfos().get(0), HttpStatus.OK);
+
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
