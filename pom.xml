@@ -20,6 +20,10 @@
       <module>NS_TEMPLATES_CATALOGUE_INTERFACES</module>
       <module>NS_TEMPLATES_CATALOGUE</module>
       <module>EVE_CATALOGUE_APP</module>
+	<module>DOMAIN_LAYER_IM</module>
+	<module>DOMAIN_LAYER_INTERFACES</module>
+	<module>DOMAIN_LAYER_CATALOGUE</module>
+	<module>DOMAIN_LAYER_CATALOGUE_APP</module>
     </modules>
 
 </project>

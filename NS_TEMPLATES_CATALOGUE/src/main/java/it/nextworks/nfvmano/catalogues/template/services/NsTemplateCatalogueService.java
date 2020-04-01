@@ -201,7 +201,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		nstInfoRepository.saveAndFlush(nstInfo);
 		
 		Long idGenerated = nstInfo.getId();
-		NsTemplateInfo nstInfoTarget = new NsTemplateInfo(null, nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
+		NsTemplateInfo nstInfoTarget = new NsTemplateInfo(String.valueOf(idGenerated), nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
 		nstInfoTarget.setId(idGenerated);
 		nstInfoRepository.saveAndFlush(nstInfoTarget);
 		
