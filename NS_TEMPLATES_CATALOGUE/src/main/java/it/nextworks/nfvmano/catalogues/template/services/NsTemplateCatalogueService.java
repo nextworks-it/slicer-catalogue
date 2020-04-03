@@ -185,6 +185,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		}
     	
     	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+    	target.setGeographicalAreaInfoList(nst.getGeographicalAreaInfoList());
 		if(nst.getPpFunctionList().size()>0){
 			target.setPpFunctionList(nst.getPpFunctionList());
 		}
@@ -198,7 +199,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	log.debug("Added NsTemplate with ID " + nstTargetID);
     	
     	NsTemplateInfo nstInfo = new NsTemplateInfo(null, nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
-		nstInfoRepository.saveAndFlush(nstInfo);
+    	nstInfoRepository.saveAndFlush(nstInfo);
 		
 		Long idGenerated = nstInfo.getId();
 		NsTemplateInfo nstInfoTarget = new NsTemplateInfo(String.valueOf(idGenerated), nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
