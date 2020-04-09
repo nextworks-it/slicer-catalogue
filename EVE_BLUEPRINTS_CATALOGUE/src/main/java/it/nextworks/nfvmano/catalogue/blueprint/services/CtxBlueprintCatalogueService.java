@@ -280,7 +280,8 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
                 ctxBlueprint.getEndPoints(),
                 ctxBlueprint.getConfigurableParameters(),
                 ctxBlueprint.getCompatibleSites(),
-                ctxBlueprint.getApplicationMetrics());	
+                ctxBlueprint.getApplicationMetrics(),
+				ctxBlueprint.getCompositionStrategy());
 
         ctxBlueprintRepository.saveAndFlush(target);
         Long ctxbId = target.getId();
@@ -310,7 +311,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		List<VsbLink> connectivityServices = ctxBlueprint.getConnectivityServices();
 		if (connectivityServices != null) {
 			for (VsbLink l : connectivityServices) {
-				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(), l.getConnectivityProperties());
+				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(), l.getConnectivityProperties(), l.getName(), l.isManagement());
 				vsbLinkRepository.saveAndFlush(targetLink);
 			}
 			log.debug("Added connectivity services in VS blueprint " + ctxbIdString);

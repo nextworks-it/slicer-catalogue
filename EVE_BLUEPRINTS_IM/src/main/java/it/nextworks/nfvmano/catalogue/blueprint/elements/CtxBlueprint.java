@@ -34,6 +34,8 @@ public class CtxBlueprint extends Blueprint {
 //    @JsonIgnore
 //    protected Long id;
 
+	private CompositionStrategy compositionStrategy;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch=FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
@@ -44,25 +46,41 @@ public class CtxBlueprint extends Blueprint {
     	//JPA only
     }
     
-    public CtxBlueprint(String blueprintId,
-			String version,
-			String name,
-			String description,
-			List<VsBlueprintParameter> parameters,
-			List<VsbEndpoint> endPoints,
-			List<String> configurableParameters, 
-			List<EveSite> compatibleSites,
-			List<ApplicationMetric> applicationMetrics) {
-    	super(blueprintId, version, name, description, parameters, endPoints, 
-    			configurableParameters, applicationMetrics);
-		if (compatibleSites != null) this.compatibleSites = compatibleSites;
-    }    
 
-    /**
+
+
+    //added compositionStrategy
+	public CtxBlueprint(String blueprintId,
+						String version,
+						String name,
+						String description,
+						List<VsBlueprintParameter> parameters,
+						List<VsbEndpoint> endPoints,
+						List<String> configurableParameters,
+						List<EveSite> compatibleSites,
+						List<ApplicationMetric> applicationMetrics,
+						CompositionStrategy compositionStrategy) {
+		super(blueprintId, version, name, description, parameters, endPoints,
+				configurableParameters, applicationMetrics);
+		if (compatibleSites != null) this.compatibleSites = compatibleSites;
+		this.compositionStrategy= compositionStrategy;
+	}
+
+	/**
 	 * @return the compatibleSites
 	 */
 	public List<EveSite> getCompatibleSites() {
 		return compatibleSites;
 	}
+
+
+	/**
+	 * @return the compositionStrategy
+	 */
+	public CompositionStrategy getCompositionStrategy() {
+		return compositionStrategy;
+	}
+
+
 
 }

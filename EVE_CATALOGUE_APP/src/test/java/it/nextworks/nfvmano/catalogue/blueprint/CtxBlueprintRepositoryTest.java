@@ -116,7 +116,8 @@ public class CtxBlueprintRepositoryTest {
                 ctxBlueprint.getEndPoints(),
                 ctxBlueprint.getConfigurableParameters(),
                 ctxBlueprint.getCompatibleSites(),
-                ctxBlueprint.getApplicationMetrics());
+                ctxBlueprint.getApplicationMetrics(),
+                ctxBlueprint.getCompositionStrategy());
 
         ctxBlueprintRepository.saveAndFlush(target);
         Long ctxbId = target.getId();

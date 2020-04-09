@@ -55,6 +55,12 @@ public class VsbLink implements DescriptorInformationElement {
 	private List<String> endPointIds = new ArrayList<>();
 	
 	private boolean external;
+
+	//Added to support Ctx/Vsb composition
+	private boolean management;
+	//Added to support Ctx/Vsb composition: should be the name of the virtual link on the NSD
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String name;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -66,22 +72,32 @@ public class VsbLink implements DescriptorInformationElement {
 		// JPA only
 	}
 	
+
+
+
+	//added management, and name
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param vsb Blueprint this link belongs to
 	 * @param endPointIds list of end points attached to the link
 	 * @param external if the link is used to interconnect to an external network
 	 * @param connectivityProperties e.g. QoS, protection, restoration
+	 * @param name the name of the correspondent virtual link on the NSD
+	 * @param management true if the link corresponds to the management network
 	 */
 	public VsbLink(Blueprint vsb,
-                   List<String> endPointIds,
-                   boolean external,
-                   List<String> connectivityProperties) {
+				   List<String> endPointIds,
+				   boolean external,
+				   List<String> connectivityProperties,
+				   String name,
+				   boolean management) {
 		this.vsb = vsb;
 		if (endPointIds != null) this.endPointIds = endPointIds;
 		this.external = external;
 		if (connectivityProperties != null) this.connectivityProperties = connectivityProperties;
+		this.name = name;
+		this.management=management;
 	}
 	
 	
@@ -112,6 +128,21 @@ public class VsbLink implements DescriptorInformationElement {
 	 */
 	public List<String> getConnectivityProperties() {
 		return connectivityProperties;
+	}
+
+	/**
+	 * @return the management
+	 */
+
+	public boolean isManagement() {
+		return management;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
 
 	@Override
