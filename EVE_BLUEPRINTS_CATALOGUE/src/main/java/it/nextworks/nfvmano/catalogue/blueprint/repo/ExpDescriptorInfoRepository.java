@@ -15,16 +15,14 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprintInfo;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptorInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface CtxBlueprintInfoRepository extends JpaRepository<CtxBlueprintInfo, Long> {
+public interface ExpDescriptorInfoRepository extends JpaRepository<ExpDescriptorInfo, Long> {
 
-
-	Optional<CtxBlueprintInfo> findByCtxBlueprintId(String ctxBlueprintId);
-	Optional<CtxBlueprintInfo> findByNameAndCtxBlueprintVersion(String name, String version);
+	Optional<ExpDescriptorInfo> findByExpDescriptorId(String id);
+	Optional<ExpDescriptorInfo> findByNameAndExpDescriptorVersion(String name, String version);
 	
 }

@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
+import it.nextworks.nfvmano.catalogue.blueprint.exceptions.ConflictiveOperationException;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
@@ -29,6 +30,7 @@ import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotPermittedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.sebastian.admin.MgmtCatalogueUtilities;
 import org.keycloak.KeycloakPrincipal;
@@ -177,7 +179,7 @@ public class ExpDescriptorCatalogueRestController {
 	@RequestMapping(value = "/expdescriptor/{expdId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteExpDescriptor(@PathVariable String expdId, Authentication auth) {
 		log.debug("Received request to delete EXP descriptor with ID " + expdId);
-		if(!authService.validateAuthentication(auth)){
+		if (!authService.validateAuthentication(auth)) {
 			log.warn("Unable to retrieve request authentication information");
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -189,8 +191,40 @@ public class ExpDescriptorCatalogueRestController {
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (NotExistingEntityException e) {
+		} catch (ConflictiveOperationException e){
+			log.error(e.getMessage());
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+
+		}catch (NotExistingEntityException e) {
 			log.error("EXP Blueprints not found");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (NotPermittedOperationException e) {
+			log.error("Operation not permitted!", e);
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+	@RequestMapping(value = "/expdescriptor/{expdId}/use/{experimentId}", method = RequestMethod.POST)
+	public ResponseEntity<?> useExpDescriptor(@PathVariable String expdId, @PathVariable String experimentId, Authentication auth) {
+		log.debug("Received request to use EXP descriptor with ID " + expdId+" in experiment:"+experimentId);
+		if(!authService.validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = authService.getUserFromAuth(auth);
+		try {
+
+			expDescriptorCatalogueService.useExpDescriptor(expdId, experimentId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (MalformattedElementException e) {
+			log.error("Malformatted request");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (NotExistingEntityException e) {
+			log.error("EXPD not found");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			log.error("Internal exception");
@@ -198,5 +232,28 @@ public class ExpDescriptorCatalogueRestController {
 		}
 	}
 
+	@RequestMapping(value = "/expdescriptor/{expdId}/release/{experimentId}", method = RequestMethod.POST)
+	public ResponseEntity<?> releaseExpDescriptor(@PathVariable String expdId, @PathVariable String experimentId, Authentication auth) {
+		log.debug("Received request to use EXP descriptor with ID " + expdId+" in experiment:"+experimentId);
+		if(!authService.validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = authService.getUserFromAuth(auth);
+		try {
+
+			expDescriptorCatalogueService.releaseExpDescriptor(expdId, experimentId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (MalformattedElementException e) {
+			log.error("Malformatted request");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (NotExistingEntityException e) {
+			log.error("EXPD not found");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 }

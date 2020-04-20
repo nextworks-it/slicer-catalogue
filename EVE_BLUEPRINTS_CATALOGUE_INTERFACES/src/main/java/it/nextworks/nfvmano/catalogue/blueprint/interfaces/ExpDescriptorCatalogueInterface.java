@@ -15,13 +15,10 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.interfaces;
 
+import it.nextworks.nfvmano.catalogue.blueprint.exceptions.ConflictiveOperationException;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpDescriptorResponse;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 
 public interface ExpDescriptorCatalogueInterface {
@@ -63,6 +60,33 @@ public interface ExpDescriptorCatalogueInterface {
 	 * @throws FailedOperationException
 	 */
 	public void deleteExpDescriptor(String expDescriptorId, String tenantId)
+			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, ConflictiveOperationException, NotPermittedOperationException;
+
+
+	/**
+	 * Method to set an ExpD as used by the Experiment
+	 *
+	 * @param expDescriptorId
+	 * @param experimentId
+	 * @throws MethodNotImplementedException
+	 * @throws MalformattedElementException
+	 * @throws NotExistingEntityException
+	 * @throws FailedOperationException
+	 */
+	public void useExpDescriptor(String expDescriptorId, String experimentId)
+			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
+
+	/**
+	 * Method to release ExpD from Experiment
+	 *
+	 * @param expDescriptorId
+	 * @param experimentId
+	 * @throws MethodNotImplementedException
+	 * @throws MalformattedElementException
+	 * @throws NotExistingEntityException
+	 * @throws FailedOperationException
+	 */
+	public void releaseExpDescriptor(String expDescriptorId, String experimentId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
 }

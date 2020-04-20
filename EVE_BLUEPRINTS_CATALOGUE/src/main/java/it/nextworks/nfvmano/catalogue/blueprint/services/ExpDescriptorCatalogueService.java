@@ -15,30 +15,15 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
-import it.nextworks.nfvmano.catalogue.blueprint.elements.BlueprintUserInformation;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.TestCaseDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
+import it.nextworks.nfvmano.catalogue.blueprint.exceptions.ConflictiveOperationException;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.ExpDescriptorCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardCtxDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardTestCaseDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardVsDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpDescriptorResponse;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintInfoRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxBlueprintRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintInfoRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpBlueprintRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintInfoRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
@@ -71,6 +56,9 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 
 	@Autowired
 	private ExpBlueprintInfoRepository expBlueprintInfoRepository;
+
+	@Autowired
+	private ExpDescriptorInfoRepository expDescriptorInfoRepository;
 	
 	@Autowired
 	private ExpBlueprintCatalogueService expBlueprintCatalogueService;
@@ -154,7 +142,10 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 		} catch (NotExistingEntityException e) {
 			throw new FailedOperationException(e.getMessage());
 		}
-		
+
+		log.debug("Storing ExpD associated information element");
+		ExpDescriptorInfo expdInfo = new ExpDescriptorInfo(idStr, expDescriptor.getName(), expDescriptor.getVersion());
+		expDescriptorInfoRepository.saveAndFlush(expdInfo);
     	return idStr;
     }
 
@@ -217,7 +208,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
     }
 
     @Override
-    public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+    public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException, ConflictiveOperationException {
     	log.debug("Processing request to delete an Exp descriptor");
 		if  (expDescriptorId == null) throw new MalformattedElementException("ExpD ID is null");
 		
@@ -225,6 +216,15 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 		if (expdOpt.isPresent()) {
 			ExpDescriptor expd = expdOpt.get();
 			if ( (expd.getTenantId().equals(tenantId)) || (tenantId.equals(adminTenant)) ) {
+				Optional<ExpDescriptorInfo> optExpDInfo = expDescriptorInfoRepository.findByExpDescriptorId(expDescriptorId);
+				if(optExpDInfo.isPresent()){
+					List<String> activeExperiments =optExpDInfo.get().getActiveExperimentIds();
+					if(activeExperiments.isEmpty()){
+						log.debug("EXPD with no active experiments:" + expDescriptorId+" continuing with the removal");
+					}else{
+						throw new ConflictiveOperationException("ExpD "+expDescriptorId+" still has active experiments: "+activeExperiments);
+					}
+				}else throw new FailedOperationException("Failed to retrieve associated ExpDInfo for:"+expDescriptorId);
 				log.debug("Removing VSD in EXPD " + expDescriptorId);
 				String vsDescriptorId = expd.getVsDescriptorId();
 				vsDescriptorCatalogueService.deleteVsDescriptor(vsDescriptorId, tenantId);
@@ -242,9 +242,14 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 				expDescriptorRepository.delete(expd);
 				expBlueprintCatalogueService.removeExpdInBlueprint(expbId, expDescriptorId);
 				log.debug("EXPD " + expDescriptorId + " removed from the internal DB.");
+
+				log.debug("Removing ExpD associated info element:"+expDescriptorId);
+				expDescriptorInfoRepository.delete(optExpDInfo.get());
+
+
 			} else {
 				log.error("Tenant " + tenantId + " does not have the right to remove the ExpD " + expDescriptorId);
-				throw new FailedOperationException("Tenant " + tenantId + " does not have the right to remove the ExpD " + expDescriptorId);
+				throw new NotPermittedOperationException("Tenant " + tenantId + " does not have the right to remove the ExpD " + expDescriptorId);
 			}
 		} else {
 			log.error("ExpD " + expDescriptorId + " not found");
@@ -373,5 +378,44 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
     	log.debug("Verified all the dependencies of the descriptor");
     	
     }
+
+
+	@Override
+    public void useExpDescriptor(String expdId, String experimentId)throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException {
+		log.debug("Received request to add experiment: "+experimentId+" from ExpD:"+expdId);
+		if  (expdId == null || experimentId==null) throw new MalformattedElementException("ExpD ID or experiment is null");
+
+		Optional<ExpDescriptorInfo> expdInfoOpt = expDescriptorInfoRepository.findByExpDescriptorId(expdId);
+		if(expdInfoOpt.isPresent()){
+			ExpDescriptorInfo expDInfo = expdInfoOpt.get();
+			List<String> activeExperimentIds = expDInfo.getActiveExperimentIds();
+			activeExperimentIds.add(experimentId);
+			expDInfo.setActiveExperimentIds(activeExperimentIds);
+			expDescriptorInfoRepository.saveAndFlush(expDInfo);
+			log.debug("Correctly added experiment:"+experimentId+" from ExpD:"+expdId);
+
+
+		}else throw  new NotExistingEntityException("Could not find ExpD Info with id"+expdId);
+
+	}
+
+	@Override
+	public void releaseExpDescriptor(String expdId, String experimentId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException {
+		log.debug("Received request to remove experiment: "+experimentId+" from ExpD:"+expdId);
+		if  (expdId == null) throw new MalformattedElementException("ExpD ID is null");
+
+		Optional<ExpDescriptorInfo> expdInfoOpt = expDescriptorInfoRepository.findByExpDescriptorId(expdId);
+    	if(expdInfoOpt.isPresent()){
+    		ExpDescriptorInfo expDInfo = expdInfoOpt.get();
+    		List<String> activeExperimentIds = expDInfo.getActiveExperimentIds();
+    		boolean removed = activeExperimentIds.remove(experimentId);
+    		if(removed){
+    			expDInfo.setActiveExperimentIds(activeExperimentIds);
+    			expDescriptorInfoRepository.saveAndFlush(expDInfo);
+    			log.debug("Correctly removed experiment:"+experimentId+" from ExpD:"+expdId);
+			}else throw new NotExistingEntityException("Failed to remove experiment:"+experimentId+" from ExpD:"+expdId);
+
+		}else throw  new NotExistingEntityException("Could not find ExpD with id"+expdId);
+	}
 
 }

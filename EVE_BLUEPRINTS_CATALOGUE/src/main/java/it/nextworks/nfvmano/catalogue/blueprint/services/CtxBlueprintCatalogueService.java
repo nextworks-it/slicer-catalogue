@@ -358,6 +358,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 
 	private List<CtxBlueprintInfo> getAllContextBlueprintInfos() throws NotExistingEntityException {
 		List<CtxBlueprintInfo> ctxbs = ctxBlueprintInfoRepository.findAll();
+
 		for (CtxBlueprintInfo ctxbi : ctxbs) {
 			String name = ctxbi.getName();
 			String version = ctxbi.getCtxBlueprintVersion();
