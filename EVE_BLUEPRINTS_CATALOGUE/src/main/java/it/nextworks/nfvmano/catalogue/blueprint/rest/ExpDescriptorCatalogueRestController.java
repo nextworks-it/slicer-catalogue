@@ -93,8 +93,10 @@ public class ExpDescriptorCatalogueRestController {
 		}
 		String user = authService.getUserFromAuth(auth);
 		if (!request.getTenantId().equals(user)) {
-			log.debug("Request and logged user mismatch:"+request.getTenantId()+" "+user);
-			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+			log.debug("Request and logged user mismatch:"+request.getTenantId()+" "+user+" generating new one");
+
+			request= new OnboardExpDescriptorRequest(request.getName(), request.getVersion(), request.getExperimentBlueprintId(), user,
+					request.isPublic(), request.getVsDescriptor(), request.getContextDetails(), request.getTestCaseConfiguration(), request.getKpiThresholds() );
 		}
 		try {
 			String expDescriptorId = expDescriptorCatalogueService.onboardExpDescriptor(request);
