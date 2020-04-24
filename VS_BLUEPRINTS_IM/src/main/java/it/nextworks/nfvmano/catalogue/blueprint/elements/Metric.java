@@ -111,11 +111,11 @@ public class Metric implements DescriptorInformationElement {
     @Override
     public void isValid() throws MalformattedElementException {
 
-        if(metricId == null || metricId.equals(""))
+        if(metricId == null || metricId.isEmpty())
             throw new MalformattedElementException("Metric without metricId");
-        if(name == null || name.equals(""))
+        if(name == null || name.isEmpty())
             throw new MalformattedElementException("Metric without name");
-        if(unit == null || unit.equals(""))
+        if(unit == null || unit.isEmpty())
             throw new MalformattedElementException("Metric without unit");
         if(metricCollectionType == null)
             throw new MalformattedElementException("Metric without MetricCollectionType");

@@ -82,7 +82,9 @@ public class VsbEndpoint implements DescriptorInformationElement {
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if (endPointId == null) throw new MalformattedElementException("VSB end point without ID");
+		if (endPointId == null || endPointId.isEmpty()){
+			throw new MalformattedElementException("VSB end point without ID");
+		}
 	}
 
 }
