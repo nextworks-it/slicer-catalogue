@@ -184,8 +184,13 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 
 	@Override
     public void isValid() throws MalformattedElementException {
-		if (name == null) throw new MalformattedElementException("Test case blueprint without name");
-		if (version == null) throw new MalformattedElementException("Test case blueprint without version");
-		if (script == null) throw new MalformattedElementException("Test case blueprint without script");
+		if (testcaseBlueprintId == null || testcaseBlueprintId.isEmpty())
+			throw new MalformattedElementException("Test case blueprint without id");
+		if (name == null || name.isEmpty())
+			throw new MalformattedElementException("Test case blueprint without name");
+		if (version == null || version.isEmpty())
+			throw new MalformattedElementException("Test case blueprint without version");
+		if (script == null || script.isEmpty())
+			throw new MalformattedElementException("Test case blueprint without script");
 	}
 }
