@@ -17,6 +17,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import org.hibernate.annotations.*;
 
 
@@ -81,6 +82,15 @@ public class CtxBlueprint extends Blueprint {
 		return compositionStrategy;
 	}
 
-
+	@Override
+	public void isValid() throws MalformattedElementException {
+		super.isValid();
+		if (compatibleSites == null || compatibleSites.isEmpty()) {
+			throw new MalformattedElementException("Ctx Blueprint without compatible sites");
+		}
+		if (compositionStrategy == null) {
+			throw new MalformattedElementException("Ctx Blueprint without composition strategy");
+		}
+	}
 
 }
