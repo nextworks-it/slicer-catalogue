@@ -126,9 +126,9 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
         if(kpiId==null || kpiId.isEmpty())
             throw  new MalformattedElementException("Missing KPI id");
         if(formula==null || formula.isEmpty())
-            throw  new MalformattedElementException("Missing KPI name");
+            throw  new MalformattedElementException("Missing KPI formula");
         if(unit==null || unit.isEmpty())
-            throw  new MalformattedElementException("Missing KPI name");
+            throw  new MalformattedElementException("Missing KPI unit");
         if(metricIds.isEmpty())
             throw  new MalformattedElementException("Missing KPI metrics");
         if(interval==null || interval.isEmpty())
