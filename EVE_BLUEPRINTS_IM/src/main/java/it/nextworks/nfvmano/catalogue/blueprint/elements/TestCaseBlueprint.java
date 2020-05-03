@@ -184,8 +184,6 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 
 	@Override
     public void isValid() throws MalformattedElementException {
-		if (testcaseBlueprintId == null || testcaseBlueprintId.isEmpty())
-			throw new MalformattedElementException("Test case blueprint without id");
 		if (name == null || name.isEmpty())
 			throw new MalformattedElementException("Test case blueprint without name");
 		if (version == null || version.isEmpty())

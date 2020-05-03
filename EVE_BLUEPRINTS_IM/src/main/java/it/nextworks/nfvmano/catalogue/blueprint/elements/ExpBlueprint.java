@@ -159,9 +159,6 @@ public class ExpBlueprint  implements DescriptorInformationElement {
 
 	@Override
     public void isValid() throws MalformattedElementException {
-        if (expBlueprintId==null || expBlueprintId.isEmpty())
-            throw new MalformattedElementException("ExpBlueprint without id");
-
         if(name==null || name.isEmpty())
             throw new MalformattedElementException("ExpBlueprint without name");
 

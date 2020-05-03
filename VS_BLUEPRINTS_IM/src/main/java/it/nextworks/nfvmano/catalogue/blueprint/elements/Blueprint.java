@@ -253,9 +253,6 @@ public class Blueprint implements DescriptorInformationElement {
 
 	@Override
     public void isValid() throws MalformattedElementException {
-		if (blueprintId==null || blueprintId.isEmpty()){
-			throw new MalformattedElementException("Blueprint without blueprintId");
-		}
 		if (version == null || version.isEmpty()) {
             throw new MalformattedElementException("Blueprint without version");
         }
