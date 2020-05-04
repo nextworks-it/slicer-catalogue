@@ -96,19 +96,21 @@ public class ApplicationMetric implements DescriptorInformationElement {
 	public String getTopic() {
 		return topic;
 	}
-	
-	@Override
-    public void isValid() throws MalformattedElementException {
-		if(topic == null || topic.isEmpty())
-            throw new MalformattedElementException("Application metric without topic");
-		if(metricId == null || metricId.isEmpty())
-            throw new MalformattedElementException("Metric without metricId");
-        if(name == null || name.isEmpty())
-            throw new MalformattedElementException("Metric without name");
-        if(unit == null || unit.isEmpty())
-            throw new MalformattedElementException("Metric without unit");
-        if(metricCollectionType == null)
-            throw new MalformattedElementException("Metric without MetricCollectionType");
-	}
+
+  @Override
+  public void isValid() throws MalformattedElementException {
+    if (metricId == null || metricId.isEmpty()) {
+      throw new MalformattedElementException("Metric without metricId");
+    }
+    if (name == null || name.isEmpty()) {
+      throw new MalformattedElementException("Metric without name");
+    }
+    if (unit == null || unit.isEmpty()) {
+      throw new MalformattedElementException("Metric without unit");
+    }
+    if (metricCollectionType == null) {
+      throw new MalformattedElementException("Metric without MetricCollectionType");
+    }
+  }
 
 }
