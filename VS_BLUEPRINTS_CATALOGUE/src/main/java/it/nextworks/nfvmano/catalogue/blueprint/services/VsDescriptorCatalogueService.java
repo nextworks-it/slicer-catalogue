@@ -68,6 +68,7 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		VsDescriptor vsd = new VsDescriptor(request.getVsd().getName(), request.getVsd().getVersion(), request.getVsd().getVsBlueprintId(), 
 				request.getVsd().getSst(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId());
 		String vsdId = storeVsd(vsd, request.getVsd().getServiceConstraints());
+		vsd.setPpFunctionList(request.getVsd().getPpFunctionList());
 		try {
 			vsBlueprintCatalogueService.addVsdInBlueprint(vsd.getVsBlueprintId(), vsdId);
 		} catch (NotExistingEntityException e) {

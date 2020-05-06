@@ -197,6 +197,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
 				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
 				vsBlueprint.getApplicationMetrics());
+		target.setPpFunctionList(vsBlueprint.getPpFunctionList());
 		vsBlueprintRepository.saveAndFlush(target);
 		
 		Long vsbId = target.getId();

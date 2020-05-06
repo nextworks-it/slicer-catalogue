@@ -18,14 +18,12 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
+import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
+import org.hibernate.annotations.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,6 +51,10 @@ public class VsBlueprint extends Blueprint {
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> compatibleContextBlueprint = new ArrayList<>();
+
+	@OneToMany(cascade = {CascadeType.ALL})
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<PpFunction> ppFunctionList = new ArrayList<PpFunction>();
 
 //	private String vsBlueprintId;
 //	private String version;
@@ -258,6 +260,15 @@ public class VsBlueprint extends Blueprint {
 		}
 
 	}
+
+	public List<PpFunction> getPpFunctionList() {
+		return ppFunctionList;
+	}
+
+	public void setPpFunctionList(List<PpFunction> ppFunctionList) {
+		this.ppFunctionList = ppFunctionList;
+	}
+
 
 	//SHOULD ONLY BE USED FOR TESTING PURPOSES
 //	public void setId(Long id) {

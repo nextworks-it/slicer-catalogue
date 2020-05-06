@@ -29,6 +29,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -83,8 +84,10 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@Embedded
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private VsdSla sla;
-	
-	
+
+	@OneToMany(cascade = {CascadeType.ALL})
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<PpFunction> ppFunctionList = new ArrayList<PpFunction>();
 	
 	public VsDescriptor() {	}
 	
@@ -252,6 +255,14 @@ public class VsDescriptor implements DescriptorInformationElement {
 	}
 
 
+	public List<PpFunction> getPpFunctionList() {
+		return ppFunctionList;
+	}
+
+	public void setPpFunctionList(List<PpFunction> ppFunctionList) {
+		this.ppFunctionList = ppFunctionList;
+	}
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {
@@ -263,5 +274,6 @@ public class VsDescriptor implements DescriptorInformationElement {
 		}
 		if (sla != null) sla.isValid();
 	}
+
 
 }
