@@ -187,14 +187,28 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
     	target.setGeographicalAreaInfoList(nst.getGeographicalAreaInfoList());
 		if(nst.getPpFunctionList().size()>0){
+			log.info("Storing P&P functions");
 			target.setPpFunctionList(nst.getPpFunctionList());
 		}
+		if(nst.getNsst().size()>0){
+			log.info("Storing NSST");
+			target.setNsst(nst.getNsst());
+		}
+
     	String nstTargetName=nst.getNstName();
     	target.setNstName(nstTargetName);
 
     	nstRepository.saveAndFlush(target);
     	String nstTargetID =String.valueOf(target.getUuid());
     	target.setNstId(nstTargetID);
+
+		if(target.getNsst().size()>0){
+			for(NST nsst: target.getNsst()){
+				String nsstTargetID =String.valueOf(nsst.getUuid());
+				nsst.setNstId(nsstTargetID);
+			}
+		}
+
     	nstRepository.saveAndFlush(target);
     	log.debug("Added NsTemplate with ID " + nstTargetID);
     	

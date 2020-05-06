@@ -15,9 +15,18 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class NfvNsInstantiationInfo {
 
 	private String nstId;
@@ -25,8 +34,13 @@ public class NfvNsInstantiationInfo {
 	private String nsdVersion;
 	private String deploymentFlavourId;
 	private String instantiationLevelId;
+
+	/*@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch= FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> domainIds = new ArrayList<String>();
-	
+	*/
 	public NfvNsInstantiationInfo() {
 		
 	}
@@ -49,7 +63,7 @@ public class NfvNsInstantiationInfo {
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
-		if (domainIds != null) this.domainIds = domainIds;
+		//if (domainIds != null) this.domainIds = domainIds;
 	}
 
 
@@ -74,7 +88,7 @@ public class NfvNsInstantiationInfo {
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
-		if (domainIds != null) this.domainIds = domainIds;
+	//	if (domainIds != null) this.domainIds = domainIds;
 	}
 
 
@@ -109,15 +123,17 @@ public class NfvNsInstantiationInfo {
 	/**
 	 * @return the domainIds
 	 */
+	/*
 	public List<String> getDomainIds() {
 		return domainIds;
 	}
 	/**
 	 * @param domainId the domainIds to set
 	 */
-	public void setDomainIds(List<String> domainIds) {
+	/*public void setDomainIds(List<String> domainIds) {
 		this.domainIds = domainIds;
 	}
+	/*
 	/**
 	 * @return the nfvNsdId
 	 */
