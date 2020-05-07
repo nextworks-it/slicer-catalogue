@@ -329,7 +329,8 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
                         kpi.getFormula(),
                         kpi.getUnit(),                                   
                         kpi.getMetricIds(),
-                        kpi.getInterval());
+                        kpi.getInterval(),
+						kpi.getKpiGraphType());
 				keyPerformanceIndicatorRepository.saveAndFlush(targetKpi);
 				log.debug("Stored kpi " + kpi.getKpiId() + " in experiment blueprint " + expbIdString);
 			}

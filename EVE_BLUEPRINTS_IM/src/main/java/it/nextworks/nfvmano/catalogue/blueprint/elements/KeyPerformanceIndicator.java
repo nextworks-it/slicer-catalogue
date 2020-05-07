@@ -34,6 +34,7 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
     private String formula;
     private String unit;
     private String interval;
+    private MetricGraphType kpiGraphType;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ElementCollection(fetch= FetchType.EAGER)
@@ -49,7 +50,8 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
                                     String formula,
                                     String unit,                                   
                                     List<String> metricIds,
-                                    String interval) {
+                                    String interval,
+								   	MetricGraphType kpiGraphType) {
         this.blueprint = blueprint;
         this.kpiId = kpiId;
         this.name = name;
@@ -58,6 +60,7 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
         if(metricIds!=null)
             this.metricIds = metricIds;
         this.interval = interval;
+        this.kpiGraphType = kpiGraphType;
     }
     
     
@@ -104,11 +107,17 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
 		return unit;
 	}
 
+
+
 	/**
 	 * @return the interval
 	 */
 	public String getInterval() {
 		return interval;
+	}
+
+	public MetricGraphType getKpiGraphType() {
+		return kpiGraphType;
 	}
 
 	/**
@@ -133,6 +142,9 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
             throw  new MalformattedElementException("Missing KPI metrics");
         if(interval==null || interval.equals(""))
             throw  new MalformattedElementException("Missing KPI interval");
+
+		if(kpiGraphType==null)
+			throw  new MalformattedElementException("Missing KPI graph type");
     }
 
 

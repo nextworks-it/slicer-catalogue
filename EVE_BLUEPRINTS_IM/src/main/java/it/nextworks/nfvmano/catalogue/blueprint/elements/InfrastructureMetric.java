@@ -31,6 +31,7 @@ public class InfrastructureMetric implements DescriptorInformationElement {
     private MetricCollectionType metricCollectionType;
     private String unit;
     private String interval;
+    private MetricGraphType metricGraphType;
 
 	public InfrastructureMetric() {
 		// JPA only
@@ -42,13 +43,15 @@ public class InfrastructureMetric implements DescriptorInformationElement {
 			String unit, 
 			String interval,
 			String topic,
-			InfrastructureMetricType iMetricType) {
+			InfrastructureMetricType iMetricType,
+                                MetricGraphType metricGraphType) {
 		this.metricId = metricId;
         this.name = name;
         this.metricCollectionType = metricCollectionType;
         this.unit = unit;
         this.interval = interval;
         this.iMetricType = iMetricType;
+        this.metricGraphType = metricGraphType;
     }
 
 	
@@ -94,8 +97,12 @@ public class InfrastructureMetric implements DescriptorInformationElement {
 	public InfrastructureMetricType getiMetricType() {
 		return iMetricType;
 	}
-	
-	@Override
+
+    public MetricGraphType getMetricGraphType() {
+        return metricGraphType;
+    }
+
+    @Override
     public void isValid() throws MalformattedElementException {
 
         if(metricId == null || metricId.equals(""))
@@ -106,6 +113,8 @@ public class InfrastructureMetric implements DescriptorInformationElement {
             throw new MalformattedElementException("Metric without unit");
         if(metricCollectionType == null)
             throw new MalformattedElementException("Metric without MetricCollectionType");
+        if(metricGraphType == null)
+            throw new MalformattedElementException("Metric without MetricGraphType");
 
     }
 

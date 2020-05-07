@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
@@ -39,13 +40,6 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedExcep
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.EveSite;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsComponent;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbLink;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsbForwardingPathHop;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorResponse;
@@ -92,6 +86,16 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Processing request to onboard a new VS blueprint");
 		request.isValid();
+		if(request.getVsBlueprint().getCompatibleSites()==null || request.getVsBlueprint().getCompatibleSites().isEmpty()){
+			throw new MalformattedElementException("Vertical service blueprint without compatible sites");
+		}
+		if(request.getVsBlueprint().getApplicationMetrics()!=null){
+			for(ApplicationMetric am: request.getVsBlueprint().getApplicationMetrics()){
+				am.isValid();
+			}
+		}
+
+
 		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner());
 		
 		VsBlueprintInfo vsBlueprintInfo;
