@@ -28,6 +28,7 @@ public class ApplicationMetric implements DescriptorInformationElement {
 	private String metricId;
     private String name;
     private MetricCollectionType metricCollectionType;
+    private MetricGraphType metricGraphType;
     private String unit;
     private String interval;
 	
@@ -40,7 +41,8 @@ public class ApplicationMetric implements DescriptorInformationElement {
 			MetricCollectionType metricCollectionType, 
 			String unit, 
 			String interval,
-			String topic) {
+			String topic,
+                             MetricGraphType metricGraphType) {
         //super(metricId, name, metricCollectionType, unit, interval);
 		this.metricId = metricId;
         this.name = name;
@@ -48,9 +50,19 @@ public class ApplicationMetric implements DescriptorInformationElement {
         this.unit = unit;
         this.interval = interval;
         this.topic = topic;
+        this.metricGraphType = metricGraphType;
     }
-	
-	public String getMetricId() {
+
+
+    public MetricGraphType getMetricGraphType() {
+        return metricGraphType;
+    }
+
+    public void setMetricGraphType(MetricGraphType metricGraphType) {
+        this.metricGraphType = metricGraphType;
+    }
+
+    public String getMetricId() {
         return metricId;
     }
 
@@ -97,20 +109,17 @@ public class ApplicationMetric implements DescriptorInformationElement {
 		return topic;
 	}
 
-  @Override
-  public void isValid() throws MalformattedElementException {
-    if (metricId == null || metricId.isEmpty()) {
-      throw new MalformattedElementException("Metric without metricId");
-    }
-    if (name == null || name.isEmpty()) {
-      throw new MalformattedElementException("Metric without name");
-    }
-    if (unit == null || unit.isEmpty()) {
-      throw new MalformattedElementException("Metric without unit");
-    }
-    if (metricCollectionType == null) {
-      throw new MalformattedElementException("Metric without MetricCollectionType");
-    }
-  }
-
+	@Override
+    public void isValid() throws MalformattedElementException {
+		if(metricId == null || metricId.isEmpty())
+            throw new MalformattedElementException("Metric without metricId");
+        if(name == null || name.isEmpty())
+            throw new MalformattedElementException("Metric without name");
+        if(unit == null || unit.isEmpty())
+            throw new MalformattedElementException("Metric without unit");
+        if(metricCollectionType == null)
+            throw new MalformattedElementException("Metric without MetricCollectionType");
+        if(metricGraphType == null)
+            throw new MalformattedElementException("Metric without MetricGraphType");
+	}
 }
