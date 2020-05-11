@@ -146,6 +146,13 @@ public class VsbLink implements DescriptorInformationElement {
 	}
 
 	@Override
-	public void isValid() throws MalformattedElementException {	}
+	public void isValid() throws MalformattedElementException {
+		if (endPointIds == null || endPointIds.isEmpty()){
+			throw new MalformattedElementException("VSB link without end points");
+		}
+		if (name == null || name.isEmpty()){
+			throw new MalformattedElementException("VSB link without name");
+		}
+	}
 
 }

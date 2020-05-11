@@ -130,17 +130,17 @@ public class KeyPerformanceIndicator implements DescriptorInformationElement {
 	@Override
     public void isValid() throws MalformattedElementException {
 
-        if(name==null || name.equals(""))
+        if(name==null || name.isEmpty())
             throw  new MalformattedElementException("Missing KPI name");
-        if(kpiId==null || kpiId.equals(""))
+        if(kpiId==null || kpiId.isEmpty())
             throw  new MalformattedElementException("Missing KPI id");
-        if(formula==null || formula.equals(""))
-            throw  new MalformattedElementException("Missing KPI name");
-        if(unit==null || unit.equals(""))
-            throw  new MalformattedElementException("Missing KPI name");
-        if(metricIds.size()<1)
+        if(formula==null || formula.isEmpty())
+            throw  new MalformattedElementException("Missing KPI formula");
+        if(unit==null || unit.isEmpty())
+            throw  new MalformattedElementException("Missing KPI unit");
+        if(metricIds.isEmpty())
             throw  new MalformattedElementException("Missing KPI metrics");
-        if(interval==null || interval.equals(""))
+        if(interval==null || interval.isEmpty())
             throw  new MalformattedElementException("Missing KPI interval");
 
 		if(kpiGraphType==null)

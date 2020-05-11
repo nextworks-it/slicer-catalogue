@@ -148,7 +148,10 @@ public class VsComponent implements DescriptorInformationElement {
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if (componentId == null) throw new MalformattedElementException("VSB atomic component without ID.");
+		if (componentId == null) throw new MalformattedElementException("VS component without ID.");
+		if (endPointsIds == null || endPointsIds.isEmpty()){
+			throw new MalformattedElementException("VS components without endpoints");
+		}
 	}
 
 }

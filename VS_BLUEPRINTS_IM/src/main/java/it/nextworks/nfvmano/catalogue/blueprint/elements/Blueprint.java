@@ -88,7 +88,7 @@ public class Blueprint implements DescriptorInformationElement {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(LazyCollectionOption.FALSE)
     protected List<@Valid VsComponent> atomicComponents = new ArrayList<>();
-    
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -100,7 +100,7 @@ public class Blueprint implements DescriptorInformationElement {
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     protected List<@Valid VsbEndpoint> endPoints = new ArrayList<>();
-    
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -112,7 +112,7 @@ public class Blueprint implements DescriptorInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	protected List<String> configurableParameters = new ArrayList<>();
-	
+
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
@@ -138,8 +138,8 @@ public class Blueprint implements DescriptorInformationElement {
 		if (configurableParameters != null) this.configurableParameters = configurableParameters;
 		if (applicationMetrics != null) this.applicationMetrics = applicationMetrics;
     }
-    
-    
+
+
 
     /**
 	 * @return the id
@@ -183,7 +183,7 @@ public class Blueprint implements DescriptorInformationElement {
 		return configurableParameters;
 	}
 
-	
+
 
     /**
 	 * @return the version
@@ -226,8 +226,8 @@ public class Blueprint implements DescriptorInformationElement {
 	public List<VsbEndpoint> getEndPoints() {
 		return endPoints;
 	}
-	
-	
+
+
 
 	/**
 	 * @return the applicationMetrics
@@ -250,33 +250,43 @@ public class Blueprint implements DescriptorInformationElement {
 		}
 		return true;
 	}
-	
+
 	@Override
     public void isValid() throws MalformattedElementException {
-        for (VsBlueprintParameter p : parameters) {
-            p.isValid();
-        }
-        if (version == null) {
+		if (version == null || version.isEmpty()) {
             throw new MalformattedElementException("Blueprint without version");
         }
-        if (name == null) {
+        if (name == null || name.isEmpty()) {
             throw new MalformattedElementException("Blueprint without name");
         }
-        if (atomicComponents != null) {
+		if (parameters != null) {
+			for (VsBlueprintParameter p : parameters) {
+				p.isValid();
+			}
+		}
+		if (atomicComponents == null || atomicComponents.isEmpty()){
+			throw new MalformattedElementException("Blueprint without atomic components");
+		} else {
             for (VsComponent c : atomicComponents) {
                 c.isValid();
             }
         }
-        if (endPoints != null) {
+		if (serviceSequence != null) {
+			for (VsbForwardingPathHop e : serviceSequence) e.isValid();
+		}
+		if (endPoints == null || endPoints.isEmpty()) {
+			throw new MalformattedElementException("Blueprint without end points");
+		} else {
             for (VsbEndpoint e : endPoints) {
                 e.isValid();
             }
         }
-        if (serviceSequence != null) {
-			for (VsbForwardingPathHop e : serviceSequence) e.isValid();
-		}
-        if (connectivityServices != null) {
-			for (VsbLink l : connectivityServices) l.isValid();
+		if (connectivityServices == null || connectivityServices.isEmpty()) {
+			throw new MalformattedElementException("Blueprint without connectivity services");
+		} else {
+			for (VsbLink l : connectivityServices) {
+				l.isValid();
+			}
 		}
         if (applicationMetrics != null) {
         	for (ApplicationMetric am : applicationMetrics) am.isValid();

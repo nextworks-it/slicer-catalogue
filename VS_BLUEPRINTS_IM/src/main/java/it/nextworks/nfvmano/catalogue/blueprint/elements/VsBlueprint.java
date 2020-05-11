@@ -241,22 +241,10 @@ public class VsBlueprint extends Blueprint {
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		for (VsBlueprintParameter p : parameters) p.isValid();
-		if (version == null) throw new MalformattedElementException("VS blueprint without version");
-		if (name == null) throw new MalformattedElementException("VS blueprint without name");
-		if (atomicComponents != null) {
-			for (VsComponent c: atomicComponents) c.isValid();
+		super.isValid();
+		if (compatibleSites == null || compatibleSites.isEmpty()) {
+			throw new MalformattedElementException("VS Blueprint without compatible sites");
 		}
-		if (serviceSequence != null) {
-			for (VsbForwardingPathHop e : serviceSequence) e.isValid();
-		}
-		if (endPoints != null) {
-			for (VsbEndpoint e : endPoints) e.isValid();
-		}
-		if (connectivityServices != null) {
-			for (VsbLink l : connectivityServices) l.isValid();
-		}
-
 	}
 
 	//SHOULD ONLY BE USED FOR TESTING PURPOSES

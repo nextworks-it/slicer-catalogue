@@ -174,6 +174,9 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         //Check for duplicate kpi ids
         if(kpiIdSet.size()!=kpis.size())
             throw  new MalformattedElementException("Duplicate KPI id inside the ExpBlueprint");
+        if (kpis != null) {
+            for (KeyPerformanceIndicator kpi : kpis) kpi.isValid();
+        }
 
         Set<String>  metricIdSet = metrics.stream()
                 .map(metric -> metric.getMetricId())
@@ -181,14 +184,15 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         //Check for duplicate kpi ids
         if(metricIdSet.size()!=metrics.size())
             throw  new MalformattedElementException("Duplicate Metric id inside the ExpBlueprint");
-        if (kpis != null) {
-        	for (KeyPerformanceIndicator kpi : kpis) kpi.isValid();
-        }
         if (metrics != null) {
         	for (InfrastructureMetric m : metrics) m.isValid();
         }
-        if (vsBlueprintId == null) throw new MalformattedElementException("Experiment blueprint without vertical service blueprint");
-        if ( (tcBlueprintIds == null) || (tcBlueprintIds.isEmpty())) throw new MalformattedElementException("Experiment blueprint without test cases");
+
+        if (vsBlueprintId == null || vsBlueprintId.isEmpty())
+            throw new MalformattedElementException("Experiment blueprint without vertical service blueprint");
+
+        if (tcBlueprintIds == null || tcBlueprintIds.isEmpty())
+            throw new MalformattedElementException("Experiment blueprint without test cases");
     }
 
     public List<KeyPerformanceIndicator> getKpis() {
