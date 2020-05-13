@@ -25,6 +25,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityExce
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.Actuation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,8 @@ public class NsTemplateCatalogueRestController {
     public NsTemplateCatalogueRestController() { }
 
     private static String getUserFromAuth(Authentication auth) {
+        if(auth==null)
+            return "";
         Object principal = auth.getPrincipal();
         if (!UserDetails.class.isAssignableFrom(principal.getClass())) {
             throw new IllegalArgumentException("Auth.getPrincipal() does not implement UserDetails");
@@ -86,8 +89,13 @@ public class NsTemplateCatalogueRestController {
 
 
     @RequestMapping(value = "/nstemplate", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllNsTemplates() {
+    public ResponseEntity<?> getAllNsTemplates(Authentication auth) {
         log.debug("Received request to retrieve all the NS Templates.");
+        String user = getUserFromAuth(auth);
+        if (!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
         try {
             QueryNsTemplateResponse response = nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(new Filter(), null));
             return new ResponseEntity<List<NsTemplateInfo>>(response.getNsTemplateInfos(), HttpStatus.OK);
@@ -104,11 +112,66 @@ public class NsTemplateCatalogueRestController {
     }
 
     @RequestMapping(value = "/nstemplate/{nstId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getNsTemplate(@PathVariable String nstId) {
+    public ResponseEntity<?> getNsTemplate(@PathVariable String nstId,Authentication auth) {
         log.debug("Received request to retrieve Ns Template with ID " + nstId);
+        String user = getUserFromAuth(auth);
+        if (!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
         try {
             QueryNsTemplateResponse response = nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildNsTemplateFilter(nstId), null));
             return new ResponseEntity<NsTemplateInfo>(response.getNsTemplateInfos().get(0), HttpStatus.OK);
+
+        } catch (MalformattedElementException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotExistingEntityException e) {
+            log.error("NS Template not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Internal exception");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/nstemplate/kpi/{nstUuid}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateKpiNsTemplate(@RequestBody List<String> kpi, @PathVariable String nstUuid, Authentication auth) {
+        log.debug("Received request to update KPI of Ns Template with UUID " + nstUuid);
+        String user = getUserFromAuth(auth);
+        if (!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            nsTemplateCatalogueService.updateKpiNsTemplate(nstUuid, kpi);
+            log.info("KPIs of Network Slice Template with UUID "+nstUuid+" correctly updated");
+            return new ResponseEntity<String>("KPIs correctly updated", HttpStatus.OK);
+
+        } catch (MalformattedElementException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotExistingEntityException e) {
+            log.error("NS Template not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Internal exception");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/nstemplate/actuation/{nstUuid}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateActuationNsTemplate(@RequestBody List<Actuation> actuationList, @PathVariable String nstUuid, Authentication auth) {
+        log.debug("Received request to update KPI of Ns Template with UUID " + nstUuid);
+        String user = getUserFromAuth(auth);
+        if (!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            nsTemplateCatalogueService.updateActuationNsTemplate(nstUuid, actuationList);
+            log.info("KPIs of Network Slice Template with UUID "+nstUuid+" correctly updated");
+            return new ResponseEntity<String>("Actuation correctly updated", HttpStatus.OK);
 
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");

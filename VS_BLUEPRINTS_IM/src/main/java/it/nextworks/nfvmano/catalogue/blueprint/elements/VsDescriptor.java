@@ -88,7 +88,13 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@OneToMany(cascade = {CascadeType.ALL})
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<PpFunction> ppFunctionList = new ArrayList<PpFunction>();
-	
+
+	//list of KPI list. This list can contain the list of the application metric ID belonging to the associated VSB.
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> kpiList;
+
 	public VsDescriptor() {	}
 	
 	
@@ -107,7 +113,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 */
 	public VsDescriptor(String name, String version, String vsBlueprintId, SliceServiceType sst,
 			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
-			boolean isPublic, String tenantId) {
+			boolean isPublic, String tenantId, List<String> kpiList) {
 		this.name = name;
 		this.version = version;
 		this.vsBlueprintId = vsBlueprintId;
@@ -118,6 +124,9 @@ public class VsDescriptor implements DescriptorInformationElement {
 		else sla = new VsdSla(ServiceCreationTimeRange.UNDEFINED, AvailabilityCoverageRange.UNDEFINED, false);
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
+
+		if(kpiList!=null) this.kpiList=kpiList;
+		else this.kpiList = new ArrayList<String>();
 	}
 
 
@@ -276,4 +285,11 @@ public class VsDescriptor implements DescriptorInformationElement {
 	}
 
 
+	public List<String> getKpiList() {
+		return kpiList;
+	}
+
+	public void setKpiList(List<String> kpiList) {
+		this.kpiList = kpiList;
+	}
 }

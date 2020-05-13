@@ -66,7 +66,8 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		log.debug("Processing request to on-board a new VS descriptor");
 		request.isValid();
 		VsDescriptor vsd = new VsDescriptor(request.getVsd().getName(), request.getVsd().getVersion(), request.getVsd().getVsBlueprintId(), 
-				request.getVsd().getSst(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId());
+				request.getVsd().getSst(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(),
+				request.isPublic(), request.getTenantId(), request.getVsd().getKpiList());
 		String vsdId = storeVsd(vsd, request.getVsd().getServiceConstraints());
 		vsd.setPpFunctionList(request.getVsd().getPpFunctionList());
 		try {

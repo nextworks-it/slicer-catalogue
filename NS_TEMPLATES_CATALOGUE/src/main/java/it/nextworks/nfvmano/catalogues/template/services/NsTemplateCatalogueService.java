@@ -25,6 +25,7 @@ import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.Actuation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 
     public NsTemplateCatalogueService() { }
 
-       
+
   
     @Override
     public synchronized String onBoardNsTemplate(OnBoardNsTemplateRequest request)
@@ -60,6 +61,35 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	return nstId;
     }
 
+	public synchronized void updateKpiNsTemplate(String nstUuid, List<String> kpi)
+			throws  MalformattedElementException,  NotExistingEntityException {
+		log.debug("Processing request to update KPI of NST with Uuid "+nstUuid);
+		if(kpi==null || kpi.size()==0)
+			throw new MalformattedElementException("KPI is either null or empty.");
+		NST nst;
+		if(nstRepository.findByNstId(nstUuid).isPresent()){
+			nst=nstRepository.findByNstId(nstUuid).get();
+		}else{
+			throw new NotExistingEntityException("Network Service Template with UUID " + nstUuid + " not found in DB.");
+		}
+		nst.setKpiList(kpi);
+		nstRepository.saveAndFlush(nst);
+	}
+
+	public synchronized void updateActuationNsTemplate(String nstUuid, List<Actuation> actuationList)
+			throws  MalformattedElementException,  NotExistingEntityException {
+		log.debug("Processing request to update actuation list of NST with Uuid "+nstUuid);
+		if(actuationList==null || actuationList.size()==0)
+			throw new MalformattedElementException("Actuation list is either null or empty.");
+		NST nst;
+		if(nstRepository.findByNstId(nstUuid).isPresent()){
+			nst=nstRepository.findByNstId(nstUuid).get();
+		}else{
+			throw new NotExistingEntityException("Network Service Template with UUID " + nstUuid + " not found in DB.");
+		}
+		nst.setActuationList(actuationList);
+		nstRepository.saveAndFlush(nst);
+	}
 
 	private NsTemplateInfo getNsTemplateInfo(String nstID) throws NotExistingEntityException {
 		NsTemplateInfo nstInfo;
@@ -184,13 +214,14 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 			throw new AlreadyExistingEntityException(logErrorStr);
 		}
     	
-    	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+    	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getKpiList(), nst.getActuationList(),
+				nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
     	target.setGeographicalAreaInfoList(nst.getGeographicalAreaInfoList());
 		if(nst.getPpFunctionList().size()>0){
 			log.info("Storing P&P functions");
 			target.setPpFunctionList(nst.getPpFunctionList());
 		}
-		if(nst.getNsst().size()>0){
+		if(nst.getNsst()!=null && nst.getNsst().size()>0){
 			log.info("Storing NSST");
 			target.setNsst(nst.getNsst());
 		}
@@ -202,7 +233,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     	String nstTargetID =String.valueOf(target.getUuid());
     	target.setNstId(nstTargetID);
 
-		if(target.getNsst().size()>0){
+		if(target.getNsst()!=null && target.getNsst().size()>0){
 			for(NST nsst: target.getNsst()){
 				String nsstTargetID =String.valueOf(nsst.getUuid());
 				nsst.setNstId(nsstTargetID);
