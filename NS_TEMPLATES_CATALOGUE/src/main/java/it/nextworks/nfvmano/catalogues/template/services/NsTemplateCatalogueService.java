@@ -24,6 +24,7 @@ import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.templates.GeographicalAreaInfo;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.Actuation;
 import org.slf4j.Logger;
@@ -73,6 +74,21 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 			throw new NotExistingEntityException("Network Service Template with UUID " + nstUuid + " not found in DB.");
 		}
 		nst.setKpiList(kpi);
+		nstRepository.saveAndFlush(nst);
+	}
+
+	public synchronized void updateGeoLocationNsTemplate(String nstUuid, List<GeographicalAreaInfo> geographicalAreaInfoList)
+			throws  MalformattedElementException,  NotExistingEntityException {
+		log.debug("Processing request to update geographical location of NST with Uuid "+nstUuid);
+		if(geographicalAreaInfoList==null || geographicalAreaInfoList.size()==0)
+			throw new MalformattedElementException("Geographical area info list is either null or empty.");
+		NST nst;
+		if(nstRepository.findByNstId(nstUuid).isPresent()){
+			nst=nstRepository.findByNstId(nstUuid).get();
+		}else{
+			throw new NotExistingEntityException("Network Service Template with UUID " + nstUuid + " not found in DB.");
+		}
+		nst.setGeographicalAreaInfoList(geographicalAreaInfoList);
 		nstRepository.saveAndFlush(nst);
 	}
 
