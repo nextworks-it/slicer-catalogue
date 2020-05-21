@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceParameters;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsDescriptorCatalogueInterface;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.SliceServiceParametersRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +53,9 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 	
 	@Autowired
 	private ServiceConstraintsRepository serviceConstraintsRepository;
-	
+
+	@Autowired
+	private SliceServiceParametersRepository sliceServiceParametersRepository;
 	@Autowired
 	private VsBlueprintCatalogueService vsBlueprintCatalogueService;
 	
@@ -66,7 +70,7 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		log.debug("Processing request to on-board a new VS descriptor");
 		request.isValid();
 		VsDescriptor vsd = new VsDescriptor(request.getVsd().getName(), request.getVsd().getVersion(), request.getVsd().getVsBlueprintId(), 
-				request.getVsd().getSst(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId());
+				 request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId(), request.getVsd().getSliceServiceParameters());
 		String vsdId = storeVsd(vsd, request.getVsd().getServiceConstraints());
 		try {
 			vsBlueprintCatalogueService.addVsdInBlueprint(vsd.getVsBlueprintId(), vsdId);
@@ -172,7 +176,9 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 			log.error("The VSD is already present");
 			throw new AlreadyExistingEntityException("VSD with name " + vsd.getName() + " and version " + vsd.getVersion() + " for tenant " + vsd.getTenantId() + " already present");
 		}
+
 		vsDescriptorRepository.saveAndFlush(vsd);
+
 		String vsdId = String.valueOf(vsd.getId());
 		vsd.setVsDescriptorId(vsdId);
 		vsDescriptorRepository.saveAndFlush(vsd);
@@ -186,6 +192,13 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 			}
 			log.debug("Added service constraints for VS descriptor with ID " + vsdId);
 		}
+		SliceServiceParameters sliceServiceParameters = vsd.getSliceServiceParameters();
+		if(sliceServiceParameters!=null){
+			sliceServiceParametersRepository.saveAndFlush(sliceServiceParameters);
+
+		}
+		vsd.setSliceServiceParameters(sliceServiceParameters);
+		vsDescriptorRepository.saveAndFlush(vsd);
 		return vsdId;
 	}
 

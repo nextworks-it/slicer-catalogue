@@ -25,11 +25,13 @@ import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardBlueprintRequest implements InterfaceMessage {
 
 	private List<Nsd> nsds = new ArrayList<>();
 	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
+	private List<NST> nsts = new ArrayList<>();
 
 	private String owner;
 	
@@ -44,10 +46,11 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	 *
 	 */
 	public OnBoardBlueprintRequest(List<Nsd> nsds,
-								   List<VsdNsdTranslationRule> translationRules) {
+								   List<VsdNsdTranslationRule> translationRules,
+								   List<NST> nsts) {
 		if (nsds != null) this.nsds = nsds;
 		if (translationRules != null) this.translationRules = translationRules;
-
+		if (nsts!=null) this.nsts = nsts;
 	}
 
 
@@ -65,7 +68,9 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 		return translationRules;
 	}
 
-
+	public List<NST> getNsts() {
+		return nsts;
+	}
 
 	@JsonIgnore
 	public void setBlueprintIdInTranslationRules(String blueprintId) {
@@ -79,6 +84,8 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 			if (tr.matchesNsdIdAndNsdVersion(nsdId, nsdVersion)) tr.setNsdInfoId(nsdInfoId);
 		}
 	}
+
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {

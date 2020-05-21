@@ -25,8 +25,6 @@ import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsBlueprintCatalogueService;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +56,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintRespons
 @Api(tags = "Vertical Service Blueprint Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/portal/catalogue")
+@RequestMapping("/vs/catalogue")
 public class VsBlueprintCatalogueRestController {
 	
 	private static final Logger log = LoggerFactory.getLogger(VsBlueprintCatalogueRestController.class);
@@ -73,9 +71,7 @@ public class VsBlueprintCatalogueRestController {
 	private boolean authenticationEnable;
 
 
-    @Value("${keycloak.enabled}")
-    private boolean keycloakEnabled;
-
+    
 	@Autowired
 	private AuthService authService;
 
@@ -102,11 +98,10 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		String user = authService.getUserFromAuth(auth);
-		if (!keycloakEnabled&&!user.equals(adminTenant)) {
-			log.warn("Request refused as tenant {} is not admin and keycloak not enabled.", user);
+		if (!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
-		request.setOwner(user);
 		try {
 			String vsBlueprintId = vsBlueprintCatalogueService.onBoardVsBlueprint(request);
 			return new ResponseEntity<String>(vsBlueprintId, HttpStatus.CREATED);
@@ -206,8 +201,8 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		String user = authService.getUserFromAuth(auth);
-		if (!keycloakEnabled&& !user.equals(adminTenant)) {
-			log.warn("Request refused as tenant {} is not admin and keycloak is not enabled.", user);
+		if (!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {

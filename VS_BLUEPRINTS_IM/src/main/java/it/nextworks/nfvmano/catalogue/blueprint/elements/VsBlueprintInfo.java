@@ -54,6 +54,11 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> onBoardedNsdInfoId = new ArrayList<>();
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedNstInfoId = new ArrayList<>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
@@ -183,6 +188,10 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 	
 	public void addNsdInfoId(String nsdInfoId) {
 		onBoardedNsdInfoId.add(nsdInfoId);
+	}
+
+	public void addNstInfoId(String nstInfoId) {
+		onBoardedNstInfoId.add(nstInfoId);
 	}
 
 	public void addVnfPackageInfoId(String vnfPackageInfoId) {

@@ -24,6 +24,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 
@@ -40,8 +41,9 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	 */
 	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint, 
 			List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules,  List<OnBoardVnfPackageRequest> vnfPackages) {
-		super(nsds, translationRules);
+			List<VsdNsdTranslationRule> translationRules,  List<OnBoardVnfPackageRequest> vnfPackages,
+									 List<NST> nsts) {
+		super(nsds, translationRules, nsts);
 		if(vnfPackages!=null) this.vnfPackages= vnfPackages;
 		this.vsBlueprint = vsBlueprint;
 	}

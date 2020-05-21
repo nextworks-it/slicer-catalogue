@@ -40,23 +40,6 @@ public class TranslatorRestController {
 	private TranslatorService translatorService;
 	
 	public TranslatorRestController() {	}
-	
-	@RequestMapping(value = "/expd/{expdId}", method = RequestMethod.GET)
-	public ResponseEntity<?> getNfvNsInstantiationInfo(@PathVariable String expdId) {
-		log.debug("Received request to retrieve NFV NS instantiation info from experiment descriptor with ID " + expdId);
-		try {
-			NfvNsInstantiationInfo result = translatorService.translateExpd(expdId);
-			return new ResponseEntity<NfvNsInstantiationInfo>(result, HttpStatus.OK);
-		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (NotExistingEntityException e) {
-			log.error("Experiment Descriptor not found");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			log.error("Internal exception");
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+
 
 }

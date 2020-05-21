@@ -15,8 +15,14 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
+import it.nextworks.nfvmano.catalogue.blueprint.elements.EMBBServiceParameters;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceParameters;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.URLLCServiceParameters;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NfvNsInstantiationInfo {
 
@@ -26,6 +32,14 @@ public class NfvNsInstantiationInfo {
 	private String deploymentFlavourId;
 	private String instantiationLevelId;
 	private List<String> domainIds = new ArrayList<String>();
+
+
+	private SliceServiceParameters sliceServiceParameters;
+
+
+
+	// nsstId -> domainId
+	private Map<String, String> nsstDomain = new HashMap<>();
 	
 	public NfvNsInstantiationInfo() {
 		
@@ -38,18 +52,23 @@ public class NfvNsInstantiationInfo {
 	 * @param nsdVersion NSD version
 	 * @param deploymentFlavourId NS Deployment Flavour ID
 	 * @param instantiationLevelId NS Instantiation Level ID
-	 * @param domains list of domains where the NFV NS should be instantiated
+	 * @param domainIds list of domains where the NFV NS should be instantiated
+	 * @param nsstDomain map between nsst ID and target domain ID
 	 */
 	public NfvNsInstantiationInfo(String nfvNsdId,
 			String nsdVersion,
 			String deploymentFlavourId,
 			String instantiationLevelId,
-			List<String> domainIds) {
+			List<String> domainIds, Map<String, String> nsstDomain,
+								  SliceServiceParameters sliceServiceParameters) {
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
+		if (nsstDomain != null) this.nsstDomain = nsstDomain;
+		if(sliceServiceParameters!=null) this.sliceServiceParameters = sliceServiceParameters;
+
 	}
 	
 	/**
@@ -60,20 +79,24 @@ public class NfvNsInstantiationInfo {
 	 * @param nsdVersion NSD version
 	 * @param deploymentFlavourId NS Deployment Flavour ID
 	 * @param instantiationLevelId NS Instantiation Level ID
-	 * @param domains list of domains where the NFV NS should be instantiated
+	 * @param domainIds list of domains where the NFV NS should be instantiated
+	 * @param nsstDomain map between nsst ID and target domain ID
 	 */
 	public NfvNsInstantiationInfo(String nstId,
 			String nfvNsdId,
 			String nsdVersion,
 			String deploymentFlavourId,
 			String instantiationLevelId,
-			List<String> domainIds) {
+			List<String> domainIds, Map<String, String> nsstDomain,
+			SliceServiceParameters sliceServiceParameters) {
 		this.nstId=nstId;
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
+		if (nsstDomain != null) this.nsstDomain = nsstDomain;
+		if(sliceServiceParameters!=null) this.sliceServiceParameters = sliceServiceParameters;
 	}
 	
 	
@@ -95,12 +118,19 @@ public class NfvNsInstantiationInfo {
 	public void setInstantiationLevelId(String instantiationLevelId) {
 		this.instantiationLevelId = instantiationLevelId;
 	}
-	
-	
+
+	public void setNsstDomain(Map<String, String> nsstDomain) {
+		this.nsstDomain = nsstDomain;
+	}
 
 	public String getNstId() {
 		return nstId;
 	}
+
+	public SliceServiceParameters getSliceServiceParameters() {
+		return sliceServiceParameters;
+	}
+
 	/**
 	 * @return the domainIds
 	 */
@@ -108,7 +138,7 @@ public class NfvNsInstantiationInfo {
 		return domainIds;
 	}
 	/**
-	 * @param domainId the domainIds to set
+	 * @param domainIds the domainIds to set
 	 */
 	public void setDomainIds(List<String> domainIds) {
 		this.domainIds = domainIds;
@@ -119,8 +149,6 @@ public class NfvNsInstantiationInfo {
 	public String getNfvNsdId() {
 		return nfvNsdId;
 	}
-	
-	
 	
 	/**
 	 * @return the nsdVersion
@@ -142,5 +170,8 @@ public class NfvNsInstantiationInfo {
 	public String getInstantiationLevelId() {
 		return instantiationLevelId;
 	}
-	
+
+	public Map<String, String> getNsstDomain() {
+		return nsstDomain;
+	}
 }

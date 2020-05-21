@@ -20,11 +20,13 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
+
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
+import it.nextworks.nfvmano.catalogues.domainLayer.repo.DomainRepository;
+import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +52,25 @@ public class TranslatorService implements TranslatorInterface {
 
 	@Value("${translator.type}")
 	private String translatorType;
-	
+
+
+	//Added to be able to retrieve the Vsb service slice type and category
+	@Autowired
+	private VsBlueprintRepository vsBlueprintRepository;
+
 	@Autowired
 	private VsDescriptorRepository vsDescriptorRepository;
 	
-	@Autowired
-	private CtxDescriptorRepository ctxDescriptorRepository;
-	
-	@Autowired
-	private ExpDescriptorRepository expDescriptorRepository;
+
 	
 	@Autowired
 	private TranslationRuleRepository translationRuleRepository;
+
+	@Autowired
+	private NsTemplateRepository nsTemplateRepository;
+
+	@Autowired
+	private DomainRepository domainRepository;
 	
 	private AbstractTranslator translator;
 	
@@ -72,7 +81,10 @@ public class TranslatorService implements TranslatorInterface {
 		log.debug("Initializing translator");
 		if (translatorType.equals("BASIC")) {
 			log.debug("The Vertical Slicer is configured to operate with a basic translator.");
-			translator = new BasicTranslator(vsDescriptorRepository, expDescriptorRepository, ctxDescriptorRepository, translationRuleRepository);
+			translator = new BasicTranslator(vsDescriptorRepository, translationRuleRepository);
+		} else if (translatorType.equals("MULTIDOMAIN")) {
+			log.debug("The Vertical Slicer is configured to operate with a multi-domain translator.");
+			translator = new MultiDomainBasicTranslator(vsDescriptorRepository, translationRuleRepository, nsTemplateRepository, domainRepository, vsBlueprintRepository);
 		} else {
 			log.error("Translator not configured!");
 		}
@@ -84,9 +96,5 @@ public class TranslatorService implements TranslatorInterface {
 		return translator.translateVsd(vsdIds);
 	}
 	
-	@Override
-	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
-		return translator.translateExpd(expdId);
-	}
+
 }

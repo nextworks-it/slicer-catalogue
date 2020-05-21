@@ -60,6 +60,8 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	@JsonIgnore
 	private String nsdInfoId;
+
+
 	
 	public VsdNsdTranslationRule() { }
 	
@@ -227,10 +229,17 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	public void isValid() throws MalformattedElementException {
 		if ((input == null) || (input.isEmpty())) throw new MalformattedElementException("VSD NSD translation rule without matching conditions");
 		else for (VsdParameterValueRange vr : input) vr.isValid();
-		if (nsdId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID");
+		if (nsdId == null && nstId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID/NST ID");
+
+		if (nsdId != null) {
+			if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");
+			//if (nsFlavourId == null) throw new MalformattedElementException("VSD NSD translation rule without NS flavour ID");
+			//if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");
+		}
+		/*if (nsdId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID");
 		if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");
 		if (nsFlavourId == null) throw new MalformattedElementException("VSD NSD translation rule without NS flavour ID");
-		if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");
+		if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");*/
 	}
 
 }

@@ -54,6 +54,23 @@ public class VsBlueprint extends Blueprint {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> compatibleContextBlueprint = new ArrayList<>();
 
+	private SliceServiceType sliceServiceType;
+	private EMBBServiceCategory embbServiceCategory;
+
+	public SliceServiceType getSliceServiceType() {
+		return sliceServiceType;
+	}
+
+	public EMBBServiceCategory getEmbbServiceCategory() {
+		return embbServiceCategory;
+	}
+
+	public URLLCServiceCategory getUrllcServiceCategory() {
+		return urllcServiceCategory;
+	}
+
+	private URLLCServiceCategory urllcServiceCategory;
+
 //	private String vsBlueprintId;
 //	private String version;
 //	private String name;
@@ -106,11 +123,17 @@ public class VsBlueprint extends Blueprint {
 			List<String> configurableParameters, 
 			List<EveSite> compatibleSites,
 			List<String> compatibleContextBlueprint, 
-			List<ApplicationMetric> applicationMetrics) {
+			List<ApplicationMetric> applicationMetrics,
+					   SliceServiceType sliceServiceType,
+					   EMBBServiceCategory embbServiceCategory,
+					   URLLCServiceCategory urllcServiceCategory) {
 		super(vsBlueprinId, version, name, description, parameters, endPoints, 
 				configurableParameters, applicationMetrics);
 		if (compatibleSites != null) this.compatibleSites = compatibleSites;
 		if (compatibleContextBlueprint != null) this.compatibleContextBlueprint = compatibleContextBlueprint;
+		if (sliceServiceType!=null) this.sliceServiceType = sliceServiceType;
+		if (embbServiceCategory!=null) this.embbServiceCategory = embbServiceCategory;
+		if (urllcServiceCategory!=null) this.urllcServiceCategory = urllcServiceCategory;
 //		this.vsBlueprintId = vsBlueprinId;
 //		this.version = version;
 //		this.name = name;
@@ -255,6 +278,19 @@ public class VsBlueprint extends Blueprint {
 		}
 		if (connectivityServices != null) {
 			for (VsbLink l : connectivityServices) l.isValid();
+		}
+
+		if(sliceServiceType==null){
+			throw  new MalformattedElementException("VSB without slice service type");
+		}else{
+			if(sliceServiceType.equals(SliceServiceType.EMBB)){
+				if(embbServiceCategory==null)
+					throw  new MalformattedElementException("VSB without slice service category");
+
+			}else if(sliceServiceType.equals(SliceServiceType.URLLC)){
+				if(urllcServiceCategory==null)
+					throw  new MalformattedElementException("VSB without slice service category");
+			}
 		}
 
 	}

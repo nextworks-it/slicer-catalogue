@@ -23,7 +23,11 @@ import java.util.Map;
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
+import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
+import it.nextworks.nfvmano.catalogues.template.services.NsTemplateCatalogueService;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
+import it.nextworks.nfvmano.libs.ifa.templates.NST;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +42,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedExcep
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.EveSite;
+
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprintInfo;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsComponent;
@@ -77,6 +81,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	
 	@Autowired
 	private TranslationRuleRepository translationRuleRepository;
+
+	@Autowired
+	private NsTemplateCatalogueService nsTemplateCatalogueService;
 	
 	@Autowired
 	private NfvoCatalogueService nfvoCatalogueService;
@@ -128,10 +135,6 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			for (Nsd nsd : nsds) {
 				try {
 					Map<String, String> userDefinedData = new HashMap<>();
-					List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
-					for (EveSite site : sites) {
-						userDefinedData.put(site.toString(), "yes");
-					}
 					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
 					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
 							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
@@ -144,6 +147,26 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 					log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
 					vsBlueprintInfo.addNsdInfoId(oldNsdInfoId);
 					request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
+				}
+			}
+
+			List<NST> nsts = request.getNsts();
+			if(nsts!=null && !nsts.isEmpty()){
+				log.debug("Onboarding NSTS");
+				for(NST currentNst : nsts){
+					try{
+						String nstInfoId = nsTemplateCatalogueService.onBoardNsTemplate(new OnBoardNsTemplateRequest(currentNst));
+						vsBlueprintInfo.addNstInfoId(nstInfoId);
+						//request.setNstInfoInTranslationRules(nstInfoId, currentNst.);
+					}catch(AlreadyExistingEntityException e)
+					{
+						QueryNsTemplateResponse nstR =
+								nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNstInfoFilter(currentNst.getNstId(), currentNst.getNstVersion()), null));
+
+
+						vsBlueprintInfo.addNstInfoId(nstR.getNsTemplateInfos().get(0).getNstInfoId());
+						//request.setNstInfoInTranslationRules(nstInfoId, currentNst.);
+					}
 				}
 			}
 			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
@@ -193,12 +216,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
             	VsBlueprintInfo vsb = getVsBlueprintInfo(vsbId);
             	vsbs.add(vsb);
             	log.debug("Added VSB info for VSB ID " + vsbId);
-            } else if (fp.size() == 1 && fp.containsKey("SITE")) {
-            	String siteStr = fp.get("SITE");
-            	EveSite site = EveSite.valueOf(siteStr);
-            	List<VsBlueprintInfo> vsb = getVsBlueprintInfoFromSite(site);
-            	vsbs.addAll(vsb);
-            	log.debug("Added VSBs info");
+
             } else if (fp.size() == 2 && fp.containsKey("VSB_NAME") && fp.containsKey("VSB_VERSION")) {
             	String vsbName = fp.get("VSB_NAME");
             	String vsbVersion = fp.get("VSB_VERSION");
@@ -304,7 +322,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
 				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
-				vsBlueprint.getApplicationMetrics());
+				vsBlueprint.getApplicationMetrics(),
+				vsBlueprint.getSliceServiceType(),
+				vsBlueprint.getEmbbServiceCategory(),
+				vsBlueprint.getUrllcServiceCategory());
 		vsBlueprintRepository.saveAndFlush(target);
 		
 		Long vsbId = target.getId();
@@ -375,6 +396,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		return vsBlueprintInfo;
 	}
 	
+	/*
 	private List<VsBlueprintInfo> getVsBlueprintInfoFromSite(EveSite site) throws NotExistingEntityException {
 		log.debug("Searching for VSB compatible with site " + site);
 		List<VsBlueprint> vsbs = vsBlueprintRepository.findByCompatibleSitesIn(site);
@@ -388,7 +410,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			log.debug("Added VSB " + vsbId);
 		}
 		return vsbis;
-	}
+	}*/
 	
 	private List<VsBlueprintInfo> getAllVsBlueprintInfos() throws NotExistingEntityException {
 		List<VsBlueprintInfo> vsbis = vsBlueprintInfoRepository.findAll();

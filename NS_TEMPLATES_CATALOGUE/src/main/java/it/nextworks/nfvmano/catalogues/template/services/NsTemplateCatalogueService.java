@@ -18,6 +18,7 @@ package it.nextworks.nfvmano.catalogues.template.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,35 +184,24 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 
     private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException {
     	String nstVersion =nst.getNstVersion();
-    	String nstName =nst.getNstName();
-    	log.debug("Onboarding NsTemplate with name " + nstName + " and version " + nstVersion);
+    	String nstTargetName =nst.getNstName();
+    	String nstTargetId = nst.getNstId();
+    	log.debug("Onboarding NsTemplate with name " + nstTargetName + " and version " + nstVersion);
  
-    	if (nstRepository.findByNstNameAndNstVersion(nstName, nstVersion).isPresent()) {
-    		String logErrorStr= "NsTemplate with name " + nstName + " and version " + nstVersion + " already present in DB.";
+    	if (nstRepository.findByNstNameAndNstVersion(nstTargetName, nstVersion).isPresent()) {
+    		String logErrorStr= "NsTemplate with name " + nstTargetName + " and version " + nstVersion + " already present in DB.";
 			log.error(logErrorStr);
 			throw new AlreadyExistingEntityException(logErrorStr);
 		}
     	
-    	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+    	NST target = new NST(nstTargetId, nstTargetName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+		nstRepository.saveAndFlush(target);
+    	log.debug("Added NsTemplate with ID " + nstTargetId);
     	
-    	String nstTargetName=nst.getNstName();
-    	target.setNstName(nstTargetName);
-    	
-    	nstRepository.saveAndFlush(target);
-    	String nstTargetID =String.valueOf(target.getId());
-    	target.setNstId(nstTargetID);
-    	nstRepository.saveAndFlush(target);
-    	log.debug("Added NsTemplate with ID " + nstTargetID);
-    	
-    	NsTemplateInfo nstInfo = new NsTemplateInfo(null, nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
+    	NsTemplateInfo nstInfo = new NsTemplateInfo(UUID.randomUUID().toString(), nstTargetId, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
 		nstInfoRepository.saveAndFlush(nstInfo);
 		
-		Long idGenerated = nstInfo.getId();
-		NsTemplateInfo nstInfoTarget = new NsTemplateInfo(null, nstTargetID, nstTargetName, nstVersion, nst.getNstProvider(), target,null, null,false);
-		nstInfoTarget.setId(idGenerated);
-		nstInfoRepository.saveAndFlush(nstInfoTarget);
-		
-		log.debug("Added NsTemplate Info with NsTemplate ID " + nstTargetID);
-    	return nstTargetID;
+		log.debug("Added NsTemplate Info with NsTemplate ID " + nstTargetId);
+    	return nstTargetId;
     }
 }

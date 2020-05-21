@@ -47,7 +47,7 @@ public class NsTemplateCatalogueRestController {
     @Autowired
     private NsTemplateCatalogueService nsTemplateCatalogueService;
 
-    @Value("${catalogue.admin}")  //FIXME Check about the NSMF Admin tenant
+    @Value("${sebastian.admin}")  //FIXME Check about the NSMF Admin tenant
     private String adminTenant;
 
     public NsTemplateCatalogueRestController() { }

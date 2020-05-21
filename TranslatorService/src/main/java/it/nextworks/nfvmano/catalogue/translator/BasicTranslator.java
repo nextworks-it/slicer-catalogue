@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
+
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
@@ -32,8 +31,6 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 
@@ -44,10 +41,9 @@ public class BasicTranslator extends AbstractTranslator {
 	private TranslationRuleRepository ruleRepo;
 
 	public BasicTranslator(VsDescriptorRepository vsdRepo,
-							ExpDescriptorRepository expDescriptorRepository,
-							CtxDescriptorRepository ctxDescriptorRepository,
+
 						    TranslationRuleRepository ruleRepo) {
-		super(TranslatorType.BASIC_TRANSLATOR, vsdRepo, expDescriptorRepository, ctxDescriptorRepository);
+		super(TranslatorType.BASIC_TRANSLATOR, vsdRepo);
 		this.ruleRepo = ruleRepo;
 	}
 	
@@ -62,51 +58,15 @@ public class BasicTranslator extends AbstractTranslator {
 			String vsdId = entry.getKey();
 			VsDescriptor vsd = entry.getValue();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null, null, null);
 			nfvNsInfo.put(vsdId, info);
 			log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
 					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
 		}
 		return nfvNsInfo;
 	}
-	
-	@Override
-	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
-		log.debug("ExpD->NSD translation at basic translator.");
-		if (expdId == null) throw new MalformattedElementException("Received null expdId as input to the basic translator");
-		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expdId);
-		if (expdOpt.isPresent()) {
-			ExpDescriptor expd = expdOpt.get();
-			VsdNsdTranslationRule rule = findMatchingTranslationRule(expd);
-			return new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
-		} else {
-			log.error("Experiment descriptor " + expdId + " not found in DB.");
-			throw new NotExistingEntityException("Experiment descriptor " + expdId + " not found in DB.");
-		}
-	}
-	
-	private VsdNsdTranslationRule findMatchingTranslationRule(ExpDescriptor expd) throws FailedOperationException, NotExistingEntityException {
-		String blueprintId = expd.getExpBlueprintId();
-		Map<String, String> descriptorParameters = new HashMap<>();
-		// for the experiment descriptor the parameters are defined in the related VSD and CTXD
-		String vsdId = expd.getVsDescriptorId();
-		Optional<VsDescriptor> vsdOpt = vsdRepo.findByVsDescriptorId(vsdId);
-		if (vsdOpt.isPresent()) {
-			Map<String, String> vsdParameters = vsdOpt.get().getQosParameters();
-			descriptorParameters.putAll(vsdParameters);
-		}
-		
-		List<String> ctxDescriptorIds = expd.getCtxDescriptorIds();
-		for (String ctxId: ctxDescriptorIds) {
-			Optional<CtxDescriptor> ctxOpt = ctxDescriptorRepository.findByCtxDescriptorId(ctxId);
-			if (ctxOpt.isPresent()) {
-				Map<String, String> ctxParameters = ctxOpt.get().getCtxParameters();
-				descriptorParameters.putAll(ctxParameters);
-			}
-		}
-		return findMatchingTranslationRule(blueprintId, descriptorParameters);
-	}
+
 	
 	private VsdNsdTranslationRule findMatchingTranslationRule(VsDescriptor vsd) throws FailedOperationException, NotExistingEntityException {
 		String vsbId = vsd.getVsBlueprintId();

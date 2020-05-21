@@ -17,5 +17,6 @@ package it.nextworks.nfvmano.catalogue.translator;
 
 public enum TranslatorType {
 	
-	BASIC_TRANSLATOR
+	BASIC_TRANSLATOR,
+	MULTI_DOMAIN_TRANSLATOR
 }

@@ -16,16 +16,15 @@
 package it.nextworks.nfvmano.catalogue.translator;
 
 
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
+
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
 public abstract class AbstractTranslator implements TranslatorInterface {
 
 	TranslatorType type;
 	VsDescriptorRepository vsdRepo;
-	ExpDescriptorRepository expDescriptorRepository;
-	CtxDescriptorRepository ctxDescriptorRepository;
+
+
 	
 	
 	/**
@@ -36,13 +35,10 @@ public abstract class AbstractTranslator implements TranslatorInterface {
 	 * 
 	 */
 	public AbstractTranslator(TranslatorType type,
-			VsDescriptorRepository vsdRepo,
-			ExpDescriptorRepository expDescriptorRepository,
-			CtxDescriptorRepository ctxDescriptorRepository) {
+			VsDescriptorRepository vsdRepo) {
 		this.type = type;
 		this.vsdRepo = vsdRepo;
-		this.expDescriptorRepository = expDescriptorRepository;
-		this.ctxDescriptorRepository = ctxDescriptorRepository;
+
 	}
 
 	/**

@@ -47,9 +47,16 @@
             <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
 
+
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>EveBlueprintsCatalogue</artifactId>
+            <artifactId>NsTemplatesCatalogue</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>it.nextworks.nfvmano</groupId>
+            <artifactId>DomainLayerCatalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         

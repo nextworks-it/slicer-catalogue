@@ -40,7 +40,6 @@ public interface TranslatorInterface {
 	public Map<String, NfvNsInstantiationInfo> translateVsd(List<String> vsdIds)
 		throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
 	
-	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
+
 	
 }

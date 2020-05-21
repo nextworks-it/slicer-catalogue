@@ -26,8 +26,6 @@ import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.sebastian.admin.MgmtCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsDescriptorCatalogueService;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +54,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorRespon
 
 @RestController
 @CrossOrigin
-@RequestMapping("/portal/catalogue")
+@RequestMapping("/vs/catalogue")
 public class VsDescriptorCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(VsDescriptorCatalogueRestController.class);
@@ -70,8 +68,7 @@ public class VsDescriptorCatalogueRestController {
 	@Value("${authentication.enable}")
 	private boolean authenticationEnable;
 
-	@Value("${keycloak.enabled}")
-	private boolean keycloakEnabled;
+	
 
 	@Autowired
 	private AuthService authService;

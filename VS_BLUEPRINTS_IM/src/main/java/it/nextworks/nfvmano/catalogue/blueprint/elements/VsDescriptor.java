@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -57,7 +58,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	private String version;
 	private String vsBlueprintId;
 	
-	private SliceServiceType sst;
+
 	private SliceManagementControlType managementType;
 	
 	//Key: parameter ID as in the blueprint; value: desired value
@@ -83,7 +84,9 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@Embedded
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private VsdSla sla;
-	
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private SliceServiceParameters sliceServiceParameters;
 	
 	
 	public VsDescriptor() {	}
@@ -94,30 +97,33 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 * @param name
 	 * @param version
 	 * @param vsBlueprintId
-	 * @param sst
 	 * @param managementType
 	 * @param qosParameters
 	 * @param sla
 	 * @param isPublic
 	 * @param tenantId
-	 * 
+	 * @param sliceServiceParameters
 	 */
-	public VsDescriptor(String name, String version, String vsBlueprintId, SliceServiceType sst,
+	public VsDescriptor(String name, String version, String vsBlueprintId,
 			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
-			boolean isPublic, String tenantId) {
+			boolean isPublic, String tenantId, SliceServiceParameters sliceServiceParameters) {
 		this.name = name;
 		this.version = version;
 		this.vsBlueprintId = vsBlueprintId;
-		this.sst = sst;
+
 		this.managementType = managementType;
 		this.qosParameters = qosParameters;
 		if (sla != null) this.sla = sla;
 		else sla = new VsdSla(ServiceCreationTimeRange.UNDEFINED, AvailabilityCoverageRange.UNDEFINED, false);
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
+		this.sliceServiceParameters = sliceServiceParameters;
 	}
 
 
+	public SliceServiceParameters getSliceServiceParameters() {
+		return sliceServiceParameters;
+	}
 
 	/**
 	 * @return the vsDescriptorId
@@ -134,7 +140,9 @@ public class VsDescriptor implements DescriptorInformationElement {
 		this.vsDescriptorId = vsDescriptorId;
 	}
 
-
+	public void setSliceServiceParameters(SliceServiceParameters sliceServiceParameters) {
+		this.sliceServiceParameters = sliceServiceParameters;
+	}
 
 	/**
 	 * @return the id
@@ -175,14 +183,6 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 */
 	public void setVsBlueprintId(String vsBlueprintId) {
 		this.vsBlueprintId = vsBlueprintId;
-	}
-
-
-	/**
-	 * @return the sst
-	 */
-	public SliceServiceType getSst() {
-		return sst;
 	}
 
 

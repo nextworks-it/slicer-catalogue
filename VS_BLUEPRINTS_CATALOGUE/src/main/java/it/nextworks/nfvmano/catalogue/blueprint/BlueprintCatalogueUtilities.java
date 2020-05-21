@@ -109,6 +109,15 @@ public class BlueprintCatalogueUtilities {
         return new Filter(filterParams);
     }
 
+    public static Filter buildNstInfoFilter(String nstId, String nstVersion) {
+        //NSD_ID
+        //NSD_VERSION
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("NST_ID", nstId);
+        //filterParams.put("NST_VERSION", nstVersion);
+        return new Filter(filterParams);
+    }
+
     public static Filter buildMecAppPackageInfoFilter(String appdId, String version) {
         //APPD_ID
         //APPD_VERSION
