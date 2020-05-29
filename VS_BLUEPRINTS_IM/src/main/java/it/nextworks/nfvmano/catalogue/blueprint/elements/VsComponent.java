@@ -66,13 +66,18 @@ public class VsComponent implements DescriptorInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> endPointsIds = new ArrayList<>();
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String nfvId;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<String, String> lifecycleOperations = new HashMap<>();
-	
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private AtomicComponentPlacement placement;
 	
 	public VsComponent() {
 		// JPA only
@@ -93,16 +98,25 @@ public class VsComponent implements DescriptorInformationElement {
 			int serversNumber,
 			List<String> imagesUrls,
 			List<String> endPointsIds,
-			Map<String, String> lifecycleOperations) {
+			Map<String, String> lifecycleOperations, String nfvId, AtomicComponentPlacement placement ) {
 		this.vsb = vsb;
 		this.componentId = componentId;
 		this.serversNumber = serversNumber;
 		if (imagesUrls != null) this.imagesUrls = imagesUrls;
 		if (endPointsIds != null) this.endPointsIds = endPointsIds;
 		if (lifecycleOperations != null) this.lifecycleOperations = lifecycleOperations;
+		this.nfvId = nfvId;
+		this.placement= placement;
 	}
-	
-	
+
+
+	public AtomicComponentPlacement getPlacement() {
+		return placement;
+	}
+
+	public String getNfvId() {
+		return nfvId;
+	}
 
 	/**
 	 * @return the vsb
@@ -151,6 +165,10 @@ public class VsComponent implements DescriptorInformationElement {
 		if (componentId == null) throw new MalformattedElementException("VS component without ID.");
 		if (endPointsIds == null || endPointsIds.isEmpty()){
 			throw new MalformattedElementException("VS components without endpoints");
+		}
+
+		if(placement!=null && nfvId==null){
+			throw new MalformattedElementException("Component with placement but without the NfvId:"+componentId);
 		}
 	}
 

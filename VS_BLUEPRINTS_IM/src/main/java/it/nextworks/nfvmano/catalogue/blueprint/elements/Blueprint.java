@@ -291,5 +291,7 @@ public class Blueprint implements DescriptorInformationElement {
         if (applicationMetrics != null) {
         	for (ApplicationMetric am : applicationMetrics) am.isValid();
         }
+
+
     }
 }

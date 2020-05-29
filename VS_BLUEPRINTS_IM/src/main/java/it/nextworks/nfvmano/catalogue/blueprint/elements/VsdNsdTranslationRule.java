@@ -16,6 +16,7 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,8 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private String blueprintId;
-	
+
+	private boolean isDefault;
 	private String nstId;
 	private String nsdId; 
 	private String nsdVersion;
@@ -100,7 +102,28 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	}
 
 
-	
+	/**
+	 * Create default translation rule
+	 * @param nstId
+	 * @param nsdId
+	 * @param nsdVersion
+	 * @param nsFlavourId
+	 * @param nsInstantiationLevelId
+	 */
+	public VsdNsdTranslationRule(String nstId, String nsdId, String nsdVersion,
+								 String nsFlavourId, String nsInstantiationLevelId) {
+		this.input = new ArrayList<>();
+		this.nstId = nstId;
+		this.nsdId = nsdId;
+		this.nsdVersion = nsdVersion;
+		this.nsFlavourId = nsFlavourId;
+		this.nsInstantiationLevelId = nsInstantiationLevelId;
+		this.isDefault = true;
+	}
+
+
+
+
 
 	public String getNstId() {
 		return nstId;
@@ -223,9 +246,13 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		throw new NotExistingEntityException("VSD parameter not found in the rule");
 	}
 
+	public boolean isDefault() {
+		return isDefault;
+	}
+
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if ((input == null) || (input.isEmpty())) throw new MalformattedElementException("VSD NSD translation rule without matching conditions");
+		if (!isDefault &&( (input == null) || (input.isEmpty()))) throw new MalformattedElementException("Non default VSD NSD translation rule without matching conditions");
 		else for (VsdParameterValueRange vr : input) vr.isValid();
 		if (nsdId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID");
 		if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");

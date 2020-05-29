@@ -41,6 +41,6 @@ public interface TranslatorInterface {
 		throws FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
 	
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
+			throws RuleNotFoundException, MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException;
 	
 }

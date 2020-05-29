@@ -71,12 +71,6 @@ public class CtxBlueprintRepositoryTest {
             e.printStackTrace();
         }
 
-
-
-
-
-
-
     }
 
 
@@ -100,7 +94,7 @@ public class CtxBlueprintRepositoryTest {
         if (atomicComponents != null) {
             for (VsComponent c : atomicComponents) {
                 //first element is null because it should be a VSB
-                VsComponent targetComponent = new VsComponent(null, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations());
+                VsComponent targetComponent = new VsComponent(null, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(), c.getNfvId(), c.getPlacement());
                 vsComponentRepository.saveAndFlush(targetComponent);
                 targetComponents.add(targetComponent);
             }

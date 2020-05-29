@@ -94,9 +94,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 				am.isValid();
 			}
 		}
-
-
-		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner());
+		Map<String, Nsd> nsdInfoNsd = storeNsds(request);
+		//disabled nsdInfoId setting in blueprint/translationrule
+		nsdInfoNsd = new HashMap<>();
+		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner(), nsdInfoNsd);
 		
 		VsBlueprintInfo vsBlueprintInfo;
 		try {
@@ -106,48 +107,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throw new FailedOperationException("Internal error: impossible to retrieve vsBlueprintInfo.");
 		}
 		
-		request.setBlueprintIdInTranslationRules(vsbId);
-		
-		log.debug("Processing NFV descriptors");
-		try {
-			log.debug("Storing NSDs");
-			List<Nsd> nsds = request.getNsds();
-			for (Nsd nsd : nsds) {
-				try {
-					Map<String, String> userDefinedData = new HashMap<>();
-					List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
-					for (EveSite site : sites) {
-						userDefinedData.put(site.toString(), "yes");
-					}
-					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
-							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(nsdInfoId);
-					request.setNsdInfoIdInTranslationRules(nsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryNsdResponse nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-					String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-					log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(oldNsdInfoId);
-					request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				}
-			}
-			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
+		storeTranslationRules(request, vsBlueprintInfo, nsdInfoNsd);
+		return vsbId;
 			
-			log.debug("Storing translation rules");
-			List<VsdNsdTranslationRule> trs = request.getTranslationRules();
-			for (VsdNsdTranslationRule tr : trs) {
-				translationRuleRepository.saveAndFlush(tr);
-			}
-			log.debug("Translation rules saved in internal DB.");
-			
-			return vsbId;
-			
-		} catch (Exception e) {
-			log.error("Something went wrong when processing SO descriptors.");
-			throw new FailedOperationException("Internal error: something went wrong when processing SO descriptors.");
-		}
+
 	}
 	
 	@Override
@@ -280,7 +243,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		log.debug("Removed VSD " + vsdId + " from blueprint " + vsBlueprintId);
 	}
 	
-	private String storeVsBlueprint(VsBlueprint vsBlueprint, String owner) throws AlreadyExistingEntityException {
+	private String storeVsBlueprint(VsBlueprint vsBlueprint, String owner, Map<String, Nsd> nsdInfoNsd) throws AlreadyExistingEntityException {
 		log.debug("Onboarding VS blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion());
 		if ( (vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ||
 				(vsBlueprintRepository.findByNameAndVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ) {
@@ -303,7 +266,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsComponent> atomicComponents = vsBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations());
+				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(),
+				c.getNfvId(), c.getPlacement());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);
@@ -330,7 +294,16 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		VsBlueprintInfo vsBlueprintInfo = new VsBlueprintInfo(vsbIdString, vsBlueprint.getVersion(), vsBlueprint.getName(), owner);
 		vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
 		log.debug("Added VS Blueprint Info with ID " + vsbIdString);
-		
+
+		if(nsdInfoNsd!=null && !nsdInfoNsd.isEmpty()) {
+			log.debug("Adding  VS Blueprint Info nsdInfoIds");
+			for (String nsdInfoId : nsdInfoNsd.keySet()) {
+				vsBlueprintInfo.addNsdInfoId(nsdInfoId);
+			}
+			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
+		}
+
+
 		return vsbIdString;
 	}
 
@@ -376,7 +349,46 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		return vsbis;
 	}
-	
+
+
+	private Map<String, Nsd> storeNsds(OnBoardVsBlueprintRequest request) throws FailedOperationException, MalformattedElementException, MethodNotImplementedException {
+
+		log.debug("Storing NSDs");
+		List<Nsd> nsds = request.getNsds();
+		Map<String, Nsd> nsdInfoIdNsd = new HashMap<>();
+		for (Nsd nsd : nsds) {
+			String nsdInfoId = null;
+			try {
+				Map<String, String> userDefinedData = new HashMap<>();
+				List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
+				for (EveSite site : sites) {
+					userDefinedData.put(site.toString(), "yes");
+				}
+				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
+				log.debug("Added NSD " + nsd.getNsdIdentifier() +
+						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
+
+				nsdInfoIdNsd.put(nsdInfoId, nsd);
+			} catch (AlreadyExistingEntityException e) {
+				log.debug("The NSD is already present in the NFVO catalogue. IGNORING.");
+
+				/*
+				QueryNsdResponse nsdR = null;
+				try {
+					nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
+				} catch (NotExistingEntityException ex) {
+					throw new FailedOperationException("Something went wrong interacting with the NFVO Catalogue: "+ex.getMessage());
+				}
+				nsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
+				log.debug("Retrieved NSD Info ID: " + nsdInfoId);
+				*/
+
+			}
+
+		}
+		return nsdInfoIdNsd;
+	}
+
 	private List<VsBlueprintInfo> getAllVsBlueprintInfos() throws NotExistingEntityException {
 		List<VsBlueprintInfo> vsbis = vsBlueprintInfoRepository.findAll();
 		for (VsBlueprintInfo vsbi : vsbis) {
@@ -387,5 +399,26 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		return vsbis;
 	}
-	
+
+
+	private void storeTranslationRules (OnBoardVsBlueprintRequest request, VsBlueprintInfo vsBlueprintInfo, Map<String,Nsd> nsdInfoIdNsd ){
+
+		log.debug("Storing translation rules");
+		String vsBlueprintId = vsBlueprintInfo.getVsBlueprintId();
+		request.setBlueprintIdInTranslationRules(vsBlueprintId);
+
+		if(nsdInfoIdNsd!=null && !nsdInfoIdNsd.isEmpty()){
+			log.debug("Adding nsdInfoId in translation rules");
+			for(Map.Entry<String, Nsd> entry:  nsdInfoIdNsd.entrySet()){
+				request.setNsdInfoIdInTranslationRules(entry.getKey(), entry.getValue().getNsdIdentifier(), entry.getValue().getVersion());
+			}
+		}
+
+		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
+		for (VsdNsdTranslationRule tr : trs) {
+			translationRuleRepository.saveAndFlush(tr);
+		}
+		log.debug("Translation rules saved in internal DB.");
+		vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
+	}
 }

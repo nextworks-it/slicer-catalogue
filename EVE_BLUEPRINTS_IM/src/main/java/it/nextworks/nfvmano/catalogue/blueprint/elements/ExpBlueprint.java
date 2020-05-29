@@ -71,6 +71,8 @@ public class ExpBlueprint  implements DescriptorInformationElement {
     private List<InfrastructureMetric> metrics = new ArrayList<>();
 
 
+    private ExperimentDeploymentType deploymentType;
+
     private String vsBlueprintId;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -91,7 +93,7 @@ public class ExpBlueprint  implements DescriptorInformationElement {
 
     public ExpBlueprint(String version, String name, String description, 
     		List<EveSite> sites, String vsBlueprintId, List<String> ctxBlueprintIds, 
-    		List<String> tcBlueprintIds, List<InfrastructureMetric> metrics) {
+    		List<String> tcBlueprintIds, List<InfrastructureMetric> metrics, ExperimentDeploymentType deploymentType) {
         this.version = version;
         this.name = name;
         this.description = description;
@@ -104,7 +106,37 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         	this.tcBlueprintIds = tcBlueprintIds;
         if(metrics!=null)
             this.metrics = metrics;
-    } 
+        this.deploymentType=deploymentType;
+    }
+
+    /**
+     * Constructor to set the default deploymentType
+     * @param version
+     * @param name
+     * @param description
+     * @param sites
+     * @param vsBlueprintId
+     * @param ctxBlueprintIds
+     * @param tcBlueprintIds
+     * @param metrics
+     */
+    public ExpBlueprint(String version, String name, String description,
+                        List<EveSite> sites, String vsBlueprintId, List<String> ctxBlueprintIds,
+                        List<String> tcBlueprintIds, List<InfrastructureMetric> metrics) {
+        this.version = version;
+        this.name = name;
+        this.description = description;
+        if(sites!=null)
+            this.sites = sites;
+        this.vsBlueprintId = vsBlueprintId;
+        if (ctxBlueprintIds != null)
+            this.ctxBlueprintIds = ctxBlueprintIds;
+        if (tcBlueprintIds !=  null)
+            this.tcBlueprintIds = tcBlueprintIds;
+        if(metrics!=null)
+            this.metrics = metrics;
+        this.deploymentType=ExperimentDeploymentType.ON_DEMAND;
+    }
 
     public String getVersion() {
         return version;
@@ -141,7 +173,9 @@ public class ExpBlueprint  implements DescriptorInformationElement {
         return description;
     }
 
-    
+    public ExperimentDeploymentType getDeploymentType() {
+        return deploymentType;
+    }
 
     /**
 	 * @return the tcBlueprintIds
@@ -167,6 +201,9 @@ public class ExpBlueprint  implements DescriptorInformationElement {
 
         if(sites==null || sites.isEmpty())
             throw new MalformattedElementException("ExpBlueprint without sites");
+
+        if(deploymentType==null)
+            throw new MalformattedElementException("ExpBlueprint without deployment type");
 
         Set<String>  kpiIdSet = kpis.stream()
                         .map(kpi -> kpi.getKpiId())

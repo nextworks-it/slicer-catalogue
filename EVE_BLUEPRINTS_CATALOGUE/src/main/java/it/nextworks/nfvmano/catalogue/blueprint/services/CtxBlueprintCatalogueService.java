@@ -87,9 +87,14 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Process CtxBlueprint Onboard request");
 		request.isValid();
+
+		Map<String, Nsd> nsdInfoIdNsd = storeNsds(request);
+		//The nsInfoId doesnot seem to be used afterwards, candidate for removal.
+		//Comment the following line to disable the changes
+		nsdInfoIdNsd = new HashMap<>();
+
 		CtxBlueprint ctxBlueprint = request.getCtxBlueprint();
-		String ctxBlueprintId = storeCtxBlueprint(ctxBlueprint, request.getOwner());
-		
+		String ctxBlueprintId = storeCtxBlueprint(ctxBlueprint, request.getOwner(), nsdInfoIdNsd);
 		CtxBlueprintInfo ctxBlueprintInfo;
 		try {
 			ctxBlueprintInfo = getContextBlueprintInfo(ctxBlueprintId);
@@ -97,45 +102,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 			log.error("Impossible to retrieve contextBlueprintInfo. Error!");
 			throw new FailedOperationException("Internal error: impossible to retrieve contextBlueprintInfo.");
 		}
-		
-		request.setBlueprintIdInTranslationRules(ctxBlueprintId);
-		
-		log.debug("Storing NSDs");
-		for(Nsd nsd : request.getNsds()){
-			try {
-				Map<String, String> userDefinedData = new HashMap<>();
-				List<EveSite> sites = ctxBlueprint.getCompatibleSites();
-				for (EveSite site : sites) {
-					userDefinedData.put(site.toString(), "yes");
-				}
-				String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-				log.debug("Added NSD " + nsd.getNsdIdentifier() +
-						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-				ctxBlueprintInfo.addNsdInfoId(nsdInfoId);
-				request.setNsdInfoIdInTranslationRules(nsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-			} catch (AlreadyExistingEntityException e) {
-				log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-				QueryNsdResponse nsdR = null;
-				try {
-					nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-				} catch (NotExistingEntityException ex) {
-					throw new FailedOperationException("Something went wrong interacting with the NFVO Catalogue: "+ex.getMessage());
-				}
-				String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-				log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-				ctxBlueprintInfo.addNsdInfoId(oldNsdInfoId);
-				request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-			}
-		}
-		ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
-		
-		log.debug("Storing translation rules");
-		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
-		for (VsdNsdTranslationRule tr : trs) {
-			translationRuleRepository.saveAndFlush(tr);
-		}
-		log.debug("Translation rules saved in internal DB.");
-		
+		storeTranslationRules(request, ctxBlueprintInfo, new HashMap<>());
 		return ctxBlueprintId;
 	}
 	
@@ -264,7 +231,54 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		log.debug("Removed Context Descriptor " + cxtDescriptorId + " from Context Blueprint " + ctxBlueprintId);
 	}
 
-	private String storeCtxBlueprint(CtxBlueprint ctxBlueprint, String owner) throws AlreadyExistingEntityException {
+	/**
+	 * @return  A Map with the nsInfoId as the key and the Nsd as value
+
+	 */
+	private Map<String, Nsd> storeNsds(OnboardCtxBlueprintRequest request) throws FailedOperationException, MethodNotImplementedException, MalformattedElementException {
+
+		Map<String, Nsd> nsdInfoIdToNsd = new HashMap<>();
+		log.debug("Storing NSDs");
+		for(Nsd nsd : request.getNsds()){
+			String nsdInfoId = null;
+			String nsdId = nsd.getNsdIdentifier();
+			try {
+				Map<String, String> userDefinedData = new HashMap<>();
+				List<EveSite> sites = request.getCtxBlueprint().getCompatibleSites();
+				for (EveSite site : sites) {
+					userDefinedData.put(site.toString(), "yes");
+				}
+
+				//TODO: Verify this, the number returned is randomly generated
+				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
+				log.debug("Added NSD " + nsd.getNsdIdentifier() +
+						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
+				log.debug("NsdId to NsdInfoId Mapping:"+nsdId+" "+nsdInfoId);
+				nsdInfoIdToNsd.put(nsdInfoId, nsd);
+			} catch (AlreadyExistingEntityException e) {
+				log.debug("The NSD is already present in the NFVO catalogue. IGNORING");
+
+				/*QueryNsdResponse nsdR = null;
+				try {
+					nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
+				} catch (NotExistingEntityException ex) {
+					throw new FailedOperationException("Something went wrong interacting with the NFVO Catalogue: "+ex.getMessage());
+				}
+				nsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
+				log.debug("Retrieved NSD Info ID: " + nsdInfoId);
+				*/
+
+			}
+
+
+
+		}
+		return  nsdInfoIdToNsd;
+
+
+	}
+
+	private String storeCtxBlueprint(CtxBlueprint ctxBlueprint, String owner, Map<String, Nsd> nsdIdToInfoId) throws AlreadyExistingEntityException {
         log.debug("Onboarding CTX blueprint with name " + ctxBlueprint.getName() + " and version " + ctxBlueprint.getVersion());
         if ( (ctxBlueprintInfoRepository.findByNameAndCtxBlueprintVersion(ctxBlueprint.getName(), ctxBlueprint.getVersion()).isPresent()) ||
                 (ctxBlueprintRepository.findByNameAndVersion(ctxBlueprint.getName(), ctxBlueprint.getVersion()).isPresent()) ) {
@@ -283,6 +297,7 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
                 ctxBlueprint.getApplicationMetrics(),
 				ctxBlueprint.getCompositionStrategy());
 
+
         ctxBlueprintRepository.saveAndFlush(target);
         Long ctxbId = target.getId();
         String ctxbIdString = String.valueOf(ctxbId);
@@ -293,7 +308,8 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
         List<VsComponent> atomicComponents = ctxBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations());
+				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(),
+						c.getNfvId(), c.getPlacement());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + ctxbIdString);
@@ -321,6 +337,11 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
         ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
         log.debug("Added Context Blueprint Info with ID " + ctxbIdString);
 
+        log.debug("Adding NsdInfoIds in ctxbluepritinfo");
+        for(String nsdInfoId: nsdIdToInfoId.keySet()){
+        	ctxBlueprintInfo.addNsdInfoId(nsdInfoId);
+		}
+        ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
         return ctxbIdString;
 	}
 
@@ -367,5 +388,26 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 		}
 		return ctxbs;
 	}
-	
+
+
+	private void storeTranslationRules(OnboardCtxBlueprintRequest request, CtxBlueprintInfo ctxBlueprintInfo, Map<String, Nsd> nsInfoIdNsd){
+
+		log.debug("Storing translation rules");
+		String ctxBlueprintId = ctxBlueprintInfo.getCtxBlueprintId();
+		request.setBlueprintIdInTranslationRules(ctxBlueprintId);
+
+		if(nsInfoIdNsd!=null && !nsInfoIdNsd.isEmpty()){
+			log.debug("Adding nsdInfoId in translation rules");
+			for(Map.Entry<String, Nsd> entry:  nsInfoIdNsd.entrySet()){
+				request.setNsdInfoIdInTranslationRules(entry.getKey(), entry.getValue().getNsdIdentifier(), entry.getValue().getVersion());
+			}
+		}
+
+		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
+		for (VsdNsdTranslationRule tr : trs) {
+			translationRuleRepository.saveAndFlush(tr);
+		}
+		log.debug("Translation rules saved in internal DB.");
+		ctxBlueprintInfoRepository.saveAndFlush(ctxBlueprintInfo);
+	}
 }

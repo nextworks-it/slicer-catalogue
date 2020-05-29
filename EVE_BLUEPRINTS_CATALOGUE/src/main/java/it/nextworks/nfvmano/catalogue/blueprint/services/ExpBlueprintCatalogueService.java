@@ -94,7 +94,9 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		request.isValid();
 		ExpBlueprint expB = request.getExpBlueprint();
         verifyExperimentBlueprintDependencies(expB);
-        String experimentId = storeExpBlueprint(expB, request.getOwner());
+        Map<String, Nsd> nsdInfoIdNsd =  storeNsds(request);
+        nsdInfoIdNsd = new HashMap<>();
+        String experimentId = storeExpBlueprint(expB, request.getOwner(), nsdInfoIdNsd);
         
         ExpBlueprintInfo expBlueprintInfo;
 		try {
@@ -103,56 +105,93 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 			log.error("Impossible to retrieve expBlueprintInfo. Error!");
 			throw new FailedOperationException("Internal error: impossible to retrieve expBlueprintInfo.");
 		}
-		
-		request.setBlueprintIdInTranslationRules(experimentId);
-		
-		log.debug("Processing NFV descriptors");
-		try {
-			log.debug("Storing NSDs");
-			List<Nsd> nsds = request.getNsds();
-			for (Nsd nsd : nsds) {
-				try {
-					Map<String, String> userDefinedData = new HashMap<>();
-					List<EveSite> sites = expB.getSites();
-					for (EveSite site : sites) {
-						userDefinedData.put(site.toString(), "yes");
-					}
-					
-					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
-							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-					expBlueprintInfo.addNsdInfoId(nsdInfoId);
-					request.setNsdInfoIdInTranslationRules(nsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryNsdResponse nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-					String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-					log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-					expBlueprintInfo.addNsdInfoId(oldNsdInfoId);
-					request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				}
-			}
-			expBlueprintInfoRepository.saveAndFlush(expBlueprintInfo);
+
+		storeTranslationRules(request, expBlueprintInfo, nsdInfoIdNsd);
+		return experimentId;
 			
-			log.debug("Storing translation rules");
-			List<VsdNsdTranslationRule> trs = request.getTranslationRules();
-			for (VsdNsdTranslationRule tr : trs) {
-				translationRuleRepository.saveAndFlush(tr);
-			}
-			log.debug("Translation rules saved in internal DB.");
-			
-			return experimentId;
-			
-		} catch (Exception e) {
-			log.error("Something went wrong when processing NFV descriptors.");
-			throw new FailedOperationException("Internal error: something went wrong when processing NFV descriptors.");
-		}
+
 		
 	}
 
+	private void storeTranslationRules(OnboardExpBlueprintRequest request, ExpBlueprintInfo expBlueprintInfo, Map<String, Nsd> nsdInfoIdNsd) {
+		log.debug("Storing Translation rules");
+
+		String expbId = expBlueprintInfo.getExpBlueprintId();
+		request.setBlueprintIdInTranslationRules(expbId);
+		if(nsdInfoIdNsd!=null && !nsdInfoIdNsd.isEmpty()){
+			log.debug("Adding nsdInfoId in translation rules");
+			for(Map.Entry<String, Nsd> entry:  nsdInfoIdNsd.entrySet()){
+				request.setNsdInfoIdInTranslationRules(entry.getKey(), entry.getValue().getNsdIdentifier(), entry.getValue().getVersion());
+			}
+		}
+
+		createDefaultTranslationRule(request, expBlueprintInfo);
+
+		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
+		for (VsdNsdTranslationRule tr : trs) {
+			translationRuleRepository.saveAndFlush(tr);
+		}
+		log.debug("Translation rules saved in internal DB.");
+		expBlueprintInfoRepository.saveAndFlush(expBlueprintInfo);
+	}
+
+	private void createDefaultTranslationRule(OnboardExpBlueprintRequest request, ExpBlueprintInfo expBlueprintInfo) {
+		List<Nsd> nsds = request.getNsds();
+		if(nsds!= null && !nsds.isEmpty()){
+			log.debug("Creating default translation rule, using the last NSD in the request");
+
+			Nsd defaultNsd = request.getNsds().get(nsds.size() - 1);
+			String nsdDf = defaultNsd.getNsDf().get(0).getNsDfId();
+			String instantiationLevel =  defaultNsd.getNsDf().get(0).getDefaultNsInstantiationLevelId();
+			VsdNsdTranslationRule defaultRule = new VsdNsdTranslationRule("", defaultNsd.getNsdIdentifier(), defaultNsd.getVersion(),nsdDf, instantiationLevel);
+			log.debug("Default rule:"+ defaultNsd.getNsdIdentifier()+" "+nsdDf+" "+instantiationLevel);
+			defaultRule.setBlueprintId(expBlueprintInfo.getExpBlueprintId());
+			translationRuleRepository.saveAndFlush(defaultRule);
+
+		}
 
 
-    @Override
+	}
+
+	private Map<String, Nsd> storeNsds(OnboardExpBlueprintRequest request) throws FailedOperationException, MethodNotImplementedException, MalformattedElementException {
+		log.debug("Storing NSDs");
+		List<Nsd> nsds = request.getNsds();
+		Map<String, Nsd> nsdInfoIdNsd = new HashMap<>();
+		for (Nsd nsd : nsds) {
+			String nsdInfoId = null;
+			try {
+				Map<String, String> userDefinedData = new HashMap<>();
+				List<EveSite> sites = request.getExpBlueprint().getSites();
+				for (EveSite site : sites) {
+					userDefinedData.put(site.toString(), "yes");
+				}
+				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
+				log.debug("Added NSD " + nsd.getNsdIdentifier() +
+						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
+
+				nsdInfoIdNsd.put(nsdInfoId, nsd);
+			} catch (AlreadyExistingEntityException e) {
+
+				log.debug("The NSD is already present in the NFVO catalogue. IGNORING.");
+				/*QueryNsdResponse nsdR = null;
+				try {
+					nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
+				} catch (NotExistingEntityException ex) {
+					throw new FailedOperationException("Something went wrong interacting with the NFVO Catalogue: "+ex.getMessage());
+				}
+				nsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
+				log.debug("Retrieved NSD Info ID: " + nsdInfoId);
+				*/
+
+			}
+
+		}
+		return nsdInfoIdNsd;
+
+	}
+
+
+	@Override
 	public QueryExpBlueprintResponse queryExpBlueprint(GeneralizedQueryRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
 		log.debug("Processing request to query an Experiment blueprint");
@@ -296,7 +335,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		return expBInfos;
 	}
 
-	private String storeExpBlueprint(ExpBlueprint expBlueprint , String owner) throws AlreadyExistingEntityException {
+	private String storeExpBlueprint(ExpBlueprint expBlueprint, String owner, Map<String, Nsd> nsdInfoIdNsd) throws AlreadyExistingEntityException {
 
         log.debug("Onboarding EXP blueprint with name " + expBlueprint.getName() + " and version " + expBlueprint.getVersion());
         if ( (expBlueprintInfoRepository.findByNameAndExpBlueprintVersion(expBlueprint.getName(), expBlueprint.getVersion()).isPresent())) {
@@ -311,7 +350,8 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
         		expBlueprint.getVsBlueprintId(),
         		expBlueprint.getCtxBlueprintIds(),
         		expBlueprint.getTcBlueprintIds(),
-        		expBlueprint.getMetrics());
+        		expBlueprint.getMetrics(),
+				expBlueprint.getDeploymentType());
         
         expBlueprintRepository.saveAndFlush(target);
         Long expbId = target.getId();
@@ -340,8 +380,15 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
         expBlueprintInfoRepository.saveAndFlush(expbInfo);
         log.debug("Added Experiment Blueprint Info with ID " + expbIdString);
 
-        
-        return expbIdString;
+		if(nsdInfoIdNsd!=null && !nsdInfoIdNsd.isEmpty()) {
+			log.debug("Adding  VS Blueprint Info nsdInfoIds");
+			for (String nsdInfoId : nsdInfoIdNsd.keySet()) {
+				expbInfo.addNsdInfoId(nsdInfoId);
+			}
+			expBlueprintInfoRepository.saveAndFlush(expbInfo);
+		}
+
+		return expbIdString;
     }
 	
 	/**

@@ -53,6 +53,9 @@ public class TranslatorRestController {
 		} catch (NotExistingEntityException e) {
 			log.error("Experiment Descriptor not found");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}catch (RuleNotFoundException e) {
+				log.error("Translation rule rule not found");
+				return new ResponseEntity<String>(e.getMessage(), HttpStatus.FAILED_DEPENDENCY);
 		} catch (Exception e) {
 			log.error("Internal exception");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

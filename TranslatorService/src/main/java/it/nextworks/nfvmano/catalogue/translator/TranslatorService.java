@@ -86,7 +86,7 @@ public class TranslatorService implements TranslatorInterface {
 	
 	@Override
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException, RuleNotFoundException {
 		return translator.translateExpd(expdId);
 	}
 }

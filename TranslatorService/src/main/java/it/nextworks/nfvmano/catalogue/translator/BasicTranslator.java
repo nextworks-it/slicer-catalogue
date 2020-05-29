@@ -72,7 +72,7 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	@Override
 	public NfvNsInstantiationInfo translateExpd(String expdId)
-			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException {
+			throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException, RuleNotFoundException {
 		log.debug("ExpD->NSD translation at basic translator.");
 		if (expdId == null) throw new MalformattedElementException("Received null expdId as input to the basic translator");
 		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expdId);
@@ -86,7 +86,7 @@ public class BasicTranslator extends AbstractTranslator {
 		}
 	}
 	
-	private VsdNsdTranslationRule findMatchingTranslationRule(ExpDescriptor expd) throws FailedOperationException, NotExistingEntityException {
+	private VsdNsdTranslationRule findMatchingTranslationRule(ExpDescriptor expd) throws FailedOperationException, NotExistingEntityException, RuleNotFoundException {
 		String blueprintId = expd.getExpBlueprintId();
 		Map<String, String> descriptorParameters = new HashMap<>();
 		// for the experiment descriptor the parameters are defined in the related VSD and CTXD
@@ -105,26 +105,39 @@ public class BasicTranslator extends AbstractTranslator {
 				descriptorParameters.putAll(ctxParameters);
 			}
 		}
-		return findMatchingTranslationRule(blueprintId, descriptorParameters);
+
+		VsdNsdTranslationRule matchingRule = findMatchingTranslationRule(blueprintId, descriptorParameters);
+		if(matchingRule!=null)
+			return matchingRule;
+		else throw new RuleNotFoundException("Impossible to find a translation rule matching the given descriptor parameters");
 	}
 	
 	private VsdNsdTranslationRule findMatchingTranslationRule(VsDescriptor vsd) throws FailedOperationException, NotExistingEntityException {
 		String vsbId = vsd.getVsBlueprintId();
 		Map<String, String> vsdParameters = vsd.getQosParameters();
-		return findMatchingTranslationRule(vsbId, vsdParameters);
+		VsdNsdTranslationRule matchingRule = findMatchingTranslationRule(vsbId, vsdParameters);
+		if(matchingRule!=null)
+			return matchingRule;
+		else throw new FailedOperationException("Impossible to find a translation rule matching the given descriptor parameters");
+
 	}
 	
 	private VsdNsdTranslationRule findMatchingTranslationRule(String blueprintId, Map<String, String> descriptorParameters) throws FailedOperationException, NotExistingEntityException {
 		if ((blueprintId == null) || (descriptorParameters.isEmpty())) throw new NotExistingEntityException("Impossible to translate descriptor into NSD because of missing parameters");
 		List<VsdNsdTranslationRule> rules = ruleRepo.findByBlueprintId(blueprintId);
+		VsdNsdTranslationRule defaultRule = null;
 		for (VsdNsdTranslationRule rule : rules) {
+			if( rule.isDefault())
+				defaultRule=rule;
 			if (rule.matchesVsdParameters(descriptorParameters)) {
 				log.debug("Found translation rule");
 				return rule;
 			}
 		}
-		log.debug("Impossible to find a translation rule matching the given descriptor parameters");
-		throw new FailedOperationException("Impossible to find a translation rule matching the given descriptor parameters");
+		log.debug("Impossible to find a translation rule matching the given descriptor parameters, using default rule");
+
+		return defaultRule;
+
 	}
 	
 	

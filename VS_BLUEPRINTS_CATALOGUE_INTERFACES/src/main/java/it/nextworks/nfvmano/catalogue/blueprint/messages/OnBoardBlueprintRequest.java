@@ -76,8 +76,11 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		//if (nsds.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without NSD");
-		if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
-		else for (VsdNsdTranslationRule tr : translationRules) tr.isValid(); 
+		//if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
+		//else for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
+		//disabled translation rule verification
+		if (!translationRules.isEmpty()) for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
+
 		for (Nsd nsd : nsds) nsd.isValid();
 	}
 

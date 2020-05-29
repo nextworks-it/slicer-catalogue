@@ -56,8 +56,17 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 	//TODO: to be discussed if this is the script or the script ID
 	@Lob @Basic(fetch=FetchType.EAGER)
 	@Column(columnDefinition = "TEXT")
-	private String script;
-	
+	private String executionScript;
+
+	@Lob @Basic(fetch=FetchType.EAGER)
+	@Column(columnDefinition = "TEXT")
+	private String configurationScript;
+
+	@Lob @Basic(fetch=FetchType.EAGER)
+	@Column(columnDefinition = "TEXT")
+	private String resetConfigScript;
+
+
 	//parameters to be passed by the experimenter using the descriptor and added automatically in the script
 	//key: name of the parameter, as shown to the experimenter when filling the descriptor
 	//value: name of the variable in the script
@@ -84,14 +93,18 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 			String name, 
 			String version, 
 			String description,
-			String script,
+			String executionScript,
+			String configurationScript,
+			String resetConfigScript,
 			Map<String, String> userParameters,
 			Map<String, String> infrastructureParameters) {
 		this.testcaseBlueprintId = testcaseBlueprintId;
 		this.name = name;
 		this.version = version;
 		this.description = description;
-		this.script = script;
+		this.executionScript = executionScript;
+		this.configurationScript = configurationScript;
+		this.resetConfigScript = resetConfigScript;
 		if (userParameters != null) this.userParameters = userParameters;
 		if (infrastructureParameters != null) this.infrastructureParameters = infrastructureParameters;
 	}
@@ -123,10 +136,24 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 	}
 
 	/**
-	 * @return the script
+	 * @return the executionScript
 	 */
-	public String getScript() {
-		return script;
+	public String getExecutionScript() {
+		return executionScript;
+	}
+
+	/**
+	 * @return the configurationScript
+	 */
+	public String getConfigurationScript() {
+		return configurationScript;
+	}
+
+	/**
+	 * @return the resetConfigScript
+	 */
+	public String getResetConfigScript() {
+		return resetConfigScript;
 	}
 
 	/**
@@ -143,9 +170,6 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 		return infrastructureParameters;
 	}
 
-	
-	
-	
 	/**
 	 * @return the version
 	 */
@@ -166,7 +190,7 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 	public String getDescription() {
 		return description;
 	}
-	
+
 	@JsonIgnore
 	public boolean isCompatibleWithDescriptorParameters(Set<String> descriptorParameters) {
 		boolean foundInBlueprint = false;
@@ -184,11 +208,12 @@ public class TestCaseBlueprint implements DescriptorInformationElement{
 
 	@Override
     public void isValid() throws MalformattedElementException {
-		if (name == null || name.isEmpty())
-			throw new MalformattedElementException("Test case blueprint without name");
-		if (version == null || version.isEmpty())
-			throw new MalformattedElementException("Test case blueprint without version");
-		if (script == null || script.isEmpty())
-			throw new MalformattedElementException("Test case blueprint without script");
+		if (name == null || name.isEmpty()) throw new MalformattedElementException("Test case blueprint without name");
+		if (version == null || version.isEmpty()) throw new MalformattedElementException("Test case blueprint without version");
+		if (executionScript == null || executionScript.isEmpty()) throw new MalformattedElementException("Test case blueprint without execution script");
+
+		//The only compulsory one is the execution script
+		//if (configurationScript == null || configurationScript.isEmpty()) throw new MalformattedElementException("Test case blueprint without configuration script");
+		//if (resetConfigScript == null || resetConfigScript.isEmpty()) throw new MalformattedElementException("Test case blueprint without reset configuration script");
 	}
 }

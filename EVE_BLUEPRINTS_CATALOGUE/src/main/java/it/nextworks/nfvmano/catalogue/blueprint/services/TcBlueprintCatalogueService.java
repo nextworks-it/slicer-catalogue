@@ -226,7 +226,9 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 				tcb.getName(), 
 				tcb.getVersion(),
 				tcb.getDescription(),
-				tcb.getScript(), 
+				tcb.getExecutionScript(),
+				tcb.getConfigurationScript(),
+				tcb.getResetConfigScript(),
 				tcb.getUserParameters(),
 				tcb.getInfrastructureParameters());
 		
