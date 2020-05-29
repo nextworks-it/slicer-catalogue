@@ -204,6 +204,7 @@ public class ExpBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		String user = authService.getUserFromAuth(auth);
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(auth);
         if (!keycloakEnabled&&!user.equals(adminTenant)) {
             log.warn("Request refused as tenant {} is not admin and keycloak is not enabled.", user);
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -211,7 +212,7 @@ public class ExpBlueprintCatalogueRestController {
 
 
         try {
-            expBlueprintCatalogueService.deleteExpBlueprint(expbId);
+            expBlueprintCatalogueService.deleteExpBlueprint(expbId, user, catalogueAdmin);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");

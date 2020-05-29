@@ -208,24 +208,30 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
     }
 
     @Override
-    public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException, ConflictiveOperationException {
+	public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException {
+
+    	//TODO: Split the interface
+    	throw  new MethodNotImplementedException("DeleteExpDescriptor maintained for compatibility purposes");
+
+	}
+
+    public void deleteExpDescriptor(String expDescriptorId, String tenantId, boolean catalogueAdmin, boolean forceRemove) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException, ConflictiveOperationException {
     	log.debug("Processing request to delete an Exp descriptor");
 		if  (expDescriptorId == null) throw new MalformattedElementException("ExpD ID is null");
 		
 		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expDescriptorId);
 		if (expdOpt.isPresent()) {
 			ExpDescriptor expd = expdOpt.get();
-			if ( (expd.getTenantId().equals(tenantId)) || (tenantId.equals(adminTenant)) ) {
+			if ( catalogueAdmin || expd.getTenantId().equals(tenantId) ) {
 				Optional<ExpDescriptorInfo> optExpDInfo = expDescriptorInfoRepository.findByExpDescriptorId(expDescriptorId);
 				if(optExpDInfo.isPresent()){
 					List<String> activeExperiments =optExpDInfo.get().getActiveExperimentIds();
-					if(activeExperiments.isEmpty()){
-						log.debug("EXPD with no active experiments:" + expDescriptorId+" continuing with the removal");
-					}else{
+					if( activeExperiments!=null && !activeExperiments.isEmpty()&& !forceRemove){
+
 						throw new ConflictiveOperationException("ExpD "+expDescriptorId+" still has active experiments: "+activeExperiments);
 					}
 				}else throw new FailedOperationException("Failed to retrieve associated ExpDInfo for:"+expDescriptorId);
-				log.debug("Removing VSD in EXPD " + expDescriptorId);
+
 				String vsDescriptorId = expd.getVsDescriptorId();
 				vsDescriptorCatalogueService.deleteVsDescriptor(vsDescriptorId, tenantId);
 				log.debug("Removing CTXDs in EXPD " + expDescriptorId);
@@ -243,7 +249,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 				expBlueprintCatalogueService.removeExpdInBlueprint(expbId, expDescriptorId);
 				log.debug("EXPD " + expDescriptorId + " removed from the internal DB.");
 
-				log.debug("Removing ExpD associated info element:"+expDescriptorId);
+				log.debug("Removing ExpD associated info element:" + expDescriptorId);
 				expDescriptorInfoRepository.delete(optExpDInfo.get());
 
 
@@ -256,6 +262,8 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 			throw new NotExistingEntityException("ExpD " + expDescriptorId + " not found");
 		}
     }
+
+
     
     /**
      * Onboards the given VSD and returns its ID
@@ -380,6 +388,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
     }
 
 
+
 	@Override
     public void useExpDescriptor(String expdId, String experimentId)throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException {
 		log.debug("Received request to add experiment: "+experimentId+" from ExpD:"+expdId);
@@ -417,5 +426,11 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 
 		}else throw  new NotExistingEntityException("Could not find ExpD with id"+expdId);
 	}
+
+
+
+
+
+
 
 }

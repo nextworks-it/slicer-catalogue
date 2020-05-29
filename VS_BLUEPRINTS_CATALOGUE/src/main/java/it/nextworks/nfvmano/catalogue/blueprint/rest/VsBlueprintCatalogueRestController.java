@@ -206,12 +206,13 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		String user = authService.getUserFromAuth(auth);
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(auth);
 		if (!keycloakEnabled&& !user.equals(adminTenant)) {
 			log.warn("Request refused as tenant {} is not admin and keycloak is not enabled.", user);
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId); 
+			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId, user, catalogueAdmin);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");

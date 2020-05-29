@@ -32,6 +32,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
+
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
@@ -240,8 +241,13 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	}
 	
 	@Override
-	public synchronized void deleteExpBlueprint(String expBlueprintId)
-			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+	public synchronized  void deleteExpBlueprint(String expBlueprintId) throws MethodNotImplementedException {
+		//TODO: split the interface
+		throw  new MethodNotImplementedException("DeleteExpBlueprint maintained for compatibility purposes");
+	}
+
+	public synchronized void deleteExpBlueprint(String expBlueprintId, String tenantId, boolean catalogueAdmin)
+			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException {
 		log.debug("Processing request to delete a Experiment blueprint with ID " + expBlueprintId);
 		
 		if (expBlueprintId == null) throw new MalformattedElementException("The Experiment blueprint ID is null");
@@ -252,12 +258,17 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 			log.error("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
 			throw new FailedOperationException("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
 		}
+		if(catalogueAdmin || expbi.getOwner().equals(tenantId)){
+
+			expBlueprintInfoRepository.delete(expbi);
+			log.debug("Removed ExpB info from DB.");
+			ExpBlueprint expb = getExpBlueprint(expBlueprintId);
+			expBlueprintRepository.delete(expb);
+			log.debug("Removed ExpB from DB.");
+		}else throw new NotPermittedOperationException("Logged user cannot delete the specified ExpB:"+tenantId+" "+expBlueprintId);
 		
-		expBlueprintInfoRepository.delete(expbi);
-		log.debug("Removed ExpB info from DB.");
-		ExpBlueprint expb = getExpBlueprint(expBlueprintId);
-		expBlueprintRepository.delete(expb);
-		log.debug("Removed ExpB from DB.");
+
+
 	}
 	
 	public synchronized void addExpdInBlueprint(String expBlueprintId, String expdId)

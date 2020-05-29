@@ -186,9 +186,10 @@ public class ExpDescriptorCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		String user = authService.getUserFromAuth(auth);
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(auth);
 		try {
 
-			expDescriptorCatalogueService.deleteExpDescriptor(expdId, user);
+			expDescriptorCatalogueService.deleteExpDescriptor(expdId, user,catalogueAdmin, false );
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");

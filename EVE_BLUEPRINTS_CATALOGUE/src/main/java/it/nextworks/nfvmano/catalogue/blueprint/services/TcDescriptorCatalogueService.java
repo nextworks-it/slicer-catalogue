@@ -162,6 +162,7 @@ public class TcDescriptorCatalogueService implements TestCaseDescriptorCatalogue
 		
 		Optional<TestCaseDescriptor> tcdOpt = testCaseDescriptorRepository.findByTestCaseDescriptorId(testcaseDescriptorId);
 		if (tcdOpt.isPresent()) {
+
 			String tcBlueprintId = tcdOpt.get().getTestCaseBlueprintId();
 			testCaseDescriptorRepository.delete(tcdOpt.get());
 			log.debug("TCD " + testcaseDescriptorId + " removed from the internal DB.");

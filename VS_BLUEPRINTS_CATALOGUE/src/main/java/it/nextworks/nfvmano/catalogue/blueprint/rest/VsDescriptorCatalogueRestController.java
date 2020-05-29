@@ -179,6 +179,7 @@ public class VsDescriptorCatalogueRestController {
 	}
 	
 
+	/*NOT USED IN EVE
 	@ApiOperation(value = "Delete a Vertical Service Descriptor with the given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
@@ -204,6 +205,8 @@ public class VsDescriptorCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	*/
+
 
 	
 

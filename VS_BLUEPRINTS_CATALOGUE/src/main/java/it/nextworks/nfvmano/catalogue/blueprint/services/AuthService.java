@@ -42,8 +42,16 @@ public class AuthService {
 
     }
 
+
+
     public  boolean validateAuthentication(Authentication auth){
         return keycloakEnabled||(!authenticationEnable || auth!=null);
 
+    }
+
+
+    public boolean isCatalogueAdminUser(Authentication auth){
+
+        return true;
     }
 }

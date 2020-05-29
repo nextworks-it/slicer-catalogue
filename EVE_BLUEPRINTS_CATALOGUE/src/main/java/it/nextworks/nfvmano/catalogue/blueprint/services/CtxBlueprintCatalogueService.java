@@ -28,11 +28,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsComponentRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbForwardingPathHopRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbLinkRepository;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.QueryNsdResponse;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
@@ -194,23 +190,30 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 	public synchronized void deleteCtxBlueprint(String ctxBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
 		
+
+		
+	}
+
+	public synchronized  void deleteCtxBlueprint(String ctxBlueprintId, String tenant, boolean catalogueAdmin) throws NotPermittedOperationException, NotExistingEntityException, FailedOperationException, MalformattedElementException {
 		log.debug("Processing request to delete a context blueprint with ID " + ctxBlueprintId);
-		
+
 		if (ctxBlueprintId == null) throw new MalformattedElementException("The context blueprint ID is null");
-		
+
 		CtxBlueprintInfo ctxbi = getContextBlueprintInfo(ctxBlueprintId);
-		
-		if (!(ctxbi.getActiveCtxdId().isEmpty())) {
-			log.error("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
-			throw new FailedOperationException("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
-		}
-		
-		ctxBlueprintInfoRepository.delete(ctxbi);
-		log.debug("Removed context blueprint info from DB.");
-		CtxBlueprint ctxb = getContextBlueprint(ctxBlueprintId);
-		ctxBlueprintRepository.delete(ctxb);
-		log.debug("Removed context blueprint from DB.");
-		
+
+		if(catalogueAdmin || ctxbi.getOwner().equals(tenant)){
+			if (!(ctxbi.getActiveCtxdId().isEmpty())) {
+				log.error("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
+				throw new FailedOperationException("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
+			}
+
+			ctxBlueprintInfoRepository.delete(ctxbi);
+			log.debug("Removed context blueprint info from DB.");
+			CtxBlueprint ctxb = getContextBlueprint(ctxBlueprintId);
+			ctxBlueprintRepository.delete(ctxb);
+			log.debug("Removed context blueprint from DB.");
+		}else throw new NotPermittedOperationException("Logged user cannot delete the specified CtxB:"+tenant+" "+ctxBlueprintId);
+
 	}
 
 	public synchronized void addCtxdInBlueprint(String ctxBlueprintId, String cxtDescriptorId) 

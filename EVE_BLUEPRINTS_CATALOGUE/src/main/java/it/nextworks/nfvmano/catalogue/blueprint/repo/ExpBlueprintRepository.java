@@ -26,4 +26,6 @@ public interface ExpBlueprintRepository extends JpaRepository<ExpBlueprint, Long
 	Optional<ExpBlueprint> findByExpBlueprintId(String id);
 	Optional<ExpBlueprint> findByNameAndVersion(String name, String version);
 	List<ExpBlueprint> findByVsBlueprintId(String vsBlueprintId);
+
+
 }

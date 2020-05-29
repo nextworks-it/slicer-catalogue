@@ -24,6 +24,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +34,6 @@ import org.springframework.stereotype.Service;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.QueryNsdResponse;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnBoardVsBlueprintRequest;
@@ -207,22 +203,32 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	@Override
 	public synchronized void deleteVsBlueprint(String vsBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+		//TODO: split interface
+		throw  new MethodNotImplementedException("DeleteVsBlueprint maintained for compatibility purposes");
+
+	}
+
+	public void deleteVsBlueprint(String vsBlueprintId, String tenantId, boolean catalogueAdmin) throws FailedOperationException, NotExistingEntityException, MalformattedElementException, NotPermittedOperationException {
 		log.debug("Processing request to delete a VS blueprint with ID " + vsBlueprintId);
-		
+
 		if (vsBlueprintId == null) throw new MalformattedElementException("The VS blueprint ID is null");
-		
+
+
 		VsBlueprintInfo vsbi = getVsBlueprintInfo(vsBlueprintId);
-		
-		if (!(vsbi.getActiveVsdId().isEmpty())) {
-			log.error("There are some VSDs associated to the VS Blueprint. Impossible to remove it.");
-			throw new FailedOperationException("There are some VSDs associated to the VS Blueprint. Impossible to remove it.");
-		}
-		
-		vsBlueprintInfoRepository.delete(vsbi);
-		log.debug("Removed VSB info from DB.");
-		VsBlueprint vsb = getVsBlueprint(vsBlueprintId);
-		vsBlueprintRepository.delete(vsb);
-		log.debug("Removed VSB from DB.");
+
+		if(catalogueAdmin || vsbi.getOwner().equals(tenantId)){
+			if (!(vsbi.getActiveVsdId().isEmpty())) {
+				log.error("There are some VSDs associated to the VS Blueprint. Impossible to remove it.");
+				throw new FailedOperationException("There are some VSDs associated to the VS Blueprint. Impossible to remove it.");
+			}
+
+			vsBlueprintInfoRepository.delete(vsbi);
+			log.debug("Removed VSB info from DB.");
+			VsBlueprint vsb = getVsBlueprint(vsBlueprintId);
+			vsBlueprintRepository.delete(vsb);
+			log.debug("Removed VSB from DB.");
+		}else throw new NotPermittedOperationException("Logged user cannot delete the specified VSB:"+tenantId+" "+vsBlueprintId);
+
 	}
 	
 	public synchronized void addVsdInBlueprint(String vsBlueprintId, String vsdId) 
