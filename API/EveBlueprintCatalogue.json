@@ -4,14 +4,14 @@
     "description": "Api Documentation",
     "version": "1.0",
     "title": "Api Documentation",
+    "termsOfService": "urn:tos",
     "contact": {},
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    },
-    "termsOfService": "urn:tos"
+    }
   },
-  "host": "192.168.217.2:8082",
+  "host": "localhost:8082",
   "basePath": "/",
   "tags": [
     {
@@ -1013,6 +1013,170 @@
         "deprecated": false
       }
     },
+    "/portal/catalogue/expdescriptor/{expdId}/release/{experimentId}": {
+      "post": {
+        "tags": [
+          "Experiment Descriptor Catalogue API"
+        ],
+        "summary": "releaseExpDescriptor",
+        "operationId": "releaseExpDescriptorUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "expdId",
+            "in": "path",
+            "description": "expdId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "experimentId",
+            "in": "path",
+            "description": "experimentId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/portal/catalogue/expdescriptor/{expdId}/use/{experimentId}": {
+      "post": {
+        "tags": [
+          "Experiment Descriptor Catalogue API"
+        ],
+        "summary": "useExpDescriptor",
+        "operationId": "useExpDescriptorUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "expdId",
+            "in": "path",
+            "description": "expdId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "experimentId",
+            "in": "path",
+            "description": "experimentId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/portal/catalogue/testcaseblueprint": {
       "get": {
         "tags": [
@@ -1815,6 +1979,78 @@
           }
         },
         "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "Vertical Service Descriptor Catalogue API"
+        ],
+        "summary": "Onboard a new Vertical Service Descriptor",
+        "operationId": "createVsDescriptorUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "in": "body",
+            "name": "request",
+            "description": "request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OnboardVsDescriptorRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The ID of the created Vertical Service Descriptor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
       }
     },
     "/portal/catalogue/vsdescriptor/{vsdId}": {
@@ -1979,6 +2215,15 @@
           "enum": [
             "CUMULATIVE",
             "DELTA",
+            "GAUGE"
+          ]
+        },
+        "metricGraphType": {
+          "type": "string",
+          "enum": [
+            "LINE",
+            "PIE",
+            "COUNTER",
             "GAUGE"
           ]
         },
@@ -2177,6 +2422,13 @@
             ]
           }
         },
+        "compositionStrategy": {
+          "type": "string",
+          "enum": [
+            "PASS_THROUGH",
+            "CONNECT"
+          ]
+        },
         "configurableParameters": {
           "type": "array",
           "items": {
@@ -2245,6 +2497,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "owner": {
+          "type": "string"
         }
       },
       "title": "CtxBlueprintInfo"
@@ -2275,6 +2530,13 @@
           "items": {
             "type": "string"
           }
+        },
+        "deploymentType": {
+          "type": "string",
+          "enum": [
+            "ON_DEMAND",
+            "STATIC"
+          ]
         },
         "description": {
           "type": "string"
@@ -2362,15 +2624,15 @@
         "iMetricType": {
           "type": "string",
           "enum": [
-            "LOST_PKT",
-            "RECEIVED_PKT",
-            "SENT_PKT",
-            "BANDWIDTH",
-            "LATENCY",
-            "JITTER",
-            "CPU_CONSUMPTION",
-            "MEMORY_CONSUMPTION",
-            "OTHER"
+            "USER_DATA_RATE_DL",
+            "USER_DATA_RATE_UL",
+            "PEAK_DATA_RATE_DL",
+            "PEAK_DATA_RATE_UL",
+            "CAPACITY",
+            "LATENCY_UP",
+            "LATENCY_CP",
+            "DEVICE_DENSITY",
+            "MOBILITY"
           ]
         },
         "interval": {
@@ -2381,6 +2643,15 @@
           "enum": [
             "CUMULATIVE",
             "DELTA",
+            "GAUGE"
+          ]
+        },
+        "metricGraphType": {
+          "type": "string",
+          "enum": [
+            "LINE",
+            "PIE",
+            "COUNTER",
             "GAUGE"
           ]
         },
@@ -2404,6 +2675,15 @@
         },
         "interval": {
           "type": "string"
+        },
+        "kpiGraphType": {
+          "type": "string",
+          "enum": [
+            "LINE",
+            "PIE",
+            "COUNTER",
+            "GAUGE"
+          ]
         },
         "kpiId": {
           "type": "string"
@@ -2951,6 +3231,9 @@
         "name": {
           "type": "string"
         },
+        "public": {
+          "type": "boolean"
+        },
         "tenantId": {
           "type": "string"
         },
@@ -2977,6 +3260,21 @@
         }
       },
       "title": "OnboardTestCaseBlueprintRequest"
+    },
+    "OnboardVsDescriptorRequest": {
+      "type": "object",
+      "properties": {
+        "public": {
+          "type": "boolean"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "vsd": {
+          "$ref": "#/definitions/VsDescriptor"
+        }
+      },
+      "title": "OnboardVsDescriptorRequest"
     },
     "PnfProfile": {
       "type": "object",
@@ -3230,7 +3528,13 @@
     "TestCaseBlueprint": {
       "type": "object",
       "properties": {
+        "configurationScript": {
+          "type": "string"
+        },
         "description": {
+          "type": "string"
+        },
+        "executionScript": {
           "type": "string"
         },
         "infrastructureParameters": {
@@ -3242,7 +3546,7 @@
         "name": {
           "type": "string"
         },
-        "script": {
+        "resetConfigScript": {
           "type": "string"
         },
         "testcaseBlueprintId": {
@@ -3666,6 +3970,17 @@
             "type": "string"
           }
         },
+        "nfvId": {
+          "type": "string"
+        },
+        "placement": {
+          "type": "string",
+          "enum": [
+            "EDGE",
+            "UE",
+            "CLOUD"
+          ]
+        },
         "serversNumber": {
           "type": "integer",
           "format": "int32"
@@ -3783,6 +4098,12 @@
         },
         "external": {
           "type": "boolean"
+        },
+        "management": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
         }
       },
       "title": "VsbLink"
@@ -3792,6 +4113,9 @@
       "properties": {
         "blueprintId": {
           "type": "string"
+        },
+        "default": {
+          "type": "boolean"
         },
         "input": {
           "type": "array",
@@ -3809,6 +4133,9 @@
           "type": "string"
         },
         "nsdVersion": {
+          "type": "string"
+        },
+        "nstId": {
           "type": "string"
         }
       },
