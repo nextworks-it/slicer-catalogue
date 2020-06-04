@@ -15,11 +15,10 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
-import java.util.List;
-
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNstTranslationRule;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 
 public interface TranslationRuleRepository extends JpaRepository<VsdNsdTranslationRule, Long> {

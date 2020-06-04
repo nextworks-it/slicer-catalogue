@@ -15,15 +15,7 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable

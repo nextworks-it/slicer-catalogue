@@ -53,7 +53,6 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 	private OperationalState operationalState;
 	private UsageState usageState;
 	private boolean deletionPending;
-	private SliceServiceType sst;
 	
 	@ElementCollection
 	private Map<String, String> userDefinedData = new HashMap<>();
@@ -166,14 +165,7 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 		if (nsTemplateVersion == null) throw new MalformattedElementException("NsTemplate info without version");
 		if (name == null) throw new MalformattedElementException("NsTemplate info without name");
     }
-    
-	public SliceServiceType getSst() {
-		return sst;
-	}
 
-	public void setSst(SliceServiceType sst) {
-		this.sst = sst;
-	}
 
 	public String getNsTemplateId() {
 		return nsTemplateId;
