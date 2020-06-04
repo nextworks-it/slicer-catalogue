@@ -242,6 +242,11 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 			target.setNsst(nst.getNsst());
 		}
 
+		if(nst.getActuationList()!=null && nst.getActuationList().size()>0){
+			log.info("Storing Actuation list");
+			target.setActuationList(nst.getActuationList());
+		}
+
     	String nstTargetName=nst.getNstName();
     	target.setNstName(nstTargetName);
 
