@@ -23,6 +23,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,7 +185,15 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		vsBlueprintInfoRepository.saveAndFlush(vsbi);
 		log.debug("Removed VSD " + vsdId + " from blueprint " + vsBlueprintId);
 	}
-	
+
+	public synchronized void updatePpFunctions(String vsBlueprintId, List<PpFunction> ppFunctions)
+			throws NotExistingEntityException, AlreadyExistingEntityException {
+		log.debug("Updating Pp function into VSB");
+		VsBlueprint vsBlueprint = getVsBlueprint(vsBlueprintId);
+		vsBlueprint.setPpFunctionList(ppFunctions);
+		vsBlueprintRepository.saveAndFlush(vsBlueprint);
+	}
+
 	private String storeVsBlueprint(VsBlueprint vsBlueprint) throws AlreadyExistingEntityException {
 		log.debug("Onboarding VS blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion());
 		if ( (vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ||

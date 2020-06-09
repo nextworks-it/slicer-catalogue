@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiResponses;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.services.VsBlueprintCatalogueService;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -225,5 +226,36 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+
+	@ApiOperation(value = "Update the P&P functions of VSB")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Empty", response = ResponseEntity.class),
+	})
+	@RequestMapping(value = "/vsblueprint/updatePP/{vsbId}", method = RequestMethod.PUT)
+	public ResponseEntity<?> updatePpFunctions(@RequestBody List<PpFunction> ppFunctionList, @PathVariable String vsbId, Authentication auth) {
+		log.debug("Received request to update P&P functions of VS blueprint with ID " + vsbId);
+		if(!validateAuthentication(auth)){
+			log.warn("Unable to retrieve request authentication information");
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		String user = getUserFromAuth(auth);
+		if (!user.equals(adminTenant)) {
+			log.warn("Request refused as tenant {} is not admin.", user);
+			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+		}
+		try {
+			vsBlueprintCatalogueService.updatePpFunctions(vsbId,ppFunctionList);
+			log.info("PP function scorrectly updated into VSB");
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NotExistingEntityException e) {
+			log.error("VS Blueprints not found");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Internal exception");
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 
 }
