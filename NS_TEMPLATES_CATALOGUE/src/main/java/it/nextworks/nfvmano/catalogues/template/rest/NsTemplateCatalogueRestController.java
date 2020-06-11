@@ -27,6 +27,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityExceptio
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.templates.GeographicalAreaInfo;
 import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.Actuation;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,6 +200,31 @@ public class NsTemplateCatalogueRestController {
             nsTemplateCatalogueService.updateActuationNsTemplate(nstUuid, actuationList);
             log.info("KPIs of Network Slice Template with UUID "+nstUuid+" correctly updated");
             return new ResponseEntity<String>("Actuation correctly updated", HttpStatus.OK);
+
+        } catch (MalformattedElementException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotExistingEntityException e) {
+            log.error("NS Template not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Internal exception");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/nstemplate/pp/{nstUuid}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateppFunctionsNsTemplate(@RequestBody List<PpFunction> ppFunctions, @PathVariable String nstUuid, Authentication auth) {
+        log.debug("Received request to update PP of Ns Template with UUID " + nstUuid);
+        String user = getUserFromAuth(auth);
+        if (!user.equals(adminTenant)) {
+            log.warn("Request refused as tenant {} is not admin.", user);
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            nsTemplateCatalogueService.updatePPfunctionsNsTemplate(nstUuid, ppFunctions);
+            log.info("PP functions of Network Slice Template with UUID "+nstUuid+" correctly updated");
+            return new ResponseEntity<String>("PP functions correctly updated", HttpStatus.OK);
 
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");

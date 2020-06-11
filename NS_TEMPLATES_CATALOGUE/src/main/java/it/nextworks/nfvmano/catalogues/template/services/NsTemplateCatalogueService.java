@@ -27,6 +27,7 @@ import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.templates.GeographicalAreaInfo;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.Actuation;
+import it.nextworks.nfvmano.libs.ifa.templates.plugAndPlay.PpFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,21 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		nst.setActuationList(actuationList);
 		nstRepository.saveAndFlush(nst);
 	}
+	public synchronized void updatePPfunctionsNsTemplate(String nstUuid, List<PpFunction> ppFunctionList)
+			throws  MalformattedElementException,  NotExistingEntityException {
+		log.debug("Processing request to update PP function list of NST with Uuid "+nstUuid);
+		if(ppFunctionList==null || ppFunctionList.size()==0)
+			throw new MalformattedElementException("PP function list is either null or empty.");
+		NST nst;
+		if(nstRepository.findByNstId(nstUuid).isPresent()){
+			nst=nstRepository.findByNstId(nstUuid).get();
+		}else{
+			throw new NotExistingEntityException("Network Service Template with UUID " + nstUuid + " not found in DB.");
+		}
+		nst.setPpFunctionList(ppFunctionList);
+		nstRepository.saveAndFlush(nst);
+	}
+
 
 	private NsTemplateInfo getNsTemplateInfo(String nstID) throws NotExistingEntityException {
 		NsTemplateInfo nstInfo;
@@ -231,7 +247,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		}
     	
     	NST target = new NST(null, nstName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getKpiList(), nst.getActuationList(),
-				nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+				nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile(),nst.getNsdName(),nst.getNsdType());
     	target.setGeographicalAreaInfoList(nst.getGeographicalAreaInfoList());
 		if(nst.getPpFunctionList().size()>0){
 			log.info("Storing P&P functions");
