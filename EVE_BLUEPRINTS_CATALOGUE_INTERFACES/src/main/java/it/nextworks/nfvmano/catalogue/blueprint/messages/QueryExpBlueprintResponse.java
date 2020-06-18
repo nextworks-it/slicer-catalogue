@@ -15,7 +15,9 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpBlueprintInfo;
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.elements.NsdInfo;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
@@ -26,10 +28,12 @@ public class QueryExpBlueprintResponse implements InterfaceMessage {
 
 	private List<ExpBlueprintInfo> expBlueprintInfo = new ArrayList<>();
 
+
 	public QueryExpBlueprintResponse() {	}
 
 	public QueryExpBlueprintResponse(List<ExpBlueprintInfo> expBlueprintInfo) {
 		if (expBlueprintInfo != null) this.expBlueprintInfo = expBlueprintInfo;
+
 	}
 	
 	/**
@@ -38,6 +42,9 @@ public class QueryExpBlueprintResponse implements InterfaceMessage {
 	public List<ExpBlueprintInfo> getExpBlueprintInfo() {
 		return expBlueprintInfo;
 	}
+
+
+
 
 	@Override
 	public void isValid() throws MalformattedElementException {	

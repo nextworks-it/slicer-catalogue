@@ -77,7 +77,7 @@ public class CatalogueAdminService {
             }
 
             //VSD should have been removed when removing the ExpD
-            vsBlueprintCatalogueService.deleteVsBlueprint(vsBlueprintId, tenantId, true);
+            vsBlueprintCatalogueService.deleteVsBlueprint(vsBlueprintId);
 
 
         } else {
@@ -104,7 +104,7 @@ public class CatalogueAdminService {
             }
 
             //TCD should have been removed when removing the ExpD
-             tcBlueprintCatalogueService.deleteTestCaseBlueprint(tcBlueprintId, tenantId, true);
+             tcBlueprintCatalogueService.deleteTestCaseBlueprint(tcBlueprintId);
 
 
         } else {
@@ -140,7 +140,7 @@ public class CatalogueAdminService {
             }
 
             //CTXD should have been removed when removing the ExpD
-            ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxBlueprintId, tenantId, true);
+            ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxBlueprintId);
 
 
         } else {
@@ -176,7 +176,7 @@ public class CatalogueAdminService {
                     }
                 }
 
-                expBlueprintCatalogueService.deleteExpBlueprint(expBlueprintId, tenantId, true);
+                expBlueprintCatalogueService.deleteExpBlueprint(expBlueprintId);
             } else {
                 log.error("Catalogue inconsistency. ExpB information element not found:" + expBlueprint.getExpBlueprintId());
                 throw new NotExistingEntityException("Database insconsistency. ExpB information element not found:" + expBlueprint.getExpBlueprintId());

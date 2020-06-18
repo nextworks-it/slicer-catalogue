@@ -39,6 +39,8 @@ import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -73,8 +75,12 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 	@Autowired
 	private VsComponentRepository vsComponentRepository;
 
+
 	@Autowired
 	private NfvoCatalogueService nfvoCatalogueService;
+
+	@Autowired
+	private AuthService authService;
 
 	public CtxBlueprintCatalogueService() {	}
 	
@@ -189,18 +195,14 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 	@Override
 	public synchronized void deleteCtxBlueprint(String ctxBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
-		
 
-		
-	}
-
-	public synchronized  void deleteCtxBlueprint(String ctxBlueprintId, String tenant, boolean catalogueAdmin) throws NotPermittedOperationException, NotExistingEntityException, FailedOperationException, MalformattedElementException {
 		log.debug("Processing request to delete a context blueprint with ID " + ctxBlueprintId);
-
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String tenant = authService.getUserFromAuth(authentication);
 		if (ctxBlueprintId == null) throw new MalformattedElementException("The context blueprint ID is null");
 
 		CtxBlueprintInfo ctxbi = getContextBlueprintInfo(ctxBlueprintId);
-
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(authentication);
 		if(catalogueAdmin || ctxbi.getOwner().equals(tenant)){
 			if (!(ctxbi.getActiveCtxdId().isEmpty())) {
 				log.error("There are some context descriptors associated to the Context Blueprint. Impossible to remove it.");
@@ -212,9 +214,12 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 			CtxBlueprint ctxb = getContextBlueprint(ctxBlueprintId);
 			ctxBlueprintRepository.delete(ctxb);
 			log.debug("Removed context blueprint from DB.");
-		}else throw new NotPermittedOperationException("Logged user cannot delete the specified CtxB:"+tenant+" "+ctxBlueprintId);
+		}else throw new FailedOperationException("Logged user cannot delete the specified CtxB:"+tenant+" "+ctxBlueprintId);
+
+
 
 	}
+
 
 	public synchronized void addCtxdInBlueprint(String ctxBlueprintId, String cxtDescriptorId) 
 			throws NotExistingEntityException {

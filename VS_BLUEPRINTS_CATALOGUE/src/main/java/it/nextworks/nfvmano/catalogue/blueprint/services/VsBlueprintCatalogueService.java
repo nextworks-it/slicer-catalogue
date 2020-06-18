@@ -29,6 +29,8 @@ import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
@@ -74,6 +76,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	
 	@Autowired
 	private VsDescriptorCatalogueService vsDescriptorCatalogueService;
+
+	@Autowired
+	private AuthService authService;
 	
 	public VsBlueprintCatalogueService() {	}
 	
@@ -203,14 +208,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	@Override
 	public synchronized void deleteVsBlueprint(String vsBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
-		//TODO: split interface
-		throw  new MethodNotImplementedException("DeleteVsBlueprint maintained for compatibility purposes");
-
-	}
-
-	public void deleteVsBlueprint(String vsBlueprintId, String tenantId, boolean catalogueAdmin) throws FailedOperationException, NotExistingEntityException, MalformattedElementException, NotPermittedOperationException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String tenantId = authService.getUserFromAuth(authentication);
 		log.debug("Processing request to delete a VS blueprint with ID " + vsBlueprintId);
-
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(authentication);
 		if (vsBlueprintId == null) throw new MalformattedElementException("The VS blueprint ID is null");
 
 
@@ -227,9 +228,11 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			VsBlueprint vsb = getVsBlueprint(vsBlueprintId);
 			vsBlueprintRepository.delete(vsb);
 			log.debug("Removed VSB from DB.");
-		}else throw new NotPermittedOperationException("Logged user cannot delete the specified VSB:"+tenantId+" "+vsBlueprintId);
+		}else throw new FailedOperationException("Logged user cannot delete the specified VSB:"+tenantId+" "+vsBlueprintId);
 
 	}
+
+
 	
 	public synchronized void addVsdInBlueprint(String vsBlueprintId, String vsdId) 
 			throws NotExistingEntityException {

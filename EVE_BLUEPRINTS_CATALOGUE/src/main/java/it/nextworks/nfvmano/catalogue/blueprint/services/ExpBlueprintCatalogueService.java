@@ -30,6 +30,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.TestCaseBlueprintRepository
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintInfoRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.elements.NsdInfo;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 
@@ -40,6 +41,8 @@ import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -86,6 +89,10 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
     @Autowired
     private KeyPerformanceIndicatorRepository keyPerformanceIndicatorRepository;
 
+    @Autowired
+	private AuthService authService;
+
+
 	public ExpBlueprintCatalogueService() {	}
 	
 	@Override
@@ -96,7 +103,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		ExpBlueprint expB = request.getExpBlueprint();
         verifyExperimentBlueprintDependencies(expB);
         Map<String, Nsd> nsdInfoIdNsd =  storeNsds(request);
-        nsdInfoIdNsd = new HashMap<>();
+
         String experimentId = storeExpBlueprint(expB, request.getOwner(), nsdInfoIdNsd);
         
         ExpBlueprintInfo expBlueprintInfo;
@@ -208,6 +215,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
         //No attribute selector is supported at the moment
 		
 		List<ExpBlueprintInfo> expbs = new ArrayList<>();
+		List<NsdInfo> nsdInfos = new ArrayList<>();
 		
 		Filter filter = request.getFilter();
         List<String> attributeSelector = request.getAttributeSelector();
@@ -217,6 +225,12 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
             	String expbId = fp.get("EXPB_ID");
             	ExpBlueprintInfo expb = getExpBlueprintInfo(expbId);
             	expbs.add(expb);
+            	/*for(String nsdInfoId : expb.getOnBoardedNsdInfoId()){
+					GeneralizedQueryRequest query = new GeneralizedQueryRequest(
+							BlueprintCatalogueUtilities.buildNsdInfoFilter(nsdInfoId),
+							null);
+            		nsdInfos.addAll(nfvoCatalogueService.queryNsd(query).getQueryResult());
+				}*/
             	log.debug("Added EXPB info for EXPB ID " + expbId);
             } else if (fp.size() == 1 && fp.containsKey("VSB_ID")) {
             	String vsbId = fp.get("VSB_ID");
@@ -228,6 +242,13 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
             	String expbVersion = fp.get("EXPB_VERSION");
             	ExpBlueprintInfo expb = getExpBlueprintInfo(expbName, expbVersion);
             	expbs.add(expb);
+            	/*for(String nsdInfoId : expb.getOnBoardedNsdInfoId()){
+					GeneralizedQueryRequest query = new GeneralizedQueryRequest(
+							BlueprintCatalogueUtilities.buildNsdInfoFilter(nsdInfoId),
+							null);
+					nsdInfos.addAll(nfvoCatalogueService.queryNsd(query).getQueryResult());
+				}
+				*/
             	log.debug("Added EXPB info for EXPB with name " + expbName + " and version " + expbVersion);
             } else if (fp.isEmpty()) {
             	expbs = getAllExpBlueprintInfos();
@@ -241,36 +262,31 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	}
 	
 	@Override
-	public synchronized  void deleteExpBlueprint(String expBlueprintId) throws MethodNotImplementedException {
-		//TODO: split the interface
-		throw  new MethodNotImplementedException("DeleteExpBlueprint maintained for compatibility purposes");
+	public synchronized  void deleteExpBlueprint(String expBlueprintId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String tenantId = authService.getUserFromAuth(authentication);
+		log.debug("Processing request to delete a Experiment blueprint with ID " + expBlueprintId+" by:"+tenantId);
+
+			if (expBlueprintId == null) throw new MalformattedElementException("The Experiment blueprint ID is null");
+
+			ExpBlueprintInfo expbi = getExpBlueprintInfo(expBlueprintId);
+
+			boolean catalogueAdmin = authService.isCatalogueAdminUser(authentication);
+			if (!(expbi.getActiveExpdId().isEmpty())) {
+				log.error("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
+				throw new FailedOperationException("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
+			}
+			if(catalogueAdmin || expbi.getOwner().equals(tenantId)){
+
+				expBlueprintInfoRepository.delete(expbi);
+				log.debug("Removed ExpB info from DB.");
+				ExpBlueprint expb = getExpBlueprint(expBlueprintId);
+				expBlueprintRepository.delete(expb);
+				log.debug("Removed ExpB from DB.");
+			}else throw new FailedOperationException("Logged user cannot delete the specified ExpB:"+tenantId+" "+expBlueprintId);
 	}
 
-	public synchronized void deleteExpBlueprint(String expBlueprintId, String tenantId, boolean catalogueAdmin)
-			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException {
-		log.debug("Processing request to delete a Experiment blueprint with ID " + expBlueprintId);
-		
-		if (expBlueprintId == null) throw new MalformattedElementException("The Experiment blueprint ID is null");
-		
-		ExpBlueprintInfo expbi = getExpBlueprintInfo(expBlueprintId);
-		
-		if (!(expbi.getActiveExpdId().isEmpty())) {
-			log.error("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
-			throw new FailedOperationException("There are some ExpDs associated to the Experiment Blueprint. Impossible to remove it.");
-		}
-		if(catalogueAdmin || expbi.getOwner().equals(tenantId)){
 
-			expBlueprintInfoRepository.delete(expbi);
-			log.debug("Removed ExpB info from DB.");
-			ExpBlueprint expb = getExpBlueprint(expBlueprintId);
-			expBlueprintRepository.delete(expb);
-			log.debug("Removed ExpB from DB.");
-		}else throw new NotPermittedOperationException("Logged user cannot delete the specified ExpB:"+tenantId+" "+expBlueprintId);
-		
-
-
-	}
-	
 	public synchronized void addExpdInBlueprint(String expBlueprintId, String expdId)
 			throws NotExistingEntityException {
 		log.debug("Adding EXPD " + expdId + " to blueprint " + expBlueprintId);

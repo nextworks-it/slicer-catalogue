@@ -206,7 +206,7 @@ public class CtxBlueprintCatalogueRestController {
             return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         try {
-            ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxbId, user, catalogueAdmin);
+            ctxBlueprintCatalogueService.deleteCtxBlueprint(ctxbId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");

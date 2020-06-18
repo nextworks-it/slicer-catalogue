@@ -212,7 +212,7 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId, user, catalogueAdmin);
+			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");

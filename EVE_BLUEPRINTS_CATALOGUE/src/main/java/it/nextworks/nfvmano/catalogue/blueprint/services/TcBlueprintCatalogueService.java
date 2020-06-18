@@ -24,6 +24,8 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.catalogue.blueprint.EveportalCatalogueUtilities;
@@ -51,7 +53,10 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 	
 	@Autowired
 	private TcDescriptorCatalogueService tcDescriptorCatalogueService;
-	
+
+	@Autowired
+	private AuthService authService;
+
 	public TcBlueprintCatalogueService() {	}
 
 	@Override
@@ -146,18 +151,15 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 	@Override
 	public void deleteTestCaseBlueprint(String testCaseBlueprintId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
-		
-
-	}
-
-	public void deleteTestCaseBlueprint(String testCaseBlueprintId, String tenant, boolean catalogueAdmin) throws MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException {
-		log.debug("Processing request to delete a test case blueprint with ID " + testCaseBlueprintId);
-
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String tenantId = authService.getUserFromAuth(authentication);
+		log.debug("Processing request to delete a test case blueprint with ID " + testCaseBlueprintId +" by:"+tenantId);
+		boolean catalogueAdmin = authService.isCatalogueAdminUser(authentication);
 		if (testCaseBlueprintId == null) throw new MalformattedElementException("The test case blueprint ID is null");
 
 		TestCaseBlueprintInfo tcbi = getTestCaseBlueprintInfo(testCaseBlueprintId);
 
-		if(catalogueAdmin || tcbi.getOwner().equals(tenant)){
+		if(catalogueAdmin || tcbi.getOwner().equals(tenantId)){
 			if (!(tcbi.getActiveTcdId().isEmpty())) {
 				log.error("There are some test case descriptors associated to the Test Case Blueprint. Impossible to remove it.");
 				throw new FailedOperationException("There are some test case descriptors associated to the Test Case Blueprint. Impossible to remove it.");
@@ -169,10 +171,13 @@ public class TcBlueprintCatalogueService implements TestCaseBlueprintCatalogueIn
 			testCaseBlueprintRepository.delete(tcb);
 			log.debug("Removed test case blueprint from DB.");
 		}else{
-			throw new NotPermittedOperationException("Logged user cannot delete the specified TCB:"+tenant+" "+testCaseBlueprintId);
+			throw new FailedOperationException("Logged user cannot delete the specified TCB:"+tenantId+" "+testCaseBlueprintId);
 		}
+		
 
 	}
+
+
 	
 	private TestCaseBlueprint getTestCaseBlueprint(String blueprintId) throws NotExistingEntityException {
 		Optional<TestCaseBlueprint> testCaseBlueprintOpt = testCaseBlueprintRepository.findByTestcaseBlueprintId(blueprintId);

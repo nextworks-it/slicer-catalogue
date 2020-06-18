@@ -26,6 +26,8 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardExpBlueprintRequ
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryExpBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.services.AuthService;
 import it.nextworks.nfvmano.catalogue.blueprint.services.ExpBlueprintCatalogueService;
+
+import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.elements.NsdInfo;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
@@ -190,6 +192,42 @@ public class ExpBlueprintCatalogueRestController {
 
 	}
 
+
+
+	/*
+@ApiOperation(value = "Get ExpBlueprint NsdInfos")
+@ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Returns the NsdInfos associated with the experiment blueprint with the given ID", response = NsdInfo.class, responseContainer = "List"),
+        //@ApiResponse(code = 400, message = "The supplied element contains elements impossible to process", response = ResponseEntity.class),
+        //@ApiResponse(code = 404, message = "The element with the supplied id was not found", response = ResponseEntity.class),
+        //@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
+
+})
+@RequestMapping(value = "/expblueprint/{expbId}/nsd", method = RequestMethod.GET)
+public ResponseEntity<?> getExpBlueprintNsds(@PathVariable String expbId, Authentication auth) {
+
+    log.debug("Received request to retrieve EXP blueprint with ID " + expbId);
+    if(!authService.validateAuthentication(auth)){
+        log.warn("Unable to retrieve request authentication information");
+        return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+    try {
+        QueryExpBlueprintResponse response = expBlueprintCatalogueService.queryExpBlueprint(new GeneralizedQueryRequest(EveportalCatalogueUtilities.buildExpBlueprintFilter(expbId), null));
+        return new ResponseEntity<List<NsdInfo>>(response.getExpNsdInfos(), HttpStatus.OK);
+    } catch (MalformattedElementException e) {
+        log.error("Malformatted request"+e.getMessage());
+        return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    } catch (NotExistingEntityException e) {
+        log.error("EXP Blueprints not found");
+        return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+    } catch (Exception e) {
+        log.error("Internal exception");
+        return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+}
+*/
 	@ApiOperation(value = "Delete ExpBlueprint")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Delete the experiment blueprint with the given ID", response = ResponseEntity.class),
@@ -212,7 +250,7 @@ public class ExpBlueprintCatalogueRestController {
 
 
         try {
-            expBlueprintCatalogueService.deleteExpBlueprint(expbId, user, catalogueAdmin);
+            expBlueprintCatalogueService.deleteExpBlueprint(expbId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");
