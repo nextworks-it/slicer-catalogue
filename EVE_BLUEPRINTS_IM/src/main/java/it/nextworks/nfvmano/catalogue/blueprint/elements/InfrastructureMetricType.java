@@ -1,13 +1,11 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 public enum InfrastructureMetricType {
-    USER_DATA_RATE_DL,
-    USER_DATA_RATE_UL,
-    PEAK_DATA_RATE_DL,
-    PEAK_DATA_RATE_UL,
+    USER_DATA_RATE_DOWNLINK,
+    USER_DATA_RATE_UPLINK,
     CAPACITY,
-    LATENCY_UP,
-    LATENCY_CP,
+    LATENCY_USERPLANE,
+    LATENCY_CONTROLPLANE,
     DEVICE_DENSITY,
     MOBILITY
 }
