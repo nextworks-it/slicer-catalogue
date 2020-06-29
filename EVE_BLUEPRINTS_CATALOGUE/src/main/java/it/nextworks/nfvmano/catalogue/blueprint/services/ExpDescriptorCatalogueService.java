@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInterface {
@@ -85,7 +86,10 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 	private CtxDescriptorCatalogueService ctxDescriptorCatalogueService;
 	
 	@Autowired
-	private TcDescriptorCatalogueService tcDescriptorCatalogueService; 
+	private TcDescriptorCatalogueService tcDescriptorCatalogueService;
+
+	@Autowired
+	private AuthService authService;
 	
 	@Value("${catalogue.admin}")
 	private String adminTenant;
@@ -95,6 +99,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
         log.debug("Processing onboarding experiment descriptor request");
         request.isValid();
         verifyExperimentBlueprintDependencies(request);
+        verifyKpiThresholds(request);
         String experimentBlueprintName = expBlueprintRepository.findByExpBlueprintId(request.getExperimentBlueprintId()).get().getName();
         
         //onboard VSD
@@ -149,6 +154,27 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
     	return idStr;
     }
 
+    private void verifyKpiThresholds(OnboardExpDescriptorRequest request) throws MalformattedElementException {
+        log.debug("Verifiying KPI thresholds");
+
+        if(request.getKpiThresholds()!=null && !request.getKpiThresholds().isEmpty()){
+            ExpBlueprint expBlueprint = expBlueprintRepository.findByExpBlueprintId(request.getExperimentBlueprintId()).get();
+            if(expBlueprint.getKpis()!=null && !expBlueprint.getKpis().isEmpty()){
+                List<String> expbKpis = expBlueprint.getKpis().stream()
+                        .map(expbK -> expbK.getKpiId())
+                        .collect(Collectors.toList());
+                for(String kpiId : request.getKpiThresholds().keySet()){
+                    if(!expbKpis.contains(kpiId))
+                        throw new MalformattedElementException("KPI " +kpiId+" not defined for the experiment");
+                }
+            }else throw new MalformattedElementException("KPI threshold for experiment without KPIs");
+
+
+        }
+
+
+    }
+
     @Override
     public QueryExpDescriptorResponse queryExpDescriptor(GeneralizedQueryRequest request) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
     	log.debug("Processing a query for an Experiment descriptor");
@@ -164,6 +190,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 		List<ExpDescriptor> expDescriptors = new ArrayList<>();
 		Filter filter = request.getFilter();
         List<String> attributeSelector = request.getAttributeSelector();
+        boolean siteAdmin = authService.getUserRoles().contains("SiteManager");
         if ((attributeSelector == null) || (attributeSelector.isEmpty())) {
         	Map<String, String> fp = filter.getParameters();
             if (fp.size() == 1 && fp.containsKey("TENANT_ID")) {
@@ -187,7 +214,7 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
             	String expdId = fp.get("EXPD_ID");
             	String tenantId = fp.get("TENANT_ID");
             	Optional<ExpDescriptor> expd = null;
-            	if (tenantId.equals(adminTenant)) {
+            	if (tenantId.equals(adminTenant)|| siteAdmin) {
             		expd = expDescriptorRepository.findByExpDescriptorId(expdId);
             	} else {
             		expd = expDescriptorRepository.findByExpDescriptorIdAndTenantId(expdId, tenantId);
@@ -207,17 +234,17 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
         }
     }
 
-    @Override
-	public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException {
 
-    	//TODO: Split the interface
-    	throw  new MethodNotImplementedException("DeleteExpDescriptor maintained for compatibility purposes");
 
-	}
-
-    public void deleteExpDescriptor(String expDescriptorId, String tenantId, boolean catalogueAdmin, boolean forceRemove) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException, ConflictiveOperationException {
+    public void deleteExpDescriptor(String expDescriptorId, String tenantId) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException, NotPermittedOperationException, ConflictiveOperationException {
     	log.debug("Processing request to delete an Exp descriptor");
-		if  (expDescriptorId == null) throw new MalformattedElementException("ExpD ID is null");
+
+
+		//TODO: to be updated
+		boolean catalogueAdmin = false;
+		boolean forceRemove = false;
+
+    	if  (expDescriptorId == null) throw new MalformattedElementException("ExpD ID is null");
 		
 		Optional<ExpDescriptor> expdOpt = expDescriptorRepository.findByExpDescriptorId(expDescriptorId);
 		if (expdOpt.isPresent()) {

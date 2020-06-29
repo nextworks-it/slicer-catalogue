@@ -189,7 +189,7 @@ public class ExpDescriptorCatalogueRestController {
 		boolean catalogueAdmin = authService.isCatalogueAdminUser(auth);
 		try {
 
-			expDescriptorCatalogueService.deleteExpDescriptor(expdId, user,catalogueAdmin, false );
+			expDescriptorCatalogueService.deleteExpDescriptor(expdId, user);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");

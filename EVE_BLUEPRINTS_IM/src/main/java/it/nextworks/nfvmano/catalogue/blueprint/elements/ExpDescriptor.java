@@ -61,8 +61,8 @@ public class ExpDescriptor implements DescriptorInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	//Key: kpi ID; Value: comparison operator + KPI threshold
-	private Map<String,String> kpiThresholds = new HashMap<>();
+	//
+	private Map<String,KpiThreshold> kpiThresholds = new HashMap<>();
 
 	@JsonIgnore
 	private boolean isPublic;
@@ -95,7 +95,7 @@ public class ExpDescriptor implements DescriptorInformationElement {
 			String vsDescriptorId,
 			List<String> ctxDescriptorIds,
 			List<String> testCaseDescriptorIds,
-			Map<String,String> kpiThresholds) {
+			Map<String,KpiThreshold> kpiThresholds) {
 		this.name = name;
 		this.version = version;
 		this.expBlueprintId = expBlueprintId;
@@ -203,7 +203,7 @@ public class ExpDescriptor implements DescriptorInformationElement {
 	/**
 	 * @return the kpiThresholds
 	 */
-	public Map<String, String> getKpiThresholds() {
+	public Map<String, KpiThreshold> getKpiThresholds() {
 		return kpiThresholds;
 	}
 

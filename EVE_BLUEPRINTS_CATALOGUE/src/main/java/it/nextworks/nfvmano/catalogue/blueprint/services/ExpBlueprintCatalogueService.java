@@ -172,7 +172,13 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 				List<EveSite> sites = request.getExpBlueprint().getSites();
 				for (EveSite site : sites) {
 					userDefinedData.put(site.toString(), "yes");
+					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS){
+						log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
+						userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
+
+					}
 				}
+
 				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
 				log.debug("Added NSD " + nsd.getNsdIdentifier() +
 						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);

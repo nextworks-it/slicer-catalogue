@@ -16,6 +16,7 @@
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
 import it.nextworks.nfvmano.catalogue.blueprint.elements.BlueprintUserInformation;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.KpiThreshold;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
@@ -39,7 +40,7 @@ public class OnboardExpDescriptorRequest implements InterfaceMessage {
 	private List<BlueprintUserInformation> contextDetails = new ArrayList<>();
 	private List<BlueprintUserInformation> testCaseConfiguration = new ArrayList<>();
 	
-	private Map<String,String> kpiThresholds = new HashMap<>();
+	private Map<String, KpiThreshold> kpiThresholds = new HashMap<>();
 	
 	public OnboardExpDescriptorRequest() { }
 
@@ -51,7 +52,7 @@ public class OnboardExpDescriptorRequest implements InterfaceMessage {
 			VsDescriptor vsDescriptor,
 			List<BlueprintUserInformation> contextDetails,
 			List<BlueprintUserInformation> testCaseConfiguration,
-			Map<String,String> kpiThresholds) {
+			Map<String,KpiThreshold> kpiThresholds) {
 		this.name = name;
 		this.version = version;
 		this.experimentBlueprintId = experimentBlueprintId;
@@ -126,7 +127,7 @@ public class OnboardExpDescriptorRequest implements InterfaceMessage {
 	/**
 	 * @return the kpiThresholds
 	 */
-	public Map<String, String> getKpiThresholds() {
+	public Map<String, KpiThreshold> getKpiThresholds() {
 		return kpiThresholds;
 	}
 
