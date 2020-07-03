@@ -49,21 +49,25 @@ public class AuthService {
     }
 
     public Set<String> getUserRoles(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(authenticationEnable){
-            if(keycloakEnabled){
-                if (auth.getPrincipal() instanceof KeycloakPrincipal) {
-                    KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
-                    Set<String> roles = kp.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles();
-                    log.debug("Retrieved user roles: "+roles);
-                    return roles;
-                }else return Collections.emptySet();
-            }else{
-                return Collections.emptySet() ;
+        //The EEM skips the authentication, therefore there is no context
+        if(SecurityContextHolder.getContext()!=null && SecurityContextHolder.getContext().getAuthentication()!=null){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(authenticationEnable){
+                if(keycloakEnabled){
+                    if (auth.getPrincipal() instanceof KeycloakPrincipal) {
+                        KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
+                        Set<String> roles = kp.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles();
+                        log.debug("Retrieved user roles: "+roles);
+                        return roles;
+                    }else return Collections.emptySet();
+                }else{
+                    return Collections.emptySet() ;
 
-            }
+                }
 
+            }else return Collections.emptySet();
         }else return Collections.emptySet();
+
     }
 
     public String getUser(){
