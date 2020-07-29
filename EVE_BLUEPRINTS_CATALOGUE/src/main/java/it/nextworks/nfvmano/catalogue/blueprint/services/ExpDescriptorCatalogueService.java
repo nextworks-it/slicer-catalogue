@@ -425,10 +425,15 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
 		if(expdInfoOpt.isPresent()){
 			ExpDescriptorInfo expDInfo = expdInfoOpt.get();
 			List<String> activeExperimentIds = expDInfo.getActiveExperimentIds();
-			activeExperimentIds.add(experimentId);
-			expDInfo.setActiveExperimentIds(activeExperimentIds);
-			expDescriptorInfoRepository.saveAndFlush(expDInfo);
-			log.debug("Correctly added experiment:"+experimentId+" from ExpD:"+expdId);
+			if(!activeExperimentIds.contains(experimentId)){
+				activeExperimentIds.add(experimentId);
+				expDInfo.setActiveExperimentIds(activeExperimentIds);
+				expDescriptorInfoRepository.saveAndFlush(expDInfo);
+				log.debug("Correctly added experiment:"+experimentId+" from ExpD:"+expdId);
+
+			}else{
+				log.warn("Experiment ID: "+experimentId+" already in the list of ExpD: "+ expdId+"active experiments, ignoring");
+			}
 
 
 		}else throw  new NotExistingEntityException("Could not find ExpD Info with id"+expdId);
