@@ -69,28 +69,15 @@ public class MultiDomainBasicTranslator extends AbstractTranslator {
             NST e2e_nst;
             List<String> nsstIds;
 
-            List<String> edgeServices = new ArrayList<>();
-            List<String> coreServices = new ArrayList<>();
-
             List<String> nstDomains = new ArrayList<>();
-            List<String> edgeDomains = new ArrayList<>();
-            List<String> coreDomains = new ArrayList<>();
 
             List<Domain> domains = domainRepository.findAll();
             for (Domain domain: domains) {
                 // Assuming that each domain has one NSP DomainLayer
-                NspDomainLayer nspDomain;
+
                 List<DomainLayer> ownedLayers = domain.getOwnedLayers();
                 for (DomainLayer domainLayer : ownedLayers) {
                     if (domainLayer instanceof NspDomainLayer) {
-                        nspDomain = (NspDomainLayer) domain.getOwnedLayers().get(0);
-                        if (nspDomain.isRANEnabled()) {
-                            edgeDomains.add(domain.getDomainId());
-                            log.debug("Added domain {} to edgeDomains", domain.getDomainId());
-                        } else {
-                            coreDomains.add(domain.getDomainId());
-                            log.debug("Added domain {} to coreDomains", domain.getDomainId());
-                        }
                         nstDomains.add(domain.getDomainId());
                     }
                 }
@@ -101,11 +88,7 @@ public class MultiDomainBasicTranslator extends AbstractTranslator {
                 e2e_nst = optionalNST.get();
                 nsstIds = e2e_nst.getNsstIds();
                 log.debug("Retrieved e2e NST with id: " + e2e_nst.getNstId());
-                try {
-                    log.debug("NSSTs in NST: \n" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nsstIds));
-                } catch (JsonProcessingException e) {
-                    log.error("Unable to parse NSSts list: " + e.getMessage());
-                }
+                log.debug("NSSTs in NST: " + nsstIds);
 
                 for (String nsstId : nsstIds) {
                     NST nsst;
@@ -113,45 +96,14 @@ public class MultiDomainBasicTranslator extends AbstractTranslator {
 
                     if (optionalNsst.isPresent()) {
                         nsst = optionalNsst.get();
-                        if (nsst.getNstServiceProfile() != null) {
-                            edgeServices.add(nsstId);
-                            log.debug("Added edge service {} to edgeService", nsstId);
-                        } else {
-                            coreServices.add(nsstId);
-                            log.debug("Added core service {} to coreService", nsstId);
-                        }
+                        //TODO: Add logic for NSST domain split
+
+                        nsstDomain.put(nsstId, nstDomains.get(0) );
                     } else {
                         throw new NotExistingEntityException("Subnet NST with nstId " + nsstId + " not present in DB.");
                     }
                 }
 
-                // This approach is a kind of round robin, given the NSTs and domains characteristics
-                if (edgeDomains.size() >= edgeServices.size()) {
-                    for (String edgeNsstId : edgeServices) {
-                        for (String edgeDomainId : edgeDomains) {
-                            if (!nsstDomain.containsValue(edgeDomainId)) {
-                                log.debug("Edge service {} mapped to domain {}", edgeNsstId, edgeDomainId);
-                                nsstDomain.put(edgeNsstId, edgeDomainId);
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    throw new FailedOperationException("More than one NS instantiation in a single domain is not yet supported.");
-                }
-                if (coreDomains.size() >= coreServices.size()) {
-                    for (String coreNsstId : coreServices) {
-                        for (String coreDomainId: coreDomains) {
-                            if (!nsstDomain.containsValue(coreDomainId)) {
-                                log.debug("Core service {} mapped to domain {}", coreNsstId, coreDomainId);
-                                nsstDomain.put(coreNsstId, coreDomainId);
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    throw new FailedOperationException("More than one NS instantiation in a single domain is not yet supported.");
-                }
 
             } else {
                 throw new NotExistingEntityException("NST with nstId " + rule.getNstId() + " not present in DB.");
@@ -161,10 +113,10 @@ public class MultiDomainBasicTranslator extends AbstractTranslator {
             SliceServiceParameters vsdParameters = vsd.getSliceServiceParameters();
             SliceServiceParameters finalServiceParameters = vsdParameters;
             if(vsbO.isPresent()){
-                if(vsbO.get().getSliceServiceType().equals(SliceServiceType.URLLC)){
+               //TODO: replace RAN slice parameters
 
-                }
-
+            }else{
+                throw new NotExistingEntityException("VSB with vsbId " + vsd.getVsBlueprintId() + " not present in DB.");
             }
             NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), nstDomains, nsstDomain, finalServiceParameters );
             nfvNsInfo.put(vsdId, info);

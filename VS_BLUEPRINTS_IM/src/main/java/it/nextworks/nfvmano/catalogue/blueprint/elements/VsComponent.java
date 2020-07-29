@@ -72,8 +72,12 @@ public class VsComponent implements DescriptorInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<String, String> lifecycleOperations = new HashMap<>();
-	
-	
+
+
+	private VsComponentPlacement placement;
+
+	private VsComponentType type;
+
 	public VsComponent() {
 		// JPA only
 	}
@@ -93,13 +97,17 @@ public class VsComponent implements DescriptorInformationElement {
 			int serversNumber,
 			List<String> imagesUrls,
 			List<String> endPointsIds,
-			Map<String, String> lifecycleOperations) {
+			Map<String, String> lifecycleOperations,
+					   VsComponentType vsComponentType,
+					   VsComponentPlacement placement) {
 		this.vsb = vsb;
 		this.componentId = componentId;
 		this.serversNumber = serversNumber;
 		if (imagesUrls != null) this.imagesUrls = imagesUrls;
 		if (endPointsIds != null) this.endPointsIds = endPointsIds;
 		if (lifecycleOperations != null) this.lifecycleOperations = lifecycleOperations;
+		this.type = vsComponentType;
+		this.placement = placement;
 	}
 	
 	
@@ -151,4 +159,11 @@ public class VsComponent implements DescriptorInformationElement {
 		if (componentId == null) throw new MalformattedElementException("VSB atomic component without ID.");
 	}
 
+	public VsComponentPlacement getPlacement() {
+		return placement;
+	}
+
+	public VsComponentType getType() {
+		return type;
+	}
 }

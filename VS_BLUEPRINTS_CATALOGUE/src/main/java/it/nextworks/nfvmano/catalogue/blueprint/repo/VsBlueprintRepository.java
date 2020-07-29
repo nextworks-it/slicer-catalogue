@@ -27,5 +27,5 @@ public interface VsBlueprintRepository extends JpaRepository<VsBlueprint, Long> 
 
 	Optional<VsBlueprint> findByBlueprintId(String id);
 	Optional<VsBlueprint> findByNameAndVersion(String name, String version);
-	List<VsBlueprint> findByCompatibleSitesIn(EveSite site);
+	//List<VsBlueprint> findByCompatibleSitesIn(EveSite site);
 }

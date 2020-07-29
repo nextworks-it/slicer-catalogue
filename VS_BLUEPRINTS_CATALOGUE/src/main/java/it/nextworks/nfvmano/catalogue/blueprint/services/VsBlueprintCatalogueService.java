@@ -321,7 +321,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
-				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
+				//vsBlueprint.getCompatibleSites(),
+				//vsBlueprint.getCompatibleContextBlueprint(),
 				vsBlueprint.getApplicationMetrics(),
 				vsBlueprint.getSliceServiceType(),
 				vsBlueprint.getEmbbServiceCategory(),
@@ -337,7 +338,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsComponent> atomicComponents = vsBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations());
+				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(), c.getType(), c.getPlacement());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);

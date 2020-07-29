@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResourceUsage;
+import it.nextworks.nfvmano.sebastian.admin.elements.VirtualResourceUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,5 +205,10 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		
 		log.debug("Added NsTemplate Info with NsTemplate ID " + nstTargetId);
     	return nstTargetId;
+    }
+
+    public VirtualResourceUsage queryResourceUsage(QueryNsTemplateResourceUsage request) {
+    	//TODO
+		return new VirtualResourceUsage(0,0,0);
     }
 }
