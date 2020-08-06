@@ -25,7 +25,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 
-import it.nextworks.nfvmano.catalogues.domainLayer.repo.DomainRepository;
+
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +69,7 @@ public class TranslatorService implements TranslatorInterface {
 	@Autowired
 	private NsTemplateRepository nsTemplateRepository;
 
-	@Autowired
-	private DomainRepository domainRepository;
-	
+
 	private AbstractTranslator translator;
 	
 	public TranslatorService() { }
@@ -82,9 +80,7 @@ public class TranslatorService implements TranslatorInterface {
 		if (translatorType.equals("BASIC")) {
 			log.debug("The Vertical Slicer is configured to operate with a basic translator.");
 			translator = new BasicTranslator(vsDescriptorRepository, translationRuleRepository);
-		} else if (translatorType.equals("MULTIDOMAIN")) {
-			log.debug("The Vertical Slicer is configured to operate with a multi-domain translator.");
-			translator = new MultiDomainBasicTranslator(vsDescriptorRepository, translationRuleRepository, nsTemplateRepository, domainRepository, vsBlueprintRepository);
+
 		} else {
 			log.error("Translator not configured!");
 		}
