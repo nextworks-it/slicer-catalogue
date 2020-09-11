@@ -4,5 +4,6 @@ public enum NspNbiType {
     THREE_GPP,
     SONATA,
     NEUTRAL_HOSTING,
-    SEBASTIAN
+    SEBASTIAN,
+    OSM
 }
