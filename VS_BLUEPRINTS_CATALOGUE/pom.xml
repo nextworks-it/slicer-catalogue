@@ -100,7 +100,7 @@
 		</dependency>
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>ns-templates-catalogue</artifactId>
+			<artifactId>ns-templates-catalogue-interfaces</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 
 		</dependency>
