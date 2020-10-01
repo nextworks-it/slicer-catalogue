@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.nextworks.nfvmano</groupId>
-    <artifactId>DomainLayerIM</artifactId>
+    <artifactId>domain-layer-im</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvManoLibsTemplates</artifactId>
+            <artifactId>nfv-mano-libs-templates</artifactId>
             <version>0.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.nextworks.nfvmano</groupId>
-    <artifactId>TranslatorService</artifactId>
+    <artifactId>translator-service</artifactId>
     <version>0.0.2-EVE-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -43,32 +43,32 @@
     <dependencies>
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>VsBlueprintsCatalogue</artifactId>
+            <artifactId>vs-blueprints-catalogue</artifactId>
             <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NsTemplatesCatalogue</artifactId>
+            <artifactId>ns-templates-catalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>DomainLayerCatalogue</artifactId>
+            <artifactId>domain-layer-catalogue</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>TranslatorServiceInterface</artifactId>
+            <artifactId>translator-service-interface</artifactId>
             <version>0.0.2-EVE-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvManoLibsCommon</artifactId>
+            <artifactId>nfv-mano-libs-common</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>

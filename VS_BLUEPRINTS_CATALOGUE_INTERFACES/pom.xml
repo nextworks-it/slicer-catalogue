@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>it.nextworks.nfvmano</groupId>
-	<artifactId>VsBlueprintsCatalogueInterfaces</artifactId>
+	<artifactId>vs-blueprints-catalogue-interfaces</artifactId>
 	<version>0.0.2-EVE-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>VS_BLUEPRINTS_CATALOGUE_INTEFACES</name>
+	<name>VS_BLUEPRINTS_CATALOGUE_INTERFACES</name>
 	<description>Interfaces for the Vertical Service Blueprint catalog service</description>
 
 	<parent>
@@ -54,19 +54,19 @@
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsCommon</artifactId>
+			<artifactId>nfv-mano-libs-common</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsCataloguesIf</artifactId>
+			<artifactId>nfv-mano-libs-catalogues-if</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>VsBlueprintsIM</artifactId>
+			<artifactId>vs-blueprints-im</artifactId>
 			<version>0.0.2-EVE-SNAPSHOT</version>
 		</dependency>
 

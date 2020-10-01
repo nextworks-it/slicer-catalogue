@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.nextworks.nfvmano</groupId>
-    <artifactId>NsTemplatesCatalogueInterfaces</artifactId>
+    <artifactId>ns-templates-catalogue-interfaces</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -54,18 +54,18 @@
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvManoLibsCommon</artifactId>
+            <artifactId>nfv-mano-libs-common</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvManoLibsCataloguesIf</artifactId>
+            <artifactId>nfv-mano-libs-catalogues-if</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NsTemplatesIM</artifactId>
+            <artifactId>ns-templates-im</artifactId>
             <version>0.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -79,7 +79,7 @@
 <!--        </dependency>-->
 	<dependency>
           <groupId>it.nextworks.nfvmano</groupId>
-          <artifactId>NfvManoLibsTemplates</artifactId>
+          <artifactId>nfv-mano-libs-templates</artifactId>
            <version>0.0.2-SNAPSHOT</version>
           <scope>compile</scope>
       </dependency>

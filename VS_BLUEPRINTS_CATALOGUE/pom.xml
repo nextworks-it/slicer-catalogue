@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>it.nextworks.nfvmano</groupId>
-	<artifactId>VsBlueprintsCatalogue</artifactId>
+	<artifactId>vs-blueprints-catalogue</artifactId>
 	<version>0.0.2-EVE-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -69,42 +69,38 @@
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsCommon</artifactId>
+			<artifactId>nfv-mano-libs-common</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>VsBlueprintsCatalogueInterfaces</artifactId>
+			<artifactId>vs-blueprints-catalogue-interfaces</artifactId>
 			<version>0.0.2-EVE-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>SebastianMgmtCatalogue</artifactId>
+			<artifactId>sebastian-mgmt-catalogue</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
+
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvoCatalogueService</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsDescriptors</artifactId>
+			<artifactId>nfv-mano-libs-descriptors</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 
 		</dependency>
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsTemplates</artifactId>
+			<artifactId>nfv-mano-libs-templates</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 
 		</dependency>
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NsTemplatesCatalogue</artifactId>
+			<artifactId>ns-templates-catalogue</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 
 		</dependency>

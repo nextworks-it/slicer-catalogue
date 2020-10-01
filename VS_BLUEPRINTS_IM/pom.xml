@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>it.nextworks.nfvmano</groupId>
-	<artifactId>VsBlueprintsIM</artifactId>
+	<artifactId>vs-blueprints-im</artifactId>
 	<version>0.0.2-EVE-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -54,7 +54,7 @@
 
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsCommon</artifactId>
+			<artifactId>nfv-mano-libs-common</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
@@ -76,7 +76,7 @@
 		</dependency>
 		<dependency>
 			<groupId>it.nextworks.nfvmano</groupId>
-			<artifactId>NfvManoLibsTemplates</artifactId>
+			<artifactId>nfv-mano-libs-templates</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 
 		</dependency>
