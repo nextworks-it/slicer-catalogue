@@ -15,14 +15,12 @@
 
 package it.nextworks.nfvmano.catalogue.template.elements;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,6 +29,9 @@ import it.nextworks.nfvmano.libs.ifa.common.enums.OperationalState;
 import it.nextworks.nfvmano.libs.ifa.common.enums.UsageState;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class NsTemplateInfo implements InterfaceInformationElement {
@@ -48,13 +49,31 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 	
 	@Transient
 	private NST nst;
-	
+	@ElementCollection(fetch= FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedNsdInfoId = new ArrayList<>();
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedNstInfoId = new ArrayList<>();
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedVnfPackageInfoId = new ArrayList<>();
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedMecAppPackageInfoId = new ArrayList<>();
 	
 	private OperationalState operationalState;
 	private UsageState usageState;
 	private boolean deletionPending;
 	private SliceServiceType sst;
-	
+
 	@ElementCollection
 	private Map<String, String> userDefinedData = new HashMap<>();
 	
@@ -76,6 +95,9 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 		this.operationalState=operationalState;
 		this.usageState=usageState;
 		this.deletionPending=deletionPending;
+		//this.onBoardedNsdInfoId=onBoardedNstInfoId;
+		//this.onBoardedVnfPackageInfoId=onBoardedVnfPackageInfoId;
+
 		
 	}
 	public Long getId() {
@@ -97,7 +119,39 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 	public String getName() {
 		return name;
 	}
+/////////////////////////////////////////////////////////// shadi start ////////////////////////////////////////////////////////////////////////////
+	/**
+	 * @return the onBoardedNsdInfoId
+	 */
+	public List<String> getOnBoardedNsdInfoId() {
+		return onBoardedNsdInfoId;
+	}
 
+	/**
+	 * @return the onBoardedVnfPackageInfoId
+	 */
+	public List<String> getOnBoardedVnfPackageInfoId() {
+		return onBoardedVnfPackageInfoId;
+	}
+	/**
+	 * @return the onBoardedMecAppPackageInfoId
+	 */
+	public List<String> getOnBoardedMecAppPackageInfoId() {
+		return onBoardedMecAppPackageInfoId;
+	}
+
+	public void addNsdInfoId(String nsdInfoId) {
+		onBoardedNsdInfoId.add(nsdInfoId);
+	}
+
+	public void addNstInfoId(String nstInfoId) {
+		onBoardedNstInfoId.add(nstInfoId);
+	}
+
+	public void addVnfPackageInfoId(String vnfPackageInfoId) {
+		onBoardedVnfPackageInfoId.add(vnfPackageInfoId);
+	}
+/////////////////////////////////////////////////////////// shadi end ////////////////////////////////////////////////////////////////////////////
 
 	public void setName(String name) {
 		this.name = name;
@@ -120,6 +174,7 @@ public class NsTemplateInfo implements InterfaceInformationElement {
 	public NST getNST() {
 		return nst;
 	}
+
 	public OperationalState getOperationalState() {
 		return operationalState;
 	}

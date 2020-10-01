@@ -1,18 +1,18 @@
 /*
-* Copyright 2018 Nextworks s.r.l.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2018 Nextworks s.r.l.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.nextworks.nfvmano.catalogue.blueprint.rest;
 
 import java.util.List;
@@ -58,9 +58,9 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintRespons
 @CrossOrigin
 @RequestMapping("/vs/catalogue")
 public class VsBlueprintCatalogueRestController {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(VsBlueprintCatalogueRestController.class);
-	
+
 	@Autowired
 	private VsBlueprintCatalogueService vsBlueprintCatalogueService;
 
@@ -71,12 +71,12 @@ public class VsBlueprintCatalogueRestController {
 	private boolean authenticationEnable;
 
 
-    
+
 	@Autowired
 	private AuthService authService;
 
 	public VsBlueprintCatalogueRestController() { }
-	
+
 	@ApiOperation(value = "Onboard a new Vertical Service Blueprint, including the associated Network Service Descriptors and translation rules.")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "The ID of the created Vertical Service Blueprint.", response = String.class),
@@ -90,8 +90,8 @@ public class VsBlueprintCatalogueRestController {
 	@RequestMapping(value = "/vsblueprint", method = RequestMethod.POST)
 	public ResponseEntity<?> createVsBlueprint(@RequestBody OnBoardVsBlueprintRequest request, Authentication auth) {
 
-	    //SecurityConfig should only allow this REST call to certain roles if keycloack enabled
-	    log.debug("Received request to create a VS blueprint.");
+		//SecurityConfig should only allow this REST call to certain roles if keycloack enabled
+		log.debug("Received request to create a VS blueprint.");
 
 		if(!authService.validateAuthentication(auth)){
 			log.warn("Unable to retrieve request authentication information");
@@ -116,7 +116,7 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@ApiOperation(value = "Get ALL the Vertical Service Blueprints")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "List of all the Vertical Service Blueprints of the user", response = VsBlueprintInfo.class, responseContainer = "Set"),
@@ -134,7 +134,7 @@ public class VsBlueprintCatalogueRestController {
 		try {
 			String user = authService.getUserFromAuth(auth);
 			if ((id == null) && (site == null)) {
-				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildTenantFilter(user), null)); 
+				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildTenantFilter(user), null));
 				return new ResponseEntity<List<VsBlueprintInfo>>(response.getVsBlueprintInfo(), HttpStatus.OK);
 			} else if (id != null) {
 				QueryVsBlueprintResponse response = vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(id, user), null));
@@ -154,7 +154,7 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@ApiOperation(value = "Get a Vertical Service Blueprint with a given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Vertical Service Blueprint with the given ID", response = VsBlueprintInfo.class),
@@ -185,7 +185,7 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@ApiOperation(value = "Delete a Vertical Service Blueprint with a given ID")
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "Empty", response = ResponseEntity.class),
@@ -206,7 +206,7 @@ public class VsBlueprintCatalogueRestController {
 			return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 		}
 		try {
-			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId); 
+			vsBlueprintCatalogueService.deleteVsBlueprint(vsbId);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (MalformattedElementException e) {
 			log.error("Malformatted request");

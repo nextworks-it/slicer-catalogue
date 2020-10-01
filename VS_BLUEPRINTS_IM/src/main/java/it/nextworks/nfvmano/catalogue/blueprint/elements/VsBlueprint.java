@@ -42,11 +42,11 @@ public class VsBlueprint extends Blueprint {
 //	@JsonIgnore
 //	private Long id;
 //	
-	//@JsonInclude(JsonInclude.Include.NON_EMPTY)
-    //@ElementCollection(fetch=FetchType.EAGER)
-    //@Fetch(FetchMode.SELECT)
-    //@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	//private List<EveSite> compatibleSites = new ArrayList<>();
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @ElementCollection(fetch=FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<EveSite> compatibleSites = new ArrayList<>();
 	
 	//@JsonInclude(JsonInclude.Include.NON_EMPTY)
     //@ElementCollection(fetch=FetchType.EAGER)
@@ -121,7 +121,7 @@ public class VsBlueprint extends Blueprint {
 			List<VsBlueprintParameter> parameters,
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters, 
-			//List<EveSite> compatibleSites,
+			List<EveSite> compatibleSites,
 			//List<String> compatibleContextBlueprint,
 			List<ApplicationMetric> applicationMetrics,
 					   SliceServiceType sliceServiceType,
@@ -129,7 +129,7 @@ public class VsBlueprint extends Blueprint {
 					   URLLCServiceCategory urllcServiceCategory) {
 		super(vsBlueprinId, version, name, description, parameters, endPoints, 
 				configurableParameters, applicationMetrics);
-		//if (compatibleSites != null) this.compatibleSites = compatibleSites;
+		if (compatibleSites != null) this.compatibleSites = compatibleSites;
 		//if (compatibleContextBlueprint != null) this.compatibleContextBlueprint = compatibleContextBlueprint;
 		if (sliceServiceType!=null) this.sliceServiceType = sliceServiceType;
 		if (embbServiceCategory!=null) this.embbServiceCategory = embbServiceCategory;
@@ -249,13 +249,13 @@ public class VsBlueprint extends Blueprint {
 	}
 
 
-	/*
+	
 	/**
 	 * @return the compatibleSites
 	 */
-	//public List<EveSite> getCompatibleSites() {
-	//	return compatibleSites;
-	//}
+	public List<EveSite> getCompatibleSites() {
+		return compatibleSites;
+	}
 
 	/**
 	 * @return the compatibleContextBlueprint
@@ -283,6 +283,17 @@ public class VsBlueprint extends Blueprint {
 			for (VsbLink l : connectivityServices) l.isValid();
 		}
 
+		if(sliceServiceType!=null){
+			if(sliceServiceType.equals(SliceServiceType.EMBB)){
+				if(embbServiceCategory==null)
+					throw  new MalformattedElementException("VSB without slice service category");
+
+			}else if(sliceServiceType.equals(SliceServiceType.URLLC)){
+				if(urllcServiceCategory==null)
+					throw  new MalformattedElementException("VSB without slice service category");
+			}
+		}
+/*
 		if(sliceServiceType==null){
 			throw  new MalformattedElementException("VSB without slice service type");
 		}else{
@@ -295,6 +306,7 @@ public class VsBlueprint extends Blueprint {
 					throw  new MalformattedElementException("VSB without slice service category");
 			}
 		}
+		*/
 
 	}
 

@@ -81,13 +81,13 @@ public class Blueprint implements DescriptorInformationElement {
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    protected List<@Valid VsBlueprintParameter> parameters = new ArrayList<>();
+    protected List<VsBlueprintParameter> parameters = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy = "vsb", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(LazyCollectionOption.FALSE)
-    protected List<@Valid VsComponent> atomicComponents = new ArrayList<>();
+    protected List<VsComponent> atomicComponents = new ArrayList<>();
     
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
@@ -99,7 +99,7 @@ public class Blueprint implements DescriptorInformationElement {
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    protected List<@Valid VsbEndpoint> endPoints = new ArrayList<>();
+    protected List<VsbEndpoint> endPoints = new ArrayList<>();
     
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)

@@ -85,7 +85,7 @@ public class VsComponent implements DescriptorInformationElement {
 	/**
 	 * Constructor
 	 * 
-	 * @param blueprint this component belongs to
+	 * @param vsb this component belongs to
 	 * @param componentId ID of the atomic component
 	 * @param serversNumber number of application servers
 	 * @param imagesUrls URLs of the images of the application
