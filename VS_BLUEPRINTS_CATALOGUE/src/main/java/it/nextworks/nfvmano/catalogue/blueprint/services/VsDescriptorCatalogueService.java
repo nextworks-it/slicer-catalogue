@@ -100,7 +100,51 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		}
 		return vsdId;
 	}
-	
+
+
+	private String onboardNestedVsd(VsBlueprint vsb, VsDescriptor userInformation, String componentId, String tenant, boolean isPublic) throws MalformattedElementException, FailedOperationException, AlreadyExistingEntityException, MethodNotImplementedException {
+		log.debug("Onboarding nested VSD for component:"+ componentId);
+
+		for(VsComponent component: vsb.getAtomicComponents()){
+			if(componentId.equals(component.getComponentId())){
+				userInformation.setVsBlueprintId(component.getAssociatedVsbId());
+				OnboardVsDescriptorRequest tReq = new OnboardVsDescriptorRequest(userInformation, tenant, isPublic, null);
+				String localId = null;
+
+				if(component.getCompatibleSite()!=null) {
+					log.debug("Remote nested VSD onboard:" + tReq);
+					String remoteId= this.vsDescriptorCatalogueInteractionHandler.onBoardVsDescriptor(component.getCompatibleSite(), tReq);
+					List<ServiceConstraints> serviceConstraints = new ArrayList<>();
+					for(ServiceConstraints sc : userInformation.getServiceConstraints()){
+						serviceConstraints.add(new ServiceConstraints(null,
+								sc.isSharable(),
+								sc.isCanIncludeSharedElements(),
+								sc.getPriority(),
+								new ArrayList<String>(sc.getPreferredProviders()),
+								new ArrayList<String>(sc.getNonPreferredProviders()),
+								new ArrayList<String>(sc.getProhibitedProviders()),
+								sc.getAtomicComponentId()));
+					}
+
+					localId = storeVsd(userInformation, serviceConstraints );
+					userInformation.setTenantId(tenant);
+					VsDescriptor localVsd = vsDescriptorRepository.findByVsDescriptorId(localId).get();
+					localVsd.setDomainId(component.getCompatibleSite());
+					localVsd.setAssociatedVsdId(remoteId);
+					vsDescriptorRepository.saveAndFlush(localVsd);
+
+
+				}else{
+					localId=onBoardVsDescriptor(tReq);
+				}
+				return localId;
+			}
+		}
+
+		throw  new MalformattedElementException("Unknown componentId:"+componentId);
+	}
+
+
 	@Override
 	public QueryVsDescriptorResponse queryVsDescriptor(GeneralizedQueryRequest request) 
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
