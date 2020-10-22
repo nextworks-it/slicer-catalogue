@@ -42,11 +42,11 @@ public class VsBlueprint extends Blueprint {
 //	@JsonIgnore
 //	private Long id;
 //	
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @ElementCollection(fetch=FetchType.EAGER)
-    @Fetch(FetchMode.SELECT)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<EveSite> compatibleSites = new ArrayList<>();
+	//@JsonInclude(JsonInclude.Include.NON_EMPTY)
+    //@ElementCollection(fetch=FetchType.EAGER)
+    //@Fetch(FetchMode.SELECT)
+    //@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	//private List<EveSite> compatibleSites = new ArrayList<>();
 	
 	//@JsonInclude(JsonInclude.Include.NON_EMPTY)
     //@ElementCollection(fetch=FetchType.EAGER)
@@ -121,15 +121,16 @@ public class VsBlueprint extends Blueprint {
 			List<VsBlueprintParameter> parameters,
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters, 
-			List<EveSite> compatibleSites,
+			//List<EveSite> compatibleSites,
 			//List<String> compatibleContextBlueprint,
 			List<ApplicationMetric> applicationMetrics,
 					   SliceServiceType sliceServiceType,
 					   EMBBServiceCategory embbServiceCategory,
-					   URLLCServiceCategory urllcServiceCategory) {
+					   URLLCServiceCategory urllcServiceCategory,
+					   boolean interSite) {
 		super(vsBlueprinId, version, name, description, parameters, endPoints, 
-				configurableParameters, applicationMetrics);
-		if (compatibleSites != null) this.compatibleSites = compatibleSites;
+				configurableParameters, applicationMetrics, interSite);
+		//if (compatibleSites != null) this.compatibleSites = compatibleSites;
 		//if (compatibleContextBlueprint != null) this.compatibleContextBlueprint = compatibleContextBlueprint;
 		if (sliceServiceType!=null) this.sliceServiceType = sliceServiceType;
 		if (embbServiceCategory!=null) this.embbServiceCategory = embbServiceCategory;
@@ -249,13 +250,13 @@ public class VsBlueprint extends Blueprint {
 	}
 
 
-	
+	/*
 	/**
 	 * @return the compatibleSites
 	 */
-	public List<EveSite> getCompatibleSites() {
-		return compatibleSites;
-	}
+	//public List<EveSite> getCompatibleSites() {
+	//	return compatibleSites;
+	//}
 
 	/**
 	 * @return the compatibleContextBlueprint

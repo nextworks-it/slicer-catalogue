@@ -87,10 +87,29 @@ public class VsDescriptor implements DescriptorInformationElement {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	private SliceServiceParameters sliceServiceParameters;
-	
-	
+
+
+	//Used for the composite VSBs
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+
+	//key: vsb component id, value the id received when onboarding the vsd
+	private Map<String, String> nestedVsdIds = new HashMap<>();
+
+	//The id obtained from the driver of the remote site
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String associatedVsdId;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String domainId;
+
+
+
 	public VsDescriptor() {	}
-	
+
+
 	
 
 	/**
@@ -106,7 +125,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 */
 	public VsDescriptor(String name, String version, String vsBlueprintId,
 			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
-			boolean isPublic, String tenantId, SliceServiceParameters sliceServiceParameters) {
+			boolean isPublic, String tenantId, SliceServiceParameters sliceServiceParameters, Map<String, String> nestedVsdIds) {
 		this.name = name;
 		this.version = version;
 		this.vsBlueprintId = vsBlueprintId;
@@ -118,11 +137,35 @@ public class VsDescriptor implements DescriptorInformationElement {
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
 		this.sliceServiceParameters = sliceServiceParameters;
+		if(nestedVsdIds!=null) this.nestedVsdIds = nestedVsdIds;
 	}
 
+	public String getAssociatedVsdId() {
+		return associatedVsdId;
+	}
+
+	public void setAssociatedVsdId(String associatedVsdId) {
+		this.associatedVsdId = associatedVsdId;
+	}
+
+	public void setTenantId(String tenantId){
+		this.tenantId=tenantId;
+	}
+
+	public String getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
+	}
 
 	public SliceServiceParameters getSliceServiceParameters() {
 		return sliceServiceParameters;
+	}
+
+	public Map<String, String> getNestedVsdIds() {
+		return nestedVsdIds;
 	}
 
 	/**

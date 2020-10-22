@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResourceUsage;
+import it.nextworks.nfvmano.sebastian.admin.elements.VirtualResourceUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +38,14 @@ import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateInfoRepository;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
-import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
+import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,20 +56,17 @@ import java.util.*;
 @Service
 public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface {
 
-    private static final Logger log = LoggerFactory.getLogger(NsTemplateCatalogueService.class);
+	private static final Logger log = LoggerFactory.getLogger(NsTemplateCatalogueService.class);
 
-    @Autowired
-    private NfvoCatalogueService nfvoCatalogueService;
-    
-    
-    @Autowired
-    private NsTemplateInfoRepository nstInfoRepository;
-    
-    @Autowired
-    private NsTemplateRepository nstRepository;
+	@Autowired
+	private NfvoCatalogueService nfvoCatalogueService;
 
-	
-	
+	@Autowired
+	private NsTemplateInfoRepository nstInfoRepository;
+
+	@Autowired
+	private NsTemplateRepository nstRepository;
+
 	public NsTemplateCatalogueService() { }
 
 	public static Filter buildVnfPackageInfoFilter(String vnfProductName, String swVersion, String provider) {
@@ -169,8 +168,8 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		nstInfo.setNST(nst);
 		return nstInfo;
 	}
-	
-	
+
+
 	private NsTemplateInfo getNsTemplateInfo(String name, String version) throws NotExistingEntityException {
 		NsTemplateInfo nstInfo;
 		if(nstInfoRepository.findByNameAndNsTemplateVersion(name, version).isPresent()){
@@ -179,36 +178,36 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 		else {
 			throw new NotExistingEntityException("NsTemplate info for NsTemplate with name " + name + " and version "+ version +"not found in DB.");
 		}
-		
+
 		NST nst=getNsTemplate(name,version);
 		nstInfo.setNST(nst);
 		return nstInfo;
 	}
-	
+
 	private NST getNsTemplate(String nstID) throws NotExistingEntityException{
 		if (nstRepository.findByNstId(nstID).isPresent()) return nstRepository.findByNstId(nstID).get();
 		else throw new NotExistingEntityException("NsTemplate with ID " + nstID + " not found in DB.");
 	}
-	
+
 	private NST getNsTemplate(String name, String version) throws NotExistingEntityException{
 		if (nstRepository.findByNstNameAndNstVersion(name, version).isPresent()) return nstRepository.findByNstNameAndNstVersion(name, version).get();
 		else throw new NotExistingEntityException("NsTemplate with name " + name + " and version " + version + " not found in DB.");
 	}
-	
-    @Override
-    public QueryNsTemplateResponse queryNsTemplate(GeneralizedQueryRequest request) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
-    	log.debug("Processing request to query a NsTemplate");	
+
+	@Override
+	public QueryNsTemplateResponse queryNsTemplate(GeneralizedQueryRequest request) throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+		log.debug("Processing request to query a NsTemplate");
 		request.isValid();
-		
+
 		//At the moment the only filters accepted are:
 		//1. NS Template name and version
 		//NST_NAME & NST_VERSION
 		//2. NS Template ID
 		//NST_ID
-        //No attribute selector is supported at the moment
-		
+		//No attribute selector is supported at the moment
+
 		List<NsTemplateInfo> nstInfos = new ArrayList<>();
-		
+
 		Filter filter = request.getFilter();
 		
 		
@@ -267,19 +266,28 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
     }
     
 
-    private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException {
-    	String nstVersion =nst.getNstVersion();
-    	String nstTargetName =nst.getNstName();
-    	String nstTargetId = nst.getNstId();
-    	log.debug("Onboarding NsTemplate with name " + nstTargetName + " and version " + nstVersion);
- 
-    	if (nstRepository.findByNstNameAndNstVersion(nstTargetName, nstVersion).isPresent()) {
-    		String logErrorStr= "NsTemplate with name " + nstTargetName + " and version " + nstVersion + " already present in DB.";
+
+	private String storeNsTemplate(NST nst) throws AlreadyExistingEntityException {
+		String nstVersion =nst.getNstVersion();
+		String nstTargetName =nst.getNstName();
+		String nstTargetId = nst.getNstId();
+		log.debug("Onboarding NsTemplate with name " + nstTargetName + " and version " + nstVersion);
+
+		if (nstRepository.findByNstNameAndNstVersion(nstTargetName, nstVersion).isPresent()
+				|| nstRepository.findByNstId(nstTargetId).isPresent()) {
+			String logErrorStr= "NsTemplate with name " + nstTargetName + " and version " + nstVersion + " or ID already present in DB.";
 			log.error(logErrorStr);
 			throw new AlreadyExistingEntityException(logErrorStr);
 		}
-    	
-    	NST target = new NST(nstTargetId, nstTargetName, nstVersion, nst.getNstProvider(), nst.getNsstIds(), nst.getNsdId(), nst.getNsdVersion(), nst.getNstServiceProfile());
+
+		NST target = new NST(nstTargetId,
+				nstTargetName,
+				nstVersion,
+				nst.getNstProvider(),
+				nst.getNsstIds(),
+				nst.getNsdId(),
+				nst.getNsdVersion(),
+				nst.getNstServiceProfile());
 		nstRepository.saveAndFlush(target);
     	log.debug("Added NsTemplate with ID " + nstTargetId);
     	

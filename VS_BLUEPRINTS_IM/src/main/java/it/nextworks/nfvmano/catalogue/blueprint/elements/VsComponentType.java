@@ -1,6 +1,8 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 public enum VsComponentType {
-    VNF,
+    //VNF,
+    SERVICE,
+    FUNCTION,
     OTHER
 }

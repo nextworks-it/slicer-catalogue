@@ -1,18 +1,18 @@
 /*
-* Copyright 2018 Nextworks s.r.l.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2018 Nextworks s.r.l.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import java.util.ArrayList;
@@ -128,6 +128,11 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 
 	private void processNsDescriptorOnboarding(OnBoardVsBlueprintRequest request) throws MalformattedElementException, FailedOperationException, AlreadyExistingEntityException, MethodNotImplementedException {
 
+		if(request.getNsts()!=null && request.getNsts().isEmpty() && request.getNsds()!=null && request.getNsds().isEmpty()
+		&& request.getVnfPackages()!=null && request.getVnfPackages().isEmpty()){
+			log.debug("No descriptors to onboard, moving on");
+			return;
+		}
 
 		if(nsTemplateCatalogueService==null && request.getNsts()!=null && !request.getNsts().isEmpty()) {
 			throw new MalformattedElementException("Onboarding request including NS descriptors, but no NSTemplateCatalogueProvider set");
@@ -279,14 +284,15 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
-				vsBlueprint.getCompatibleSites(),
+				//vsBlueprint.getCompatibleSites(),
 				//vsBlueprint.getCompatibleContextBlueprint(),
 				vsBlueprint.getApplicationMetrics(),
 				vsBlueprint.getSliceServiceType(),
 				vsBlueprint.getEmbbServiceCategory(),
-				vsBlueprint.getUrllcServiceCategory());
+				vsBlueprint.getUrllcServiceCategory(),
+				vsBlueprint.isInterSite());
 		vsBlueprintRepository.saveAndFlush(target);
-		
+
 		Long vsbId = target.getId();
 		String vsbIdString = String.valueOf(vsbId);
 		target.setBlueprintId(vsbIdString);
@@ -303,7 +309,9 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 						c.getEndPointsIds(),
 						c.getLifecycleOperations(),
 						c.getType(),
-						c.getPlacement());
+						c.getPlacement(),
+						c.getAssociatedVsbId(),
+						c.getCompatibleSite());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);

@@ -119,6 +119,8 @@ public class Blueprint implements DescriptorInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	protected List<ApplicationMetric> applicationMetrics = new ArrayList<>();
 
+	private boolean interSite = false;
+
     public Blueprint() { }
 
     public Blueprint(String blueprintId,
@@ -128,11 +130,13 @@ public class Blueprint implements DescriptorInformationElement {
 			List<VsBlueprintParameter> parameters,
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters,
-			List<ApplicationMetric> applicationMetrics) {
+			List<ApplicationMetric> applicationMetrics,
+					 boolean interSite) {
     	this.blueprintId = blueprintId;
 		this.version = version;
 		this.name = name;
 		this.description = description;
+		this.interSite = interSite;
 		if (parameters != null) this.parameters = parameters;
 		if (endPoints != null) this.endPoints = endPoints;
 		if (configurableParameters != null) this.configurableParameters = configurableParameters;
@@ -141,7 +145,11 @@ public class Blueprint implements DescriptorInformationElement {
     
     
 
-    /**
+	public boolean isInterSite() {
+		return interSite;
+	}
+
+	/**
 	 * @return the id
 	 */
 	public Long getId() {

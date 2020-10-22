@@ -78,6 +78,12 @@ public class VsComponent implements DescriptorInformationElement {
 
 	private VsComponentType type;
 
+	//Reference to the blueprint in the case of type VS
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String associatedVsbId;
+
+	private String compatibleSite;
+
 	public VsComponent() {
 		// JPA only
 	}
@@ -90,7 +96,9 @@ public class VsComponent implements DescriptorInformationElement {
 	 * @param serversNumber number of application servers
 	 * @param imagesUrls URLs of the images of the application
 	 * @param endPointsIds IDs of the connection end points of the applications 
-	 * @param lifecycleOperations map with LCM operation as key and script to be executed as value 
+	 * @param lifecycleOperations map with LCM operation as key and script to be executed as value
+	 * @param vsComponentType the type of component (VS/VNF at the moment)
+	 *  @param placement high-level placement indications for the component, used for the VNFs for the moment
 	 */
 	public VsComponent(Blueprint vsb,
 			String componentId,
@@ -99,7 +107,9 @@ public class VsComponent implements DescriptorInformationElement {
 			List<String> endPointsIds,
 			Map<String, String> lifecycleOperations,
 					   VsComponentType vsComponentType,
-					   VsComponentPlacement placement) {
+					   VsComponentPlacement placement,
+					   String associatedVsbId,
+					   String compatibleSite) {
 		this.vsb = vsb;
 		this.componentId = componentId;
 		this.serversNumber = serversNumber;
@@ -108,15 +118,23 @@ public class VsComponent implements DescriptorInformationElement {
 		if (lifecycleOperations != null) this.lifecycleOperations = lifecycleOperations;
 		this.type = vsComponentType;
 		this.placement = placement;
+		this.associatedVsbId = associatedVsbId;
+		this.compatibleSite =compatibleSite;
 	}
-	
-	
+
+	public String getAssociatedVsbId() {
+		return associatedVsbId;
+	}
 
 	/**
 	 * @return the vsb
 	 */
 	public Blueprint getVsb() {
 		return vsb;
+	}
+
+	public String getCompatibleSite() {
+		return compatibleSite;
 	}
 
 	/**
@@ -157,6 +175,7 @@ public class VsComponent implements DescriptorInformationElement {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		if (componentId == null) throw new MalformattedElementException("VSB atomic component without ID.");
+		if (this.type==VsComponentType.SERVICE &&  associatedVsbId==null) throw new MalformattedElementException("Component of type service without associated VSB id");
 	}
 
 	public VsComponentPlacement getPlacement() {
