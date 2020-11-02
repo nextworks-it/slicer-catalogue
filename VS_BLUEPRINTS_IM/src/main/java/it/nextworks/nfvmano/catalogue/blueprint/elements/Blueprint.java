@@ -142,8 +142,6 @@ public class Blueprint implements DescriptorInformationElement {
 		if (configurableParameters != null) this.configurableParameters = configurableParameters;
 		if (applicationMetrics != null) this.applicationMetrics = applicationMetrics;
     }
-    
-    
 
 	public boolean isInterSite() {
 		return interSite;

@@ -36,8 +36,21 @@ public class OnboardVsDescriptorRequest implements InterfaceMessage {
 	private Map<String, VsDescriptor> nestedVsd = new HashMap<>();
 	
 	public OnboardVsDescriptorRequest() { }
-	
-	
+
+
+	/**
+	 * @param vsd
+	 * @param tenantId
+	 * @param isPublic
+	 *
+	 */
+	public OnboardVsDescriptorRequest(VsDescriptor vsd, String tenantId, boolean isPublic) {
+		this.vsd = vsd;
+		this.tenantId = tenantId;
+		this.isPublic = isPublic;
+
+	}
+
 
 	/**
 	 * @param vsd
