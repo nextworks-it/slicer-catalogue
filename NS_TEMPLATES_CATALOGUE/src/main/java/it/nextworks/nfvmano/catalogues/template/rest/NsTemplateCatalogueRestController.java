@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Api(tags = "Network Slice Template Management API")
-@ConditionalOnExpression("${slicer.nbi.nstcatalogue:true}")
+
 @RestController
 @CrossOrigin
 @RequestMapping("/ns/catalogue")
