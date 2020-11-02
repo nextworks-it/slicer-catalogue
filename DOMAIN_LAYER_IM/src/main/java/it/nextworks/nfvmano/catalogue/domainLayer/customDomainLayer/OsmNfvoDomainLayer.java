@@ -1,20 +1,23 @@
 package it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer;
 
-import it.nextworks.nfvmano.catalogue.domainLayer.DomainLayer;
-import it.nextworks.nfvmano.catalogue.domainLayer.DomainLayerType;
-import it.nextworks.nfvmano.catalogue.domainLayer.ManoNbiType;
-import it.nextworks.nfvmano.catalogue.domainLayer.NfvoDomainLayer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import it.nextworks.nfvmano.catalogue.domainLayer.*;
 
 import javax.persistence.Entity;
 
 @Entity
 public class OsmNfvoDomainLayer extends NfvoDomainLayer {
 
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("password")
     private String password;
+    @JsonProperty("project")
     private String project;
 
-    public OsmNfvoDomainLayer(){}
+    public OsmNfvoDomainLayer(){
+        super(ManoNbiType.OSM_DRIVER);
+    }
 
     public OsmNfvoDomainLayer(String domainLayerId, String username, String password, String project) {
         super(domainLayerId, ManoNbiType.OSM_DRIVER);
@@ -33,5 +36,17 @@ public class OsmNfvoDomainLayer extends NfvoDomainLayer {
 
     public String getProject() {
         return project;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
     }
 }

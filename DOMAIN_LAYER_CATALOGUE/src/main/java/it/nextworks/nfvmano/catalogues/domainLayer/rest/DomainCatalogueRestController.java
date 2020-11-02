@@ -17,15 +17,18 @@ package it.nextworks.nfvmano.catalogues.domainLayer.rest;
 
 import io.swagger.annotations.Api;
 import it.nextworks.nfvmano.catalogue.domainLayer.Domain;
+import it.nextworks.nfvmano.catalogue.domainLayer.DomainCatalogueSubscription;
+import it.nextworks.nfvmano.catalogue.domainLayer.DomainCatalogueSubscriptionRequest;
 import it.nextworks.nfvmano.catalogues.domainLayer.services.DomainCatalogueService;
+import it.nextworks.nfvmano.catalogues.domainLayer.services.DomainCatalogueSubscriptionService;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,7 +39,6 @@ import java.util.List;
 
 @Api(tags = "Domain management API")
 @RestController
-@ConditionalOnExpression("${slicer.nbi.domainLayer:false}")
 @CrossOrigin
 @RequestMapping("/domainLayer/catalogue")
 public class DomainCatalogueRestController {
@@ -45,6 +47,9 @@ public class DomainCatalogueRestController {
 
     @Autowired
     private DomainCatalogueService domainCatalogueService;
+
+    @Autowired
+    private DomainCatalogueSubscriptionService  subscriptionService;
 
     @Value("${catalogue.admin}")
     private String adminTenant;
@@ -125,6 +130,47 @@ public class DomainCatalogueRestController {
         } catch (Exception e) {
             log.error("Internal exception");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/subscriptions", method = RequestMethod.GET)
+    public ResponseEntity<?> subscriptionsGet() {
+        log.debug("Received request to retrieve all subscriptions");
+        return new ResponseEntity<List<DomainCatalogueSubscription>>(subscriptionService.getDomainCatalogueSubscriptions(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/subscriptions", method = RequestMethod.POST)
+    public ResponseEntity<?> subscriptionsPost(@RequestBody DomainCatalogueSubscriptionRequest body) {
+        log.debug("Received subscription request");
+        try {
+            String subscriptionId = subscriptionService.subscribe(body);
+            return new ResponseEntity<String>(subscriptionId, HttpStatus.CREATED);
+        } catch (FailedOperationException e) {
+            log.error("Malformatted request");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/subscriptions/{subscriptionId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> subscriptionDelete(@PathVariable("subscriptionId") String subscriptionId) {
+        log.debug("Received request to delete subscription with Id {}", subscriptionId);
+        try {
+            subscriptionService.unsubscribe(subscriptionId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotExistingEntityException e) {
+            log.error("Subscription not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/subscriptions/{subscriptionId}", method = RequestMethod.GET)
+    public ResponseEntity<?> subscriptionGet(@PathVariable("subscriptionId") String subscriptionId) {
+        log.debug("Received request to retrieve subscription with Id {}", subscriptionId);
+        try {
+            return new ResponseEntity<DomainCatalogueSubscription>(subscriptionService.getDomainCatalogueSubscription(subscriptionId), HttpStatus.OK);
+        } catch (NotExistingEntityException e) {
+            log.error("Subscription not found");
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 }
