@@ -126,32 +126,53 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
         }
         
         //onboard experiment descriptor
-        ExpDescriptor expDescriptor = new ExpDescriptor(request.getName(), 
-        		request.getVersion(),
-        		request.getExperimentBlueprintId(),
-        		request.isPublic(),
-        		request.getTenantId(),
-        		vsdId,
-        		ctxDIds,
-        		tcDIds,
-    			request.getKpiThresholds());
-        
-        expDescriptorRepository.saveAndFlush(expDescriptor);
-        String idStr = String.valueOf(expDescriptor.getId());
-        expDescriptor.setExpDescriptorId(idStr);
-        expDescriptorRepository.saveAndFlush(expDescriptor);
-		log.debug("Added Experiment Descriptor with ID " + idStr);
-		
-		try {
-			expBlueprintCatalogueService.addExpdInBlueprint(request.getExperimentBlueprintId(), idStr);
-		} catch (NotExistingEntityException e) {
-			throw new FailedOperationException(e.getMessage());
-		}
+		//onboard experiment descriptor
+		String idStr=null;
+		try{
+			ExpDescriptor expDescriptor = new ExpDescriptor(request.getName(),
+					request.getVersion(),
+					request.getExperimentBlueprintId(),
+					request.isPublic(),
+					request.getTenantId(),
+					vsdId,
+					ctxDIds,
+					tcDIds,
+					request.getKpiThresholds());
 
-		log.debug("Storing ExpD associated information element");
-		ExpDescriptorInfo expdInfo = new ExpDescriptorInfo(idStr, expDescriptor.getName(), expDescriptor.getVersion());
-		expDescriptorInfoRepository.saveAndFlush(expdInfo);
-    	return idStr;
+			expDescriptorRepository.saveAndFlush(expDescriptor);
+			idStr = String.valueOf(expDescriptor.getId());
+			expDescriptor.setExpDescriptorId(idStr);
+			expDescriptorRepository.saveAndFlush(expDescriptor);
+			log.debug("Added Experiment Descriptor with ID " + idStr);
+
+			try {
+				expBlueprintCatalogueService.addExpdInBlueprint(request.getExperimentBlueprintId(), idStr);
+			} catch (NotExistingEntityException e) {
+				throw new FailedOperationException(e.getMessage());
+			}
+
+			log.debug("Storing ExpD associated information element");
+			ExpDescriptorInfo expdInfo = new ExpDescriptorInfo(idStr, expDescriptor.getName(), expDescriptor.getVersion());
+			expDescriptorInfoRepository.saveAndFlush(expdInfo);
+			return idStr;
+		}catch (Exception e){
+			log.error("Error creating EXPD:",e);
+			vsDescriptorCatalogueService.deleteVsDescriptor(vsdId, request.getTenantId());
+			log.debug("Removing CTXDs");
+
+			for (String ctxDescriptorId : ctxDIds) {
+				ctxDescriptorCatalogueService.deleteCtxDescriptor(ctxDescriptorId, request.getTenantId());
+			}
+			log.debug("Removing TCDs");
+
+			for (String tcdId : tcDIds) {
+				tcDescriptorCatalogueService.deleteTestCaseDescriptor(tcdId, request.getTenantId());
+			}
+			String expbId = request.getExperimentBlueprintId();
+			if(idStr!=null)
+				expBlueprintCatalogueService.removeExpdInBlueprint(expbId, idStr);
+			throw  new FailedOperationException(e.getMessage());
+		}
     }
 
     private void verifyKpiThresholds(OnboardExpDescriptorRequest request) throws MalformattedElementException {
@@ -164,8 +185,10 @@ public class ExpDescriptorCatalogueService implements ExpDescriptorCatalogueInte
                         .map(expbK -> expbK.getKpiId())
                         .collect(Collectors.toList());
                 for(String kpiId : request.getKpiThresholds().keySet()){
-                    if(!expbKpis.contains(kpiId))
-                        throw new MalformattedElementException("KPI " +kpiId+" not defined for the experiment");
+                    if(!expbKpis.contains(kpiId)) {
+						log.error("KPI " + kpiId + " not defined for the experiment");
+						throw new MalformattedElementException("KPI " + kpiId + " not defined for the experiment");
+					}
                 }
             }else throw new MalformattedElementException("KPI threshold for experiment without KPIs");
 
