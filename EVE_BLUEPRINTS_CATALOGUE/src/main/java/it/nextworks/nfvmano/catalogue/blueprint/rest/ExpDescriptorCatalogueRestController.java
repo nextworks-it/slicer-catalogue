@@ -102,7 +102,7 @@ public class ExpDescriptorCatalogueRestController {
 			String expDescriptorId = expDescriptorCatalogueService.onboardExpDescriptor(request);
 			return new ResponseEntity<String>(expDescriptorId, HttpStatus.CREATED);
 		} catch (MalformattedElementException e) {
-			log.error("Malformatted request");
+			log.error("Malformatted request"+e.getMessage(), e );
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (AlreadyExistingEntityException e) {
 			log.error("EXP Descriptor already existing");
