@@ -18,11 +18,7 @@ package it.nextworks.nfvmano.catalogue.blueprint.elements;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -53,6 +49,7 @@ public class TestCaseDescriptor implements DescriptorInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@Column(length = 600)
 	private Map<String, String> userParameters = new HashMap<String, String>();
 	
 	@JsonIgnore
