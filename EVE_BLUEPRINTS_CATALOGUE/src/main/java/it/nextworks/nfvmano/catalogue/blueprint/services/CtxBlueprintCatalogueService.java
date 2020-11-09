@@ -255,7 +255,8 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
 				List<EveSite> sites = request.getCtxBlueprint().getCompatibleSites();
 				for (EveSite site : sites) {
 					userDefinedData.put(site.toString(), "yes");
-					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS){
+					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS||site==EveSite.FRANCE_SACLAY
+							||site==EveSite.FRANCE_CHATILLON||site==EveSite.FRANCE_SOPHIA_ANTIPOLIS){
 						log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
 						userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
 
