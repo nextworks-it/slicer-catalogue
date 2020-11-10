@@ -87,7 +87,8 @@ public class NfvNsInstantiationInfo {
 			String nsdVersion,
 			String deploymentFlavourId,
 			String instantiationLevelId,
-			List<String> domainIds, Map<String, String> nsstDomain,
+			List<String> domainIds,
+								  Map<String, String> nsstDomain,
 			SliceServiceParameters sliceServiceParameters) {
 		this.nstId=nstId;
 		this.nfvNsdId = nfvNsdId;

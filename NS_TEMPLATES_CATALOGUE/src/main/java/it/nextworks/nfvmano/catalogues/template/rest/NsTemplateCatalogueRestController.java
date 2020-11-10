@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
-import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResourceUsage;
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.TemplateCatalogueUtilities;
 import it.nextworks.nfvmano.catalogues.template.services.NsTemplateCatalogueService;
@@ -30,12 +29,10 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityExce
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
-import it.nextworks.nfvmano.sebastian.admin.elements.VirtualResourceUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -123,30 +120,6 @@ public class NsTemplateCatalogueRestController {
         } catch (NotExistingEntityException e) {
             log.error("NS Template not found");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            log.error("Internal exception");
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @ApiOperation(value = "Get the virtual resource usage of one Network Slice template")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "The resource usage", response = VirtualResourceUsage.class),
-            //@ApiResponse(code = 400, message = "The request contains elements impossible to process", response = ResponseEntity.class),
-            //@ApiResponse(code = 409, message = "There is a conflict with the request", response = ResponseEntity.class),
-            //@ApiResponse(code = 500, message = "Status 500", response = ResponseEntity.class)
-
-    })
-    @ResponseStatus(HttpStatus.OK)
-
-    @RequestMapping(value = "/nstemplate/queryResourceUsage", method = RequestMethod.GET)
-    public ResponseEntity<?> queryResourceUsage(@RequestBody QueryNsTemplateResourceUsage request){
-        log.debug("Received query for NST resource usage " + request.getNstId());
-        try {
-            VirtualResourceUsage response = nsTemplateCatalogueService.queryResourceUsage(request);
-            return new ResponseEntity<VirtualResourceUsage>(response, HttpStatus.OK);
-
         } catch (Exception e) {
             log.error("Internal exception");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

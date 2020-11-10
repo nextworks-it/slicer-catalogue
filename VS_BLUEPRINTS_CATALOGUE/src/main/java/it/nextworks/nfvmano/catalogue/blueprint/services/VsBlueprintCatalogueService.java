@@ -329,7 +329,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsbLink> connectivityServices = vsBlueprint.getConnectivityServices();
 		if (connectivityServices != null) {
 			for (VsbLink l : connectivityServices) {
-				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(), l.getConnectivityProperties());
+				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(),l.getName(), l.getConnectivityProperties());
 				vsbLinkRepository.saveAndFlush(targetLink);
 			}
 			log.debug("Added connectivity services in VS blueprint " + vsbIdString);

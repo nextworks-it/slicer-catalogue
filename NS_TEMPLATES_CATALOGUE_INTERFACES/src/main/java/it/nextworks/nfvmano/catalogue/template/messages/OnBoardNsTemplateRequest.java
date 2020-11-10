@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package it.nextworks.nfvmano.catalogue.template.messages;
 
 import java.util.ArrayList;

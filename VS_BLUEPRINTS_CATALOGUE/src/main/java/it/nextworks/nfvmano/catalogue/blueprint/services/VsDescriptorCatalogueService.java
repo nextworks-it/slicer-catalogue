@@ -58,8 +58,8 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 	private VsBlueprintCatalogueService vsBlueprintCatalogueService;
 
 
-	@Autowired
-	private VsDescriptorCatalogueInteractionHandler vsDescriptorCatalogueInteractionHandler;
+	//@Autowired
+	//private VsDescriptorCatalogueInteractionHandler vsDescriptorCatalogueInteractionHandler;
 	
 	@Value("${catalogue.admin}")
 	private String adminTenant;

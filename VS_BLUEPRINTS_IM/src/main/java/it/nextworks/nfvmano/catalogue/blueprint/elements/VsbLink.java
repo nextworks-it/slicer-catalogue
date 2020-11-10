@@ -55,6 +55,9 @@ public class VsbLink implements DescriptorInformationElement {
 	private List<String> endPointIds = new ArrayList<>();
 	
 	private boolean external;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String name;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -77,10 +80,12 @@ public class VsbLink implements DescriptorInformationElement {
 	public VsbLink(Blueprint vsb,
                    List<String> endPointIds,
                    boolean external,
+                   String name,
                    List<String> connectivityProperties) {
 		this.vsb = vsb;
 		if (endPointIds != null) this.endPointIds = endPointIds;
 		this.external = external;
+		if (name != null) this.name = name;
 		if (connectivityProperties != null) this.connectivityProperties = connectivityProperties;
 	}
 	
@@ -105,6 +110,10 @@ public class VsbLink implements DescriptorInformationElement {
 	 */
 	public boolean isExternal() {
 		return external;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	/**
