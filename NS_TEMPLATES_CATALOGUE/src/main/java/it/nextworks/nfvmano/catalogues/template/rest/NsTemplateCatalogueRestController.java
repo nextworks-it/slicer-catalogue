@@ -15,6 +15,10 @@
 
 package it.nextworks.nfvmano.catalogues.template.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
@@ -36,6 +40,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+@Api(tags = "Network Slice Template Management API")
 
 @RestController
 @CrossOrigin

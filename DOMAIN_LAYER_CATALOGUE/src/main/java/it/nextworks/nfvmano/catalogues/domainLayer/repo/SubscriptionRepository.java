@@ -13,12 +13,15 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package it.nextworks.nfvmano.catalogue.translator;
+package it.nextworks.nfvmano.catalogues.domainLayer.repo;
 
-public enum TranslatorType {
-	
-	BASIC_TRANSLATOR,
-	MULTI_DOMAIN_TRANSLATOR,
-	GROWTH_ALB_TRANSLATOR
+import it.nextworks.nfvmano.catalogue.domainLayer.DomainCatalogueSubscription;
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
+public interface SubscriptionRepository extends JpaRepository<DomainCatalogueSubscription, Long> {
+
+	Optional<DomainCatalogueSubscription> findBySubscriptionId(String subscriptionId);
 }

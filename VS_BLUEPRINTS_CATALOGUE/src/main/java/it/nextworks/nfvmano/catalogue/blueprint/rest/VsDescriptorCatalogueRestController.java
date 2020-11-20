@@ -105,7 +105,7 @@ public class VsDescriptorCatalogueRestController {
 			log.error("VS Blueprint already existing");
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
-			log.error("Internal exception");
+			log.error("Internal exception", e);
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

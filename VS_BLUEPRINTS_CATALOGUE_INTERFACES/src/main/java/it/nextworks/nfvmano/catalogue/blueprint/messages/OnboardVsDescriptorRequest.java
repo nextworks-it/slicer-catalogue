@@ -15,32 +15,59 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.messages;
 
+
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OnboardVsDescriptorRequest implements InterfaceMessage {
 
 	private VsDescriptor vsd;
 	private String tenantId;
 	private boolean isPublic;
+
+
+	//the key is the component id
+	private Map<String, VsDescriptor> nestedVsd = new HashMap<>();
 	
 	public OnboardVsDescriptorRequest() { }
-	
-	
+
 
 	/**
 	 * @param vsd
 	 * @param tenantId
 	 * @param isPublic
+	 *
 	 */
 	public OnboardVsDescriptorRequest(VsDescriptor vsd, String tenantId, boolean isPublic) {
 		this.vsd = vsd;
 		this.tenantId = tenantId;
 		this.isPublic = isPublic;
+
 	}
 
 
+	/**
+	 * @param vsd
+	 * @param tenantId
+	 * @param isPublic
+	 * @param nestedVsd Containing a Map of parameters to create the nested VSDs
+	 */
+	public OnboardVsDescriptorRequest(VsDescriptor vsd, String tenantId, boolean isPublic, Map<String,VsDescriptor> nestedVsd) {
+		this.vsd = vsd;
+		this.tenantId = tenantId;
+		this.isPublic = isPublic;
+		if(nestedVsd!=null) this.nestedVsd = nestedVsd;
+	}
+
+	public Map<String, VsDescriptor> getNestedVsd() {
+		return nestedVsd;
+	}
 
 	/**
 	 * @return the vsd

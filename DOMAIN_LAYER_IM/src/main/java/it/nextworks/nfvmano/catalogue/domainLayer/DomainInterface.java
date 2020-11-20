@@ -1,5 +1,7 @@
 package it.nextworks.nfvmano.catalogue.domainLayer;
 
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
@@ -48,6 +50,16 @@ public class DomainInterface {
 
     public void setInterfaceType(InterfaceType interfaceType) {
         this.interfaceType = interfaceType;
+    }
+
+    public void isValid() throws MalformattedElementException {
+        if (this.url == null) {
+            throw new MalformattedElementException("Domain interface url not set");
+        } else if (this.port == 0) {
+            throw new MalformattedElementException("Domain interface port not set");
+        } else if (this.interfaceType == null) {
+            throw new MalformattedElementException("Domain interface type not set");
+        }
     }
 
 }

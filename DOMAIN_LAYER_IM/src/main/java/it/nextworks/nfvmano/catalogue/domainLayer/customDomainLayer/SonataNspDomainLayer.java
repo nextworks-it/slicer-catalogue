@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.nextworks.nfvmano.catalogue.domainLayer.DomainLayer;
 import it.nextworks.nfvmano.catalogue.domainLayer.DomainLayerType;
 import it.nextworks.nfvmano.catalogue.domainLayer.NspDomainLayer;
@@ -10,10 +11,14 @@ import javax.persistence.Entity;
 @Entity
 public class SonataNspDomainLayer extends NspDomainLayer {
 
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("password")
     private String password;
 
-    public SonataNspDomainLayer(){}
+    public SonataNspDomainLayer(){
+        super(NspNbiType.SONATA);
+    }
 
     public SonataNspDomainLayer(String domainLayerId, String username, String password) {
         super(domainLayerId, NspNbiType.SONATA, false);
@@ -27,5 +32,13 @@ public class SonataNspDomainLayer extends NspDomainLayer {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

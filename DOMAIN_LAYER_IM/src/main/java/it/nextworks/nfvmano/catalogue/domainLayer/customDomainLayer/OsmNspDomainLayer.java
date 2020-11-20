@@ -1,12 +1,14 @@
 package it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.nextworks.nfvmano.catalogue.domainLayer.*;
+import it.nextworks.nfvmano.catalogue.domainLayer.ManoNbiType;
+import it.nextworks.nfvmano.catalogue.domainLayer.NspDomainLayer;
+import it.nextworks.nfvmano.catalogue.domainLayer.NspNbiType;
 
 import javax.persistence.Entity;
 
 @Entity
-public class OsmNfvoDomainLayer extends NfvoDomainLayer {
+public class OsmNspDomainLayer extends NspDomainLayer {
 
     @JsonProperty("username")
     private String username;
@@ -14,16 +16,19 @@ public class OsmNfvoDomainLayer extends NfvoDomainLayer {
     private String password;
     @JsonProperty("project")
     private String project;
+    @JsonProperty("vimAccount")
+    private String vimAccount;
 
-    public OsmNfvoDomainLayer(){
-        super(ManoNbiType.OSM_DRIVER);
+    public OsmNspDomainLayer(){
+        super(NspNbiType.OSM);
     }
 
-    public OsmNfvoDomainLayer(String domainLayerId, String username, String password, String project) {
-        super(domainLayerId, ManoNbiType.OSM_DRIVER);
+    public OsmNspDomainLayer(String domainLayerId, String username, String password, String project, String vimAccount) {
+        super(domainLayerId, NspNbiType.OSM, false);
         this.username = username;
         this.password = password;
         this.project = project;
+        this.vimAccount = vimAccount;
     }
 
     public String getUsername() {
@@ -38,6 +43,10 @@ public class OsmNfvoDomainLayer extends NfvoDomainLayer {
         return project;
     }
 
+    public String getVimAccount() {
+        return vimAccount;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -48,5 +57,9 @@ public class OsmNfvoDomainLayer extends NfvoDomainLayer {
 
     public void setProject(String project) {
         this.project = project;
+    }
+
+    public void setVimAccount(String vimAccount) {
+        this.vimAccount = vimAccount;
     }
 }

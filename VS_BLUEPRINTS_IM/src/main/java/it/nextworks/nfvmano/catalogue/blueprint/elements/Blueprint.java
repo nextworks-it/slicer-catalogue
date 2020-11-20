@@ -81,13 +81,13 @@ public class Blueprint implements DescriptorInformationElement {
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    protected List<@Valid VsBlueprintParameter> parameters = new ArrayList<>();
+    protected List<VsBlueprintParameter> parameters = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy = "vsb", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @LazyCollection(LazyCollectionOption.FALSE)
-    protected List<@Valid VsComponent> atomicComponents = new ArrayList<>();
+    protected List<VsComponent> atomicComponents = new ArrayList<>();
     
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
@@ -99,7 +99,7 @@ public class Blueprint implements DescriptorInformationElement {
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    protected List<@Valid VsbEndpoint> endPoints = new ArrayList<>();
+    protected List<VsbEndpoint> endPoints = new ArrayList<>();
     
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "vsb", cascade=CascadeType.ALL)
@@ -119,6 +119,8 @@ public class Blueprint implements DescriptorInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	protected List<ApplicationMetric> applicationMetrics = new ArrayList<>();
 
+	private boolean interSite = false;
+
     public Blueprint() { }
 
     public Blueprint(String blueprintId,
@@ -128,20 +130,24 @@ public class Blueprint implements DescriptorInformationElement {
 			List<VsBlueprintParameter> parameters,
 			List<VsbEndpoint> endPoints,
 			List<String> configurableParameters,
-			List<ApplicationMetric> applicationMetrics) {
+			List<ApplicationMetric> applicationMetrics,
+					 boolean interSite) {
     	this.blueprintId = blueprintId;
 		this.version = version;
 		this.name = name;
 		this.description = description;
+		this.interSite = interSite;
 		if (parameters != null) this.parameters = parameters;
 		if (endPoints != null) this.endPoints = endPoints;
 		if (configurableParameters != null) this.configurableParameters = configurableParameters;
 		if (applicationMetrics != null) this.applicationMetrics = applicationMetrics;
     }
-    
-    
 
-    /**
+	public boolean isInterSite() {
+		return interSite;
+	}
+
+	/**
 	 * @return the id
 	 */
 	public Long getId() {

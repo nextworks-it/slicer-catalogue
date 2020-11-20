@@ -17,9 +17,12 @@ package it.nextworks.nfvmano.catalogues.domainLayer.services;
 
 
 import it.nextworks.nfvmano.catalogue.domainLayer.Domain;
+import it.nextworks.nfvmano.catalogue.domainLayer.DomainCatalogueSubscriptionNotification;
+import it.nextworks.nfvmano.catalogue.domainLayer.NotificationType;
 import it.nextworks.nfvmano.catalogue.domainLayer.interfaces.DomainCatalogueInterface;
 import it.nextworks.nfvmano.catalogues.domainLayer.repo.DomainRepository;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.AlreadyExistingEntityException;
+import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import org.slf4j.Logger;
@@ -38,7 +41,9 @@ public class DomainCatalogueService implements DomainCatalogueInterface {
     @Autowired
     private DomainRepository domainRepository;
 
-    
+    @Autowired
+	private DomainCatalogueSubscriptionService subscriptionService;
+
     public DomainCatalogueService() { }
 
 
@@ -59,6 +64,9 @@ public class DomainCatalogueService implements DomainCatalogueInterface {
 		log.info("Received request to delete a domain from DB");
 		if(domainRepository.findByDomainId(domainId).isPresent()){
 			domainRepository.delete(domainRepository.findByDomainId(domainId).get());
+			//Notifying domain removal
+			DomainCatalogueSubscriptionNotification notification = new DomainCatalogueSubscriptionNotification(NotificationType.DOMAIN_REMOVAL, new Domain(domainId));
+			subscriptionService.notify(notification);
 		}
 		else {
 			throw new NotExistingEntityException("Domain layer with ID " + domainId + " not found in DB.");
@@ -78,8 +86,9 @@ public class DomainCatalogueService implements DomainCatalogueInterface {
 		}
 
 		Domain domainTarget = domainRepository.saveAndFlush(domain);
-		domainTarget.setDomainId(String.valueOf(domainTarget.getId()));
-		domainRepository.saveAndFlush(domainTarget);
+		//Notifying domain on-boarding
+		DomainCatalogueSubscriptionNotification notification = new DomainCatalogueSubscriptionNotification(NotificationType.DOMAIN_ONBOARDING, domainTarget);
+		subscriptionService.notify(notification);
 		return domainTarget.getId();
 	}
 }

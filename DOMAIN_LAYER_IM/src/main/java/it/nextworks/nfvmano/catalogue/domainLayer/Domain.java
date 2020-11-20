@@ -1,6 +1,7 @@
 package it.nextworks.nfvmano.catalogue.domainLayer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
 import javax.persistence.*;
@@ -18,19 +19,25 @@ public class Domain {
     @JsonIgnore
     private Long id;
     @Column(unique=true)
+    @JsonProperty("domainId")
     private String domainId;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("description")
     private String description;
+    @JsonProperty("owner")
     private String owner;
+    @JsonProperty("admin")
     private String admin;
-
+    @JsonProperty("domainStatus")
     private DomainStatus domainStatus;
 
-
     @Embedded
+    @JsonProperty("domainInterface")
     private DomainInterface domainInterface;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JsonProperty("ownedLayers")
     private List <DomainLayer> ownedLayers=new ArrayList<>();
 
     //Key: id of domain having an agreement with, value: external domain layers id list the agreement is established with.
@@ -38,6 +45,7 @@ public class Domain {
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JsonProperty("domainsAgreement")
     private Set<DomainAgreement> domainsAgreement=new HashSet<DomainAgreement>();
 
     public Domain(){}
@@ -81,15 +89,22 @@ public class Domain {
     public void isValid() throws MalformattedElementException {
         if (this.domainId == null) {
             throw new MalformattedElementException("Domain Id name not set");
-        }else if (this.name == null) {
+        } else if (this.name == null) {
             throw new MalformattedElementException("Domain name not set");
-        }else if (this.owner == null) {
+        } else if (this.owner == null) {
             throw new MalformattedElementException("Domain owner not set");
         } else if (this.admin == null) {
             throw new MalformattedElementException("Domain admin not set");
-        } else if (this.domainStatus == null)
+        } else if (this.domainStatus == null) {
             throw new MalformattedElementException("Domain status not set");
+        } else if (this.domainInterface == null){
+            throw new MalformattedElementException("Domain interface not set");
+        }
+        this.domainInterface.isValid();
+        for(DomainLayer layer : this.ownedLayers)
+            layer.isValid();
     }
+
     public String getName() {
         return name;
     }

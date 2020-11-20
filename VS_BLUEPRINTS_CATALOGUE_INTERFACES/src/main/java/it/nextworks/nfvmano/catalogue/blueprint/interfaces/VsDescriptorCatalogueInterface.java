@@ -38,6 +38,9 @@ public interface VsDescriptorCatalogueInterface {
 	 */
 	public String onBoardVsDescriptor(OnboardVsDescriptorRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException;
+
+
+
 	
 	/**
 	 * Method to request info about an existing VSD

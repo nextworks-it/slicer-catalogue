@@ -1,18 +1,18 @@
 /*
-* Copyright 2018 Nextworks s.r.l.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2018 Nextworks s.r.l.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.Map;
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsBlueprintCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsBlueprintRepository;
+import it.nextworks.nfvmano.catalogue.template.interfaces.NsTemplateCatalogueInterface;
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.services.NsTemplateCatalogueService;
@@ -59,6 +60,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.repo.VsbLinkRepository;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
 
 
+
 @Service
 public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterface {
 
@@ -82,12 +84,10 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	@Autowired
 	private TranslationRuleRepository translationRuleRepository;
 
-	@Autowired
-	private NsTemplateCatalogueService nsTemplateCatalogueService;
-	
-	@Autowired
-	private NfvoCatalogueService nfvoCatalogueService;
-	
+
+	private NsTemplateCatalogueInterface nsTemplateCatalogueService;
+
+
 	@Autowired
 	private VsDescriptorCatalogueService vsDescriptorCatalogueService;
 	
@@ -98,8 +98,12 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Processing request to onboard a new VS blueprint");
 		request.isValid();
+
+
+		this.processNsDescriptorOnboarding(request);
+
 		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner());
-		
+
 		VsBlueprintInfo vsBlueprintInfo;
 		try {
 			vsBlueprintInfo = getVsBlueprintInfo(vsbId);
@@ -107,91 +111,50 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			log.error("Impossible to retrieve vsBlueprintInfo. Error!");
 			throw new FailedOperationException("Internal error: impossible to retrieve vsBlueprintInfo.");
 		}
-		
+
 		request.setBlueprintIdInTranslationRules(vsbId);
-		
-		log.debug("Processing NFV descriptors");
-		try {
-			log.debug("Storing VNF packages");
-			List<OnBoardVnfPackageRequest> vnfPackages = request.getVnfPackages();
-			for (OnBoardVnfPackageRequest vnfR : vnfPackages) {
-				try {
-					OnBoardVnfPackageResponse vnfReply = nfvoCatalogueService.onBoardVnfPackage(vnfR);
-					String vnfPackageId = vnfReply.getOnboardedVnfPkgInfoId();
-					log.debug("Added VNF package for VNF " + vnfR.getName() +
-							", version " + vnfR.getVersion() + ", provider " + vnfR.getProvider() + " in NFVO catalogue. VNF package ID: " + vnfPackageId);
-					vsBlueprintInfo.addVnfPackageInfoId(vnfPackageId);
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The VNF package is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryOnBoardedVnfPkgInfoResponse r =
-							nfvoCatalogueService.queryVnfPackageInfo(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVnfPackageInfoFilter(vnfR.getName(), vnfR.getVersion(), vnfR.getProvider()), null));
-					String oldVnfPackageId = r.getQueryResult().get(0).getOnboardedVnfPkgInfoId();
-					log.debug("Retrieved VNF package ID: " + oldVnfPackageId);
-					vsBlueprintInfo.addVnfPackageInfoId(oldVnfPackageId);
-				}
-			}
-			log.debug("Storing NSDs");
-			List<Nsd> nsds = request.getNsds();
-			for (Nsd nsd : nsds) {
-				try {
-					Map<String, String> userDefinedData = new HashMap<>();
-					String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-					log.debug("Added NSD " + nsd.getNsdIdentifier() + 
-							", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(nsdInfoId);
-					request.setNsdInfoIdInTranslationRules(nsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				} catch (AlreadyExistingEntityException e) {
-					log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-					QueryNsdResponse nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-					String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-					log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-					vsBlueprintInfo.addNsdInfoId(oldNsdInfoId);
-					request.setNsdInfoIdInTranslationRules(oldNsdInfoId, nsd.getNsdIdentifier(), nsd.getVersion());
-				}
-			}
-
-			List<NST> nsts = request.getNsts();
-			if(nsts!=null && !nsts.isEmpty()){
-				log.debug("Onboarding NSTS");
-				for(NST currentNst : nsts){
-					try{
-						String nstInfoId = nsTemplateCatalogueService.onBoardNsTemplate(new OnBoardNsTemplateRequest(currentNst));
-						vsBlueprintInfo.addNstInfoId(nstInfoId);
-						//request.setNstInfoInTranslationRules(nstInfoId, currentNst.);
-					}catch(AlreadyExistingEntityException e)
-					{
-						QueryNsTemplateResponse nstR =
-								nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildNstInfoFilter(currentNst.getNstId(), currentNst.getNstVersion()), null));
-
-
-						vsBlueprintInfo.addNstInfoId(nstR.getNsTemplateInfos().get(0).getNstInfoId());
-						//request.setNstInfoInTranslationRules(nstInfoId, currentNst.);
-					}
-				}
-			}
-			vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
-			
-			log.debug("Storing translation rules");
-			List<VsdNsdTranslationRule> trs = request.getTranslationRules();
-			for (VsdNsdTranslationRule tr : trs) {
-				translationRuleRepository.saveAndFlush(tr);
-			}
-			log.debug("Translation rules saved in internal DB.");
-			
-			return vsbId;
-			
-		} catch (Exception e) {
-			log.error("Something went wrong when processing SO descriptors.");
-			throw new FailedOperationException("Internal error: something went wrong when processing SO descriptors.");
+		vsBlueprintInfoRepository.saveAndFlush(vsBlueprintInfo);
+		log.debug("Storing translation rules");
+		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
+		for (VsdNsdTranslationRule tr : trs) {
+			translationRuleRepository.saveAndFlush(tr);
 		}
+		log.debug("Translation rules saved in internal DB.");
+
+		return vsbId;
+
+
 	}
-	
+
+	private void processNsDescriptorOnboarding(OnBoardVsBlueprintRequest request) throws MalformattedElementException, FailedOperationException, AlreadyExistingEntityException, MethodNotImplementedException {
+
+		if(request.getNsts()!=null && request.getNsts().isEmpty() && request.getNsds()!=null && request.getNsds().isEmpty()
+		&& request.getVnfPackages()!=null && request.getVnfPackages().isEmpty()){
+			log.debug("No descriptors to onboard, moving on");
+			return;
+		}
+
+		if(nsTemplateCatalogueService==null && request.getNsts()!=null && !request.getNsts().isEmpty()) {
+			throw new MalformattedElementException("Onboarding request including NS descriptors, but no NSTemplateCatalogueProvider set");
+
+		}
+		OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages());
+		nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
+		for(int i=1; i<request.getNsts().size(); i++) {
+			nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null);
+			nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
+		}
+
+
+
+	}
+
 	@Override
-	public QueryVsBlueprintResponse queryVsBlueprint(GeneralizedQueryRequest request) 
+	public QueryVsBlueprintResponse queryVsBlueprint(GeneralizedQueryRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
 		log.debug("Processing request to query a VS blueprint");
 		request.isValid();
-		
+
 		//At the moment the only filters accepted are:
 		//1. VS Blueprint name and version
 		//VSB_NAME & VSB_VERSION
@@ -203,19 +166,19 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		//VSB_ID and TENANT_ID --> This modifies the list of associated VSD to visualize only the ones visible to that VSD
 		//5. Tenant ID
 		//TENANT_ID --> This modifies the list of associated VSD to visualize only the ones visible to that VSD
-        //No attribute selector is supported at the moment
-		
+		//No attribute selector is supported at the moment
+
 		List<VsBlueprintInfo> vsbs = new ArrayList<>();
-		
+
 		Filter filter = request.getFilter();
-        List<String> attributeSelector = request.getAttributeSelector();
-        if ((attributeSelector == null) || (attributeSelector.isEmpty())) {
-        	Map<String, String> fp = filter.getParameters();
-            if (fp.size() == 1 && fp.containsKey("VSB_ID")) {
-            	String vsbId = fp.get("VSB_ID");
-            	VsBlueprintInfo vsb = getVsBlueprintInfo(vsbId);
-            	vsbs.add(vsb);
-            	log.debug("Added VSB info for VSB ID " + vsbId);
+		List<String> attributeSelector = request.getAttributeSelector();
+		if ((attributeSelector == null) || (attributeSelector.isEmpty())) {
+			Map<String, String> fp = filter.getParameters();
+			if (fp.size() == 1 && fp.containsKey("VSB_ID")) {
+				String vsbId = fp.get("VSB_ID");
+				VsBlueprintInfo vsb = getVsBlueprintInfo(vsbId);
+				vsbs.add(vsb);
+				log.debug("Added VSB info for VSB ID " + vsbId);
 
             } else if (fp.size() == 2 && fp.containsKey("VSB_NAME") && fp.containsKey("VSB_VERSION")) {
             	String vsbName = fp.get("VSB_NAME");
@@ -321,13 +284,15 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
-				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
+				//vsBlueprint.getCompatibleSites(),
+				//vsBlueprint.getCompatibleContextBlueprint(),
 				vsBlueprint.getApplicationMetrics(),
 				vsBlueprint.getSliceServiceType(),
 				vsBlueprint.getEmbbServiceCategory(),
-				vsBlueprint.getUrllcServiceCategory());
+				vsBlueprint.getUrllcServiceCategory(),
+				vsBlueprint.isInterSite());
 		vsBlueprintRepository.saveAndFlush(target);
-		
+
 		Long vsbId = target.getId();
 		String vsbIdString = String.valueOf(vsbId);
 		target.setBlueprintId(vsbIdString);
@@ -337,7 +302,16 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsComponent> atomicComponents = vsBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations());
+				VsComponent targetComponent = new VsComponent(target,
+						c.getComponentId(),
+						c.getServersNumber(),
+						c.getImagesUrls(),
+						c.getEndPointsIds(),
+						c.getLifecycleOperations(),
+						c.getType(),
+						c.getPlacement(),
+						c.getAssociatedVsbId(),
+						c.getCompatibleSite());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);
@@ -355,7 +329,7 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsbLink> connectivityServices = vsBlueprint.getConnectivityServices();
 		if (connectivityServices != null) {
 			for (VsbLink l : connectivityServices) {
-				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(), l.getConnectivityProperties());
+				VsbLink targetLink = new VsbLink(target, l.getEndPointIds(), l.isExternal(),l.getName(), l.getConnectivityProperties());
 				vsbLinkRepository.saveAndFlush(targetLink);
 			}
 			log.debug("Added connectivity services in VS blueprint " + vsbIdString);
@@ -422,5 +396,11 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		return vsbis;
 	}
-	
+
+
+	public void setNsTemplateCatalogueService(NsTemplateCatalogueInterface nsTemplateCatalogueService){
+		log.debug("Setting NsTemplateCatalogueService");
+		this.nsTemplateCatalogueService= nsTemplateCatalogueService;
+	}
+
 }
