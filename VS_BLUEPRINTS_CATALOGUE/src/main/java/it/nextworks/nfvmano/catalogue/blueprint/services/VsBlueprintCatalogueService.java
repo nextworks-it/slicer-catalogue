@@ -138,13 +138,14 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throw new MalformattedElementException("Onboarding request including NS descriptors, but no NSTemplateCatalogueProvider set");
 
 		}
-		OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages());
-		nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
-		for(int i=1; i<request.getNsts().size(); i++) {
-			nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null);
+		if(request.getNsts()!=null && !request.getNsts().isEmpty()){
+			OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages());
 			nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
-		}
-
+			for(int i=1; i<request.getNsts().size(); i++) {
+				nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null);
+				nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
+			}
+		}else log.debug("Emtpy NST onboarding list. IGNORING NST/NSD onboarding");
 
 
 	}
