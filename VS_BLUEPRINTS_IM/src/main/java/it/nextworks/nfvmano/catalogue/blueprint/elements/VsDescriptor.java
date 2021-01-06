@@ -57,16 +57,31 @@ public class VsDescriptor implements DescriptorInformationElement {
 	private String version;
 	private String vsBlueprintId;
 	
-	private SliceServiceType sst;
+
 	private SliceManagementControlType managementType;
-	
+
+
+
 	//Key: parameter ID as in the blueprint; value: desired value
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<String, String> qosParameters = new HashMap<String, String>();
-	
+
+
+	//KEY endPointId
+	//RadioAccessTechnology (Enum: 4G; 5G_NSA; 5G_SA)
+	//Latency if sst in VSB EP == URLLC
+	//UplinkThroughput if sst in VSB EP == EMBB
+	//DownlinkThroughput if sst in VSB EP == EMBB
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private Map<String, SliceProfile> sliceProfiles = new HashMap<String, SliceProfile>();
+
+
 	@JsonIgnore
 	private boolean isPublic;
 	
@@ -83,9 +98,16 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@Embedded
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private VsdSla sla;
-	
-	
-	
+
+	//key: vsb component id, value the id received when onboarding the vsd
+
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private Map<String, String> nestedVsdIds = new HashMap<>();
+
+
 	public VsDescriptor() {	}
 	
 	
@@ -102,22 +124,30 @@ public class VsDescriptor implements DescriptorInformationElement {
 	 * @param tenantId
 	 * 
 	 */
-	public VsDescriptor(String name, String version, String vsBlueprintId, SliceServiceType sst,
-			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
-			boolean isPublic, String tenantId) {
+	public VsDescriptor(String name, String version, String vsBlueprintId, 	SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
+			boolean isPublic, String tenantId, Map<String, String> nestedVsdIds, Map<String, SliceProfile> sliceProfiles) {
 		this.name = name;
 		this.version = version;
 		this.vsBlueprintId = vsBlueprintId;
-		this.sst = sst;
-		this.managementType = managementType;
+			this.managementType = managementType;
 		this.qosParameters = qosParameters;
 		if (sla != null) this.sla = sla;
 		else sla = new VsdSla(ServiceCreationTimeRange.UNDEFINED, AvailabilityCoverageRange.UNDEFINED, false);
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
+		if(nestedVsdIds!=null)
+			this.nestedVsdIds= nestedVsdIds;
+		if(sliceProfiles!=null) this.sliceProfiles=sliceProfiles;
+
 	}
 
+	public Map<String, SliceProfile> getSliceProfiles() {
+		return sliceProfiles;
+	}
 
+	public Map<String, String> getNestedVsdIds() {
+		return nestedVsdIds;
+	}
 
 	/**
 	 * @return the vsDescriptorId
@@ -178,12 +208,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	}
 
 
-	/**
-	 * @return the sst
-	 */
-	public SliceServiceType getSst() {
-		return sst;
-	}
+
 
 
 

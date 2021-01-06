@@ -83,7 +83,7 @@ public class ExpBlueprintRepositoryTest {
             throw new AlreadyExistingEntityException("EXP Blueprint with id " + expBlueprint.getExpBlueprintId());
         }
         expBlueprintRepository.saveAndFlush(expBlueprint);
-        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(expBlueprint.getExpBlueprintId(), expBlueprint.getVersion(), expBlueprint.getName(), "admin");
+        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(expBlueprint.getExpBlueprintId(), expBlueprint.getVersion(), expBlueprint.getName(), "admin", null);
         expBlueprintInfoRepository.saveAndFlush(expbInfo);
 
 

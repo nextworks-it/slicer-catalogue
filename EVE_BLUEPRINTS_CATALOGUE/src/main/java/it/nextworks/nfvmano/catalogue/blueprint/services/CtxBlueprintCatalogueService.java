@@ -322,8 +322,16 @@ public class CtxBlueprintCatalogueService implements CtxBlueprintCatalogueInterf
         List<VsComponent> atomicComponents = ctxBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(),
-						c.getNfvId(), c.getPlacement());
+				VsComponent targetComponent = new VsComponent(target,
+						c.getComponentId(),
+						c.getServersNumber(),
+						c.getImagesUrls(), c.getEndPointsIds(),
+						c.getLifecycleOperations(),
+						null,
+						c.getNfvId(),
+						c.getPlacement(),
+						null,
+						null);
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + ctxbIdString);

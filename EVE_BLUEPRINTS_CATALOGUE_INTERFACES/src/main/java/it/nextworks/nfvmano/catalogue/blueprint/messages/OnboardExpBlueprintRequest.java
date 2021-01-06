@@ -21,11 +21,24 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OnboardExpBlueprintRequest extends OnBoardBlueprintRequest {
 
 	private ExpBlueprint expBlueprint;
+
+
+	//key VSB atomic component id
+	//value NSD with context elements
+	private Map<String, Nsd> enhancedVsbs = new HashMap<>();
+
+
+	//key ctxbid, value: componentId
+	private Map<String, String> contextComponent;
+
+
 
 	public OnboardExpBlueprintRequest() { }
 
@@ -39,11 +52,18 @@ public class OnboardExpBlueprintRequest extends OnBoardBlueprintRequest {
 	 */
 	public OnboardExpBlueprintRequest(ExpBlueprint expBlueprint, 
 			List<Nsd> nsds,
-			List<VsdNsdTranslationRule> translationRules) {
+			List<VsdNsdTranslationRule> translationRules,
+									  Map<String, Nsd> enhancedVsbs, Map<String, String> contextComponent) {
 		super(nsds, translationRules);
 		this.expBlueprint = expBlueprint;
+		this.enhancedVsbs = enhancedVsbs;
+		if(contextComponent!=null) this.contextComponent= contextComponent;
 	}
 
+
+	public Map<String, String> getContextComponent() {
+		return contextComponent;
+	}
 
 	/**
 	 * @return the expBlueprint
@@ -53,11 +73,19 @@ public class OnboardExpBlueprintRequest extends OnBoardBlueprintRequest {
 	}
 
 
+	public Map<String, Nsd> getEnhancedVsbs() {
+		return enhancedVsbs;
+	}
+
 	@Override
 	public void isValid() throws MalformattedElementException {
 		super.isValid();
 		if (expBlueprint == null) throw new MalformattedElementException("Onboard EXP blueprint request without EXP blueprint");
 		else expBlueprint.isValid();
+
+		for(Nsd nsd: enhancedVsbs.values()){
+			nsd.isValid();
+		}
 	}
 
 }

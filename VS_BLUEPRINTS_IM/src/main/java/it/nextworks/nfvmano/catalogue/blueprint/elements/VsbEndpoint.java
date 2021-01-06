@@ -27,6 +27,10 @@ public class VsbEndpoint implements DescriptorInformationElement {
 	private boolean external;
 	private boolean management;
 	private boolean ranConnection;
+
+	private SliceServiceType sliceType;
+
+	private String coverageArea;
 	
 	public VsbEndpoint() {
 		// JPA only
@@ -43,14 +47,24 @@ public class VsbEndpoint implements DescriptorInformationElement {
 	public VsbEndpoint(String endPointId,
 			boolean external,
 			boolean management,
-			boolean ranConnection) {
+			boolean ranConnection,
+					   SliceServiceType sliceType,
+					   String coverageArea) {
 		this.endPointId = endPointId;
 		this.external = external;
 		this.management = management;
 		this.ranConnection = ranConnection;
+		this.coverageArea = coverageArea;
+		this.sliceType=sliceType;
 	}
-	
-	
+
+	public SliceServiceType getSliceType() {
+		return sliceType;
+	}
+
+	public String getCoverageArea() {
+		return coverageArea;
+	}
 
 	/**
 	 * @return the endPointId
@@ -84,6 +98,10 @@ public class VsbEndpoint implements DescriptorInformationElement {
 	public void isValid() throws MalformattedElementException {
 		if (endPointId == null || endPointId.isEmpty()){
 			throw new MalformattedElementException("VSB end point without ID");
+		}
+
+		if(!ranConnection && (sliceType!=null || coverageArea!=null)){
+			throw new MalformattedElementException("CoverageArea and SliceType are only supported on RAN endpoints. Endpoint id: "+endPointId);
 		}
 	}
 

@@ -20,10 +20,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +59,13 @@ public class TranslatorService implements TranslatorInterface {
 	
 	@Autowired
 	private TranslationRuleRepository translationRuleRepository;
-	
+
+	@Autowired
+	private VsBlueprintRepository vsBlueprintRepository;
+
+	@Autowired
+	private ExpBlueprintRepository expBlueprintRepository;
+
 	private AbstractTranslator translator;
 	
 	public TranslatorService() { }
@@ -72,7 +75,7 @@ public class TranslatorService implements TranslatorInterface {
 		log.debug("Initializing translator");
 		if (translatorType.equals("BASIC")) {
 			log.debug("The Vertical Slicer is configured to operate with a basic translator.");
-			translator = new BasicTranslator(vsDescriptorRepository, expDescriptorRepository, ctxDescriptorRepository, translationRuleRepository);
+			translator = new BasicTranslator(vsDescriptorRepository, expDescriptorRepository, ctxDescriptorRepository, translationRuleRepository,expBlueprintRepository, vsBlueprintRepository);
 		} else {
 			log.error("Translator not configured!");
 		}

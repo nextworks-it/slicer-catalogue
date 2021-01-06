@@ -15,15 +15,10 @@
 */
 package it.nextworks.nfvmano.catalogue.translator;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import it.nextworks.nfvmano.catalogue.blueprint.repo.CtxDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.ExpDescriptorRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.TranslationRuleRepository;
-import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
+import it.nextworks.nfvmano.catalogue.blueprint.repo.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +27,6 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.FailedOperationException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.CtxDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ExpDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 
 public class BasicTranslator extends AbstractTranslator {
 	
@@ -43,11 +34,18 @@ public class BasicTranslator extends AbstractTranslator {
 	
 	private TranslationRuleRepository ruleRepo;
 
+	private ExpBlueprintRepository expBlueprintRepository;
+	private VsBlueprintRepository vsBlueprintRepository;
+
 	public BasicTranslator(VsDescriptorRepository vsdRepo,
 							ExpDescriptorRepository expDescriptorRepository,
 							CtxDescriptorRepository ctxDescriptorRepository,
-						    TranslationRuleRepository ruleRepo) {
+						    TranslationRuleRepository ruleRepo,
+						   ExpBlueprintRepository expBlueprintRepository,
+						   VsBlueprintRepository vsBlueprintRepository) {
 		super(TranslatorType.BASIC_TRANSLATOR, vsdRepo, expDescriptorRepository, ctxDescriptorRepository);
+		this.vsBlueprintRepository=vsBlueprintRepository;
+		this.expBlueprintRepository= expBlueprintRepository;
 		this.ruleRepo = ruleRepo;
 	}
 	
@@ -62,7 +60,7 @@ public class BasicTranslator extends AbstractTranslator {
 			String vsdId = entry.getKey();
 			VsDescriptor vsd = entry.getValue();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null, null);
 			nfvNsInfo.put(vsdId, info);
 			log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
 					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
@@ -79,7 +77,49 @@ public class BasicTranslator extends AbstractTranslator {
 		if (expdOpt.isPresent()) {
 			ExpDescriptor expd = expdOpt.get();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(expd);
-			return new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null);
+			ExpBlueprint expBlueprint = expBlueprintRepository.findByExpBlueprintId(expd.getExpBlueprintId()).get();
+			VsBlueprint vsBlueprint = vsBlueprintRepository.findByBlueprintId(expBlueprint.getVsBlueprintId()).get();
+			Map<String, NfvNsInstantiationInfo> nestedVsdTranslation = new HashMap<>();
+			if(vsBlueprint.isInterSite()){
+				log.debug("computing nested VS translation");
+				VsDescriptor compositeVsd = vsdRepo.findByVsDescriptorId(expd.getVsDescriptorId()).get();
+				Map<String, VsdNestedNsdTranslation> vsdNestedNsdTranslationMap = rule.getVsdNestedNsdTranslations();
+				for(String componentId : compositeVsd.getNestedVsdIds().keySet()){
+					if(vsdNestedNsdTranslationMap.containsKey(componentId)){
+						log.debug("Using VSD Nested NSD information for translation");
+						VsdNestedNsdTranslation nestedTranslation = vsdNestedNsdTranslationMap.get(componentId);
+						nestedVsdTranslation.put(componentId, new NfvNsInstantiationInfo(nestedTranslation.getNsdId(),
+								null,
+								nestedTranslation.getNsDf(),
+								nestedTranslation.getNsIl(),
+								null,
+								null));
+					}else{
+
+						String nestedVsdId = compositeVsd.getNestedVsdIds().get(componentId);
+						log.debug("Translating VS component:"+componentId+" using VSD:"+nestedVsdId);
+						List<String> vsdIds = new ArrayList<>();
+						vsdIds.add(nestedVsdId);
+						Map<String, NfvNsInstantiationInfo> translation = this.translateVsd(vsdIds);
+						nestedVsdTranslation.put(componentId, translation.get(nestedVsdId));
+					}
+
+
+				}
+
+
+			}
+			log.debug("Completed translation for EXPD:"+expdId);
+			return new NfvNsInstantiationInfo(rule.getNstId(),
+					rule.getNsdId(),
+					rule.getNsdVersion(),
+					rule.getNsFlavourId(),
+					rule.getNsInstantiationLevelId(),
+					null,
+					nestedVsdTranslation);
+
+
+
 		} else {
 			log.error("Experiment descriptor " + expdId + " not found in DB.");
 			throw new NotExistingEntityException("Experiment descriptor " + expdId + " not found in DB.");

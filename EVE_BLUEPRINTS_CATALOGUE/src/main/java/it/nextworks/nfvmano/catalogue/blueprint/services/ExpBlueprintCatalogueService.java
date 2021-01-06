@@ -36,7 +36,7 @@ import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
-import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.*;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterface {
@@ -101,10 +102,10 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		log.debug("Processing request to onboard a new Exp blueprint");
 		request.isValid();
 		ExpBlueprint expB = request.getExpBlueprint();
-        verifyExperimentBlueprintDependencies(expB);
+        verifyExperimentBlueprintDependencies(expB, request.getContextComponent());
         Map<String, Nsd> nsdInfoIdNsd =  storeNsds(request);
 
-        String experimentId = storeExpBlueprint(expB, request.getOwner(), nsdInfoIdNsd);
+        String experimentId = storeExpBlueprint(expB, request.getOwner(), nsdInfoIdNsd, request.getContextComponent());
         
         ExpBlueprintInfo expBlueprintInfo;
 		try {
@@ -121,7 +122,10 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		
 	}
 
-	private void storeTranslationRules(OnboardExpBlueprintRequest request, ExpBlueprintInfo expBlueprintInfo, Map<String, Nsd> nsdInfoIdNsd) {
+
+
+
+	private void storeTranslationRules(OnboardExpBlueprintRequest request, ExpBlueprintInfo expBlueprintInfo, Map<String, Nsd> nsdInfoIdNsd) throws MalformattedElementException {
 		log.debug("Storing Translation rules");
 
 		String expbId = expBlueprintInfo.getExpBlueprintId();
@@ -137,10 +141,58 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 
 		List<VsdNsdTranslationRule> trs = request.getTranslationRules();
 		for (VsdNsdTranslationRule tr : trs) {
+			if(request.getEnhancedVsbs()!=null && !request.getEnhancedVsbs().isEmpty()){
+				Map<String, VsdNestedNsdTranslation> nestedNsdTranslationMap= computeVsdNestedNsdTranslation(request, tr);
+				tr.setVsdNestedNsdTranslations(nestedNsdTranslationMap);
+			}
 			translationRuleRepository.saveAndFlush(tr);
 		}
 		log.debug("Translation rules saved in internal DB.");
 		expBlueprintInfoRepository.saveAndFlush(expBlueprintInfo);
+	}
+
+	private Map<String, VsdNestedNsdTranslation> computeVsdNestedNsdTranslation(OnboardExpBlueprintRequest request, VsdNsdTranslationRule tr) throws MalformattedElementException {
+		log.debug("computing Nested VS translation rules");
+		//This method creates theVsdNestedNsdTranslation which over-rides the translation
+		//for the vertical sub-service. The information is retrieved from the translation rules and
+		//the composite NSD
+
+
+		Map<String, Nsd> enhancedVsbs = request.getEnhancedVsbs();
+		Map<String, VsdNestedNsdTranslation> translationMap = new HashMap<>();
+		Nsd defaultNsd = request.getNsds().get(request.getNsds().size() - 1);
+		String compositeDfId = tr.getNsFlavourId();
+		String compositeIlId = tr.getNsInstantiationLevelId();
+		try {
+			NsDf compositeDf = defaultNsd.getNsDeploymentFlavour(compositeDfId);
+			List<NsProfile> nsProfiles = compositeDf.getNsProfile();
+
+			NsLevel compositeIl = compositeDf.getNsLevel(compositeIlId);
+			for(String componentId : enhancedVsbs.keySet()){
+				String nestedNsdId = enhancedVsbs.get(componentId).getNsdIdentifier();
+				NsProfile nsProfile = nsProfiles.stream()
+							.filter(p -> p.getNsdId().equals(nestedNsdId))
+							.findFirst()
+							.get();
+				if(nsProfile==null)
+					throw new MalformattedElementException("Could not find a NS profile for:"+nestedNsdId);
+				NsToLevelMapping nsToLevelMapping= compositeIl.getNsToLevelMapping().stream()
+												.filter(l -> l.getNsProfileId().equals(nsProfile.getNsProfileId()))
+												.findFirst()
+												.get();
+				if(nsToLevelMapping==null)
+					throw new MalformattedElementException("NS Profile not mapped in instantiation level"+nsProfile.getNsProfileId()+" "+compositeIlId);
+				VsdNestedNsdTranslation nestedNsdTranslation = new VsdNestedNsdTranslation(nestedNsdId, nsProfile.getNsDeploymentFlavourId(), nsProfile.getNsInstantiationLevelId());
+				translationMap.put(componentId, nestedNsdTranslation);
+
+			}
+
+		} catch (NotExistingEntityException e) {
+			throw new MalformattedElementException(e);
+		}
+
+
+		return translationMap;
 	}
 
 	private void createDefaultTranslationRule(OnboardExpBlueprintRequest request, ExpBlueprintInfo expBlueprintInfo) {
@@ -162,30 +214,36 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	}
 
 	private Map<String, Nsd> storeNsds(OnboardExpBlueprintRequest request) throws FailedOperationException, MethodNotImplementedException, MalformattedElementException {
+		log.debug("Storing enhanced VSB NSDs");
+		VsBlueprint vsb = vsBlueprintRepository.findByBlueprintId(request.getExpBlueprint().getVsBlueprintId()).get();
+		for(String componentId: request.getEnhancedVsbs().keySet() ){
+			Optional<VsComponent> component = vsb.getAtomicComponents().stream()
+										.filter(c -> c.getComponentId().equals(componentId))
+										.findFirst();
+			if(component.isPresent()){
+
+				List<EveSite> compatibleSites = new ArrayList<>();
+				compatibleSites.add(EveSite.valueOf(component.get().getCompatibleSite()));
+
+				try {
+					storeNsd(compatibleSites, request.getEnhancedVsbs().get(componentId), false);
+				} catch (AlreadyExistingEntityException e) {
+					log.debug("The NSD is already present in the NFVO catalogue. IGNORING.");
+				}
+			}else throw new MalformattedElementException("Component with ID: "+componentId+" not found on VSB:"+vsb.getBlueprintId()+" while onboarding enhanced VSBs");
+
+		}
 		log.debug("Storing NSDs");
 		List<Nsd> nsds = request.getNsds();
 		Map<String, Nsd> nsdInfoIdNsd = new HashMap<>();
 		for (Nsd nsd : nsds) {
 			String nsdInfoId = null;
+			List<EveSite> sites = request.getExpBlueprint().getSites();
 			try {
-				Map<String, String> userDefinedData = new HashMap<>();
-				List<EveSite> sites = request.getExpBlueprint().getSites();
-				for (EveSite site : sites) {
-					userDefinedData.put(site.toString(), "yes");
-					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS||site==EveSite.FRANCE_SACLAY
-							||site==EveSite.FRANCE_CHATILLON||site==EveSite.FRANCE_SOPHIA_ANTIPOLIS||site==EveSite.FRANCE_LANNION){
-						log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
-						userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
+				boolean interSite = vsb.isInterSite();
+				nsdInfoId = this.storeNsd(sites, nsd, interSite);
 
-					}
-				}
-
-				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-				log.debug("Added NSD " + nsd.getNsdIdentifier() +
-						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
-
-				nsdInfoIdNsd.put(nsdInfoId, nsd);
-			} catch (AlreadyExistingEntityException e) {
+				} catch (AlreadyExistingEntityException e) {
 
 				log.debug("The NSD is already present in the NFVO catalogue. IGNORING.");
 				/*QueryNsdResponse nsdR = null;
@@ -205,6 +263,34 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 
 	}
 
+
+	private String storeNsd(List<EveSite> sites, Nsd nsd, boolean interSite) throws MalformattedElementException, FailedOperationException, MethodNotImplementedException, AlreadyExistingEntityException {
+
+			Map<String, String> userDefinedData = new HashMap<>();
+			if(!interSite){
+				for (EveSite site : sites) {
+					userDefinedData.put(site.toString(), "yes");
+					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS||site==EveSite.FRANCE_SACLAY
+							||site==EveSite.FRANCE_CHATILLON||site==EveSite.FRANCE_SOPHIA_ANTIPOLIS||site==EveSite.FRANCE_LANNION){
+						log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
+						userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
+
+					}
+				}
+			}else{
+				log.debug("onboarding inter-site NSDs for EXPB");
+				if(nsd.getNestedNsdId()==null || nsd.getNestedNsdId().isEmpty())
+					throw new MalformattedElementException("Inter-site VSB with non composite NSD");
+				userDefinedData.put("multiSite","yes");
+
+			}
+			String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
+			log.debug("Added NSD " + nsd.getNsdIdentifier() +
+					", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
+
+			return nsdInfoId;
+
+	}
 
 	@Override
 	public QueryExpBlueprintResponse queryExpBlueprint(GeneralizedQueryRequest request)
@@ -369,7 +455,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 		return expBInfos;
 	}
 
-	private String storeExpBlueprint(ExpBlueprint expBlueprint, String owner, Map<String, Nsd> nsdInfoIdNsd) throws AlreadyExistingEntityException {
+	private String storeExpBlueprint(ExpBlueprint expBlueprint, String owner, Map<String, Nsd> nsdInfoIdNsd, Map<String, String> contextComponent) throws AlreadyExistingEntityException {
 
         log.debug("Onboarding EXP blueprint with name " + expBlueprint.getName() + " and version " + expBlueprint.getVersion());
         if ( (expBlueprintInfoRepository.findByNameAndExpBlueprintVersion(expBlueprint.getName(), expBlueprint.getVersion()).isPresent())) {
@@ -410,7 +496,7 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 			}
 		}
 		
-        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(target.getExpBlueprintId(), target.getVersion(), target.getName(), owner);
+        ExpBlueprintInfo expbInfo = new ExpBlueprintInfo(target.getExpBlueprintId(), target.getVersion(), target.getName(), owner, contextComponent);
         expBlueprintInfoRepository.saveAndFlush(expbInfo);
         log.debug("Added Experiment Blueprint Info with ID " + expbIdString);
 
@@ -431,21 +517,50 @@ public class ExpBlueprintCatalogueService implements ExpBlueprintCatalogueInterf
 	 * @param expBlueprint input
 	 * @throws NotExistingEntityException if one or more blueprints are not available in the DB.
 	 */
-	private void verifyExperimentBlueprintDependencies(ExpBlueprint expBlueprint) throws NotExistingEntityException {
+	private void verifyExperimentBlueprintDependencies(ExpBlueprint expBlueprint, Map<String, String> contextComponent ) throws NotExistingEntityException, MalformattedElementException {
 		log.debug("Verifying dependencies for experiment blueprint.");
 		String vsbId = expBlueprint.getVsBlueprintId();
-		if (!((vsBlueprintRepository.findByBlueprintId(vsbId)).isPresent())) throw new NotExistingEntityException("VSB with ID " + vsbId + " not present in DB.");
+		Optional<VsBlueprint> vsb = vsBlueprintRepository.findByBlueprintId(vsbId);
+		if (!((vsb).isPresent())) throw new NotExistingEntityException("VSB with ID " + vsbId + " not present in DB.");
 		if (!((vsBlueprintInfoRepository.findByVsBlueprintId(vsbId)).isPresent())) throw new NotExistingEntityException("VSB info with ID " + vsbId + " not present in DB.");
+
 		List<String> ctxBlueprintIds = expBlueprint.getCtxBlueprintIds();
 		for (String cb : ctxBlueprintIds) {
 			if (!(ctxBlueprintRepository.findByBlueprintId(cb).isPresent())) throw new NotExistingEntityException("CTXB with ID " + cb + " not present in DB.");
 			if (!(ctxBlueprintInfoRepository.findByCtxBlueprintId(cb).isPresent())) throw new NotExistingEntityException("CTXB info with ID " + cb + " not present in DB.");
+			boolean containedInMap = contextComponent!=null&& contextComponent.containsKey(cb);
+			if (vsb.get().isInterSite() && !containedInMap)
+				throw new NotExistingEntityException("Missing context to component mapping for intersite VSB:"+cb);
+
 		}
 		List<String> tcBlueprintIds = expBlueprint.getTcBlueprintIds();
 		for (String tc : tcBlueprintIds) {
 			if (!(testCaseBlueprintRepository.findByTestcaseBlueprintId(tc).isPresent())) throw new NotExistingEntityException("TCB with ID " + tc + " not present in DB.");
 			if (!(testCaseBlueprintInfoRepository.findByTestCaseBlueprintId(tc).isPresent())) throw new NotExistingEntityException("TCB info with ID " + tc + " not present in DB.");
 		}
+
+		if(vsb.get().isInterSite()){
+			boolean expWithCtx = expBlueprint.getCtxBlueprintIds()!=null && !expBlueprint.getCtxBlueprintIds().isEmpty();
+			boolean ctxComponentInfo = contextComponent!=null && !contextComponent.isEmpty();
+			if(expWithCtx && !ctxComponentInfo )
+				throw new MalformattedElementException("Missing context component mapping for intersite experiment");
+
+			for(String ctxbId : expBlueprint.getCtxBlueprintIds() ){
+				//if (!expBlueprint.getCtxBlueprintIds().contains(ctxbId)) throw new NotExistingEntityException("CTXB info with ID " + ctxbId + " not present associated with Experiment.");
+
+				if(!contextComponent.containsKey(ctxbId))
+					throw new MalformattedElementException("Missing context component mapping for context blueprint with id:"+ctxbId);
+
+				String componentId= contextComponent.get(ctxbId);
+				Optional<VsComponent> component = vsb.get().getAtomicComponents().stream()
+						.filter(c -> c.getComponentId().equals(componentId))
+						.findFirst();
+				if(!component.isPresent()) throw new NotExistingEntityException("Could not find component:"+componentId+" in VSB:"+ vsbId);
+
+
+			}
+		}
+
 		log.debug("Verified dependencies for experiment blueprint.");
 	}
 

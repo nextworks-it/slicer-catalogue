@@ -26,7 +26,9 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class ExpBlueprintInfo implements InterfaceInformationElement {
@@ -55,6 +57,16 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> onBoardedNsdInfoId = new ArrayList<>();
 
+
+
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private Map<String, String> contextComponent = new HashMap<>();
+
+
+
 	public ExpBlueprintInfo() {	}
 	
 	
@@ -65,14 +77,19 @@ public class ExpBlueprintInfo implements InterfaceInformationElement {
 	 * @param name
 	 * @param owner
 	 */
-	public ExpBlueprintInfo(String expBlueprintId, String expBlueprintVersion, String name, String owner) {
+	public ExpBlueprintInfo(String expBlueprintId, String expBlueprintVersion, String name, String owner, Map<String, String> contextComponent) {
 		this.expBlueprintId = expBlueprintId;
 		this.expBlueprintVersion = expBlueprintVersion;
 		this.name = name;
 		this.owner = owner;
+		if(contextComponent!=null)this.contextComponent= contextComponent;
 	}
 
 
+	public Map<String, String> getContextComponent() {
+
+		return contextComponent;
+	}
 
 	/**
 	 * @return the id

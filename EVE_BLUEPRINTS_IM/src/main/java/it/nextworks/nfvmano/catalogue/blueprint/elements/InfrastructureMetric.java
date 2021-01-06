@@ -33,6 +33,8 @@ public class InfrastructureMetric implements DescriptorInformationElement {
     private String interval;
     private MetricGraphType metricGraphType;
 
+    private String targetSite;
+
 	public InfrastructureMetric() {
 		// JPA only
 	}
@@ -44,7 +46,8 @@ public class InfrastructureMetric implements DescriptorInformationElement {
 			String interval,
 			String topic,
 			InfrastructureMetricType iMetricType,
-                                MetricGraphType metricGraphType) {
+			MetricGraphType metricGraphType,
+								String targetSite) {
 		this.metricId = metricId;
         this.name = name;
         this.metricCollectionType = metricCollectionType;
@@ -52,10 +55,13 @@ public class InfrastructureMetric implements DescriptorInformationElement {
         this.interval = interval;
         this.iMetricType = iMetricType;
         this.metricGraphType = metricGraphType;
+        this.targetSite=targetSite;
     }
 
-	
-	
+	public String getTargetSite() {
+		return targetSite;
+	}
+
 	/**
 	 * @return the metricId
 	 */
@@ -115,6 +121,11 @@ public class InfrastructureMetric implements DescriptorInformationElement {
             throw new MalformattedElementException("Metric without MetricCollectionType");
         if(metricGraphType == null)
             throw new MalformattedElementException("Metric without MetricGraphType");
+       	try{
+       		if(targetSite!=null && !targetSite.isEmpty()) EveSite.valueOf(targetSite);
+		}catch(Exception e){
+			throw new MalformattedElementException("Unknown infrastructure metric target site:"+targetSite);
+		}
 
     }
 
