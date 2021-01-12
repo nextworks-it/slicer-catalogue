@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import it.nextworks.nfvmano.libs.ifa.common.DescriptorInformationElement;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 
@@ -117,6 +118,10 @@ public class Blueprint implements DescriptorInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@JsonPropertyDescription("In order for the 5G EVE Performance Diagnosis Module to recognize "
+			+ "the metrics, a naming pattern must be followed. "
+			+ "You should use one of the following prefixes: cpu_*, mem_*, disk_*, net_*. "
+			+ "Example: 'cpu_consumption_my_vnf'.")
 	protected List<ApplicationMetric> applicationMetrics = new ArrayList<>();
 
     public Blueprint() { }
