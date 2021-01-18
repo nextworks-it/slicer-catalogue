@@ -220,6 +220,13 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		if (vsdOpt.isPresent()) {
 			VsDescriptor vsd = vsdOpt.get();
 			if ( (vsd.getTenantId().equals(tenantId)) || (tenantId.equals(adminTenant)) ) {
+				if(vsd.getNestedVsdIds()!=null&&!vsd.getNestedVsdIds().isEmpty()){
+					log.debug("Removing nested VSDs:{}", vsd.getNestedVsdIds());
+					for(String nestedId: vsd.getNestedVsdIds().values()){
+						deleteVsDescriptor(nestedId, tenantId);
+					}
+
+				}
 				String vsbId = vsd.getVsBlueprintId();
 				vsDescriptorRepository.delete(vsd);
 				vsBlueprintCatalogueService.removeVsdInBlueprint(vsbId, vsDescriptorId);
