@@ -56,7 +56,7 @@ import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintRespons
 @Api(tags = "Vertical Service Blueprint Catalogue API")
 @RestController
 @CrossOrigin
-@RequestMapping("/vs/catalogue")
+@RequestMapping("/portal/catalogue")
 public class VsBlueprintCatalogueRestController {
 
 	private static final Logger log = LoggerFactory.getLogger(VsBlueprintCatalogueRestController.class);
