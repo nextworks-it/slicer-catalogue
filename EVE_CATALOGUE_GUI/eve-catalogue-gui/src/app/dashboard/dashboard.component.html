@@ -1,0 +1,24 @@
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<div class="grid-container">
+  <mat-grid-list cols="2" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let card of cards; let i=index" [colspan]="card.cols" [rowspan]="card.rows">
+      <mat-card class="grid-card" [matBadge]="counters[i]" matBadgeSize="large" matBadgeOverlap="true" matBadgePosition="above after" matBadgeColor="warn">
+        <mat-card-header>
+          <!--div mat-card-avatar class="header-image"></div-->
+          <mat-card-title >             
+          </mat-card-title>
+          <mat-card-subtitle></mat-card-subtitle>
+        </mat-card-header>
+        <!--img mat-card-image src="../../assets/images/kd-ic-catalogue-white.png"-->
+        <mat-card-content >
+            <div style="float: left;"><img src="../../assets/images/library_books_white.png" class="card-image"></div>
+            <div class="card-title">
+                <button class="card-actions" mat-button (click)="goTo(card.path);">
+                    <b>{{card.title}}</b><br/>Onboard <mat-icon>add_circle</mat-icon>
+                </button>
+            </div>       
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

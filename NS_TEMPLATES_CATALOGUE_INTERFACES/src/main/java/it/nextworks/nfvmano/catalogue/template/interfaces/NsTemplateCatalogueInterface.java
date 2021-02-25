@@ -35,7 +35,7 @@ public interface NsTemplateCatalogueInterface {
             throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException;
 
     /**
-     * Method to retrieve a VS Blueprint from the catalogue.
+     * Method to retrieve a NS Template from the catalogue.
      *
      * @param request query
      * @return the NS Template info

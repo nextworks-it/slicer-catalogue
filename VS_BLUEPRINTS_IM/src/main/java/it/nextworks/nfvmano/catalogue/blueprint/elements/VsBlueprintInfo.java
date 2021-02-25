@@ -45,6 +45,7 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 	private String vsBlueprintId;
 	private String vsBlueprintVersion;
 	private String name;
+	private String owner;
 	
 	@Transient
 	private VsBlueprint vsBlueprint;
@@ -53,6 +54,11 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> onBoardedNsdInfoId = new ArrayList<>();
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private List<String> onBoardedNstInfoId = new ArrayList<>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
@@ -77,11 +83,13 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 	 * @param vsBlueprintId
 	 * @param vsBlueprintVersion
 	 * @param name
+	 * @param owner
 	 */
-	public VsBlueprintInfo(String vsBlueprintId, String vsBlueprintVersion, String name) {
+	public VsBlueprintInfo(String vsBlueprintId, String vsBlueprintVersion, String name, String owner) {
 		this.vsBlueprintId = vsBlueprintId;
 		this.vsBlueprintVersion = vsBlueprintVersion;
 		this.name = name;
+		this.owner =owner;
 	}
 
 
@@ -163,7 +171,12 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 		if (!(activeVsdId.contains(vsdId)))
 			activeVsdId.add(vsdId);
 	}
-	
+
+	@JsonIgnore
+	public String getOwner() {
+		return owner;
+	}
+
 	public void removeVsd(String vsdId) {
 		if (activeVsdId.contains(vsdId))
 			activeVsdId.remove(vsdId);
@@ -177,8 +190,16 @@ public class VsBlueprintInfo implements InterfaceInformationElement {
 		onBoardedNsdInfoId.add(nsdInfoId);
 	}
 
+	public void addNstInfoId(String nstInfoId) {
+		onBoardedNstInfoId.add(nstInfoId);
+	}
+
 	public void addVnfPackageInfoId(String vnfPackageInfoId) {
 		onBoardedVnfPackageInfoId.add(vnfPackageInfoId);
+	}
+	
+	public void removeAllVsds() {
+		this.activeVsdId = new ArrayList<String>();
 	}
 	
 	@Override

@@ -1,0 +1,26 @@
+<!--app-catalogue-sub-toolbar></app-catalogue-sub-toolbar-->
+<div class="grid-container">
+    <mat-grid-list cols="2" rowHeight="100px">
+        <mat-grid-tile *ngFor="let card of cards" [colspan]="card.cols" [rowspan]="card.rows">
+            <!--button mat-raised-button color="primary" routerLink={{card.path}} style="width: 80%; height: 70px; font-size: 23px;">
+                <mat-icon>library_books</mat-icon> {{card.title}}
+            </button-->
+            <mat-card class="dashboard-card">
+                <mat-card-header>
+                    <div mat-card-avatar style="background-size: cover;"><mat-icon>{{card.icon}}</mat-icon></div>
+                    <mat-card-title>
+                        <span>
+                            <button mat-button routerLink={{card.path}} style="color: white; font-size: 18px;">{{card.title}}
+                            </button>
+                        </span>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <span>{{card.subtitle}} </span>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content class="dashboard-card-content">
+                </mat-card-content>
+            </mat-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

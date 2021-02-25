@@ -1,0 +1,50 @@
+.full-width-table {
+  margin-top: 2%;
+  width: 90%;
+  height: 80%;
+  margin-left:5%; 
+  margin-right:5%;
+}
+  
+.margin-all {
+  margin: 5px;
+}
+
+.rules-div {
+  margin-top: 2%;
+  width: 50%;
+  height: 80%;
+  margin-left:25%; 
+  margin-right:25%;
+  background: #424242;
+  padding: 30px;
+}
+
+.rules-form {
+  min-width: 300px;
+  max-width: 600px;
+  width: 100%;
+  align-self: center;
+}
+  
+.rules-full-width {
+  width: 100%;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.margin-top {
+  margin-top: 30px;
+}
+  
+a {
+  font-weight: bold;
+  color: #f0a30a;
+}
+
+a:hover {
+  color: white;
+  cursor: pointer;
+}

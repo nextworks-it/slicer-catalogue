@@ -21,9 +21,6 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
-import java.util.Optional;
-
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardVsDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorResponse;
 
@@ -41,6 +38,9 @@ public interface VsDescriptorCatalogueInterface {
 	 */
 	public String onBoardVsDescriptor(OnboardVsDescriptorRequest request)
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException;
+
+
+
 	
 	/**
 	 * Method to request info about an existing VSD
@@ -68,12 +68,4 @@ public interface VsDescriptorCatalogueInterface {
 	public void deleteVsDescriptor(String vsDescriptorId, String tenantId)
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException;
 
-
-	/**
-	 * Method to retrieve a VSD
-	 *
-	 * @param vsDescriptorId
-	 * @return the VS Descriptor Element
-	 */
-	public Optional<VsDescriptor> findByVsDescriptorId(String vsDescriptorId);
 }

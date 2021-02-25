@@ -47,11 +47,12 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	@ElementCollection(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> input = new ArrayList<>();
+	private List<VsdParameterValueRange> input = new ArrayList<>();
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	private String vsbId;
+	private String blueprintId;
 	
+	private String nstId;
 	private String nsdId; 
 	private String nsdVersion;
 	private String nsFlavourId;
@@ -59,6 +60,8 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	@JsonIgnore
 	private String nsdInfoId;
+
+
 	
 	public VsdNsdTranslationRule() { }
 	
@@ -71,13 +74,38 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	 * @param nsFlavourId
 	 * @param nsInstantiationLevelId
 	 */
-	public VsdNsdTranslationRule(List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> input, String nsdId, String nsdVersion,
+	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nsdId, String nsdVersion,
                                  String nsFlavourId, String nsInstantiationLevelId) {
 		if (input!= null) this.input = input;
 		this.nsdId = nsdId;
 		this.nsdVersion = nsdVersion;
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
+	}
+	
+	/**
+	 * @param input
+	 * @param nstId
+	 * @param nsdId
+	 * @param nsdVersion
+	 * @param nsFlavourId
+	 * @param nsInstantiationLevelId
+	 */
+	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nstId, String nsdId, String nsdVersion,
+                                 String nsFlavourId, String nsInstantiationLevelId) {
+		if (input!= null) this.input = input;
+		this.nstId = nstId;
+		this.nsdId = nsdId;
+		this.nsdVersion = nsdVersion;
+		this.nsFlavourId = nsFlavourId;
+		this.nsInstantiationLevelId = nsInstantiationLevelId;
+	}
+
+
+	
+
+	public String getNstId() {
+		return nstId;
 	}
 
 
@@ -99,7 +127,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	/**
 	 * @return the input
 	 */
-	public List<it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange> getInput() {
+	public List<VsdParameterValueRange> getInput() {
 		return input;
 	}
 
@@ -133,22 +161,32 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	
 	
+
+
+
+
 	/**
-	 * @return the vsbId
+	 * @return the blueprintId
 	 */
-	public String getVsbId() {
-		return vsbId;
+	public String getBlueprintId() {
+		return blueprintId;
 	}
 
 
 
 	/**
-	 * @param vsbId the vsbId to set
+	 * @param blueprintId the blueprintId to set
 	 */
-	public void setVsbId(String vsbId) {
-		this.vsbId = vsbId;
+	public void setBlueprintId(String blueprintId) {
+		this.blueprintId = blueprintId;
 	}
 
+
+	@JsonIgnore
+	public boolean matchesNstId(String id) {
+		if (nstId.equals(id)) return true;
+		else return false;
+	}
 
 
 	@JsonIgnore
@@ -169,7 +207,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		for (Map.Entry<String, String> entry : vsdParameters.entrySet()) {
 			String parameterId = entry.getKey();
 			try {
-				it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange vr = getVsdParameterValueRange(parameterId);
+				VsdParameterValueRange vr = getVsdParameterValueRange(parameterId);
 				String parameterValue = entry.getValue();
 				if (!(vr.matchesVsdParameter(parameterValue))) return false;
 			} catch (NotExistingEntityException e) {
@@ -180,8 +218,8 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	}
 	
 	@JsonIgnore
-	private it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange getVsdParameterValueRange (String parameterId) throws NotExistingEntityException {
-		for (it.nextworks.nfvmano.catalogue.blueprint.elements.VsdParameterValueRange p : input) {
+	private VsdParameterValueRange getVsdParameterValueRange (String parameterId) throws NotExistingEntityException {
+		for (VsdParameterValueRange p : input) {
 			if (p.getParameterId().equals(parameterId)) return p;
 		}
 		throw new NotExistingEntityException("VSD parameter not found in the rule");
@@ -191,10 +229,17 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	public void isValid() throws MalformattedElementException {
 		if ((input == null) || (input.isEmpty())) throw new MalformattedElementException("VSD NSD translation rule without matching conditions");
 		else for (VsdParameterValueRange vr : input) vr.isValid();
-		if (nsdId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID");
+		if (nsdId == null && nstId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID/NST ID");
+
+		if (nsdId != null) {
+			if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");
+			//if (nsFlavourId == null) throw new MalformattedElementException("VSD NSD translation rule without NS flavour ID");
+			//if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");
+		}
+		/*if (nsdId == null) throw new MalformattedElementException("VSD NSD translation rule without NSD ID");
 		if (nsdVersion == null) throw new MalformattedElementException("VSD NSD translation rule without NSD version");
 		if (nsFlavourId == null) throw new MalformattedElementException("VSD NSD translation rule without NS flavour ID");
-		if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");
+		if (nsInstantiationLevelId == null) throw new MalformattedElementException("VSD NSD translation rule without NS Instantiation Level ID");*/
 	}
 
 }

@@ -1,0 +1,21 @@
+.full-width-table {
+  margin-top: 2%;
+  width: 80%;
+  height: 80%;
+  margin-left:10%; 
+  margin-right:10%;
+}
+
+.margin-all {
+  margin: 5px;
+}
+
+a {
+  font-weight: bold;
+  color: #f0a30a;
+}
+
+a:hover {
+  color: white;
+  cursor: pointer;
+}

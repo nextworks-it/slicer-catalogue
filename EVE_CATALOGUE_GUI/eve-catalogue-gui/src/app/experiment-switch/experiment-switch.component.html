@@ -1,0 +1,25 @@
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<div class="grid-container">
+    <mat-grid-list cols="2" rowHeight="2:1">
+        <mat-grid-tile *ngFor="let card of cards" [colspan]="card.cols" [rowspan]="card.rows">
+            <mat-card class="grid-card">
+                <mat-card-header>
+                <mat-card-title >             
+                </mat-card-title>
+                <mat-card-subtitle></mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content >
+                    <div style="float: left;"><img src={{card.icon}} class="card-image"></div>
+                    <div class="card-title">
+                        <button class="card-actions" mat-button (click)="goTo(card.path);">
+                            <b>{{card.title}}</b><br/>{{card.subtitle}} <mat-icon>{{card.btn}}</mat-icon>
+                        </button>
+                    </div>     
+                </mat-card-content>
+                <!--mat-card-actions>
+                    <button class="card-actions" mat-button routerLink={{card.path}}><b>{{card.subtitle}}</b> <mat-icon>{{card.btn}}</mat-icon></button>
+                </mat-card-actions-->
+            </mat-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

@@ -45,7 +45,8 @@ public class VsbLink implements DescriptorInformationElement {
 	
 	@JsonIgnore
 	@ManyToOne
-	private it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint vsb;
+	//private it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint vsb;
+	private Blueprint vsb;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -54,6 +55,9 @@ public class VsbLink implements DescriptorInformationElement {
 	private List<String> endPointIds = new ArrayList<>();
 	
 	private boolean external;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String name;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -68,18 +72,20 @@ public class VsbLink implements DescriptorInformationElement {
 	/**
 	 * Constructor
 	 * 
-	 * @param vsb VS blueprint this link belongs to
+	 * @param vsb Blueprint this link belongs to
 	 * @param endPointIds list of end points attached to the link
 	 * @param external if the link is used to interconnect to an external network
 	 * @param connectivityProperties e.g. QoS, protection, restoration
 	 */
-	public VsbLink(it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint vsb,
+	public VsbLink(Blueprint vsb,
                    List<String> endPointIds,
                    boolean external,
+                   String name,
                    List<String> connectivityProperties) {
 		this.vsb = vsb;
 		if (endPointIds != null) this.endPointIds = endPointIds;
 		this.external = external;
+		if (name != null) this.name = name;
 		if (connectivityProperties != null) this.connectivityProperties = connectivityProperties;
 	}
 	
@@ -88,7 +94,7 @@ public class VsbLink implements DescriptorInformationElement {
 	/**
 	 * @return the vsb
 	 */
-	public VsBlueprint getVsb() {
+	public Blueprint getVsb() {
 		return vsb;
 	}
 
@@ -104,6 +110,10 @@ public class VsbLink implements DescriptorInformationElement {
 	 */
 	public boolean isExternal() {
 		return external;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	/**

@@ -15,14 +15,17 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import it.nextworks.nfvmano.catalogue.blueprint.elements.EveSite;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 
 public interface VsBlueprintRepository extends JpaRepository<VsBlueprint, Long> {
 
-	Optional<VsBlueprint> findByVsBlueprintId(String id);
+	Optional<VsBlueprint> findByBlueprintId(String id);
 	Optional<VsBlueprint> findByNameAndVersion(String name, String version);
+	//List<VsBlueprint> findByCompatibleSitesIn(EveSite site);
 }

@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Experiment w/ Id: {{data.expId}}</h1>
+<mat-dialog-content [formGroup]="expExecForm">
+    <mat-form-field>
+        <mat-label>Action</mat-label>
+        <mat-select formControlName="selectedAction">
+            <mat-option *ngIf="(data.expStatus).indexOf('READY') >= 0" value="deploy">DEPLOY</mat-option>
+            <mat-option *ngIf="(data.expStatus).indexOf('INSTANTIATED') >= 0" value="execute">EXECUTE</mat-option>
+            <mat-option *ngIf="(data.expStatus).indexOf('INSTANTIATED') >= 0" value="terminate">TERMINATE</mat-option>
+        </mat-select>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button color="warn" (click)="onNoClick()">Close</button>
+    <button mat-raised-button color="accent" (click)="confirmSelection()" cdkFocusInitial>Submit</button>
+</mat-dialog-actions>

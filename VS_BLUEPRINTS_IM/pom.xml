@@ -5,11 +5,11 @@
 
 	<groupId>it.nextworks.nfvmano</groupId>
 	<artifactId>VsBlueprintsIM</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2-EVE-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>VS_BLUEPRINTS_IM</name>
-	<description>Contains the Information Models of the entities used in SEBASTIAN </description>
+	<description>Contains the Information Models of the Vertical Service Blueprint </description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

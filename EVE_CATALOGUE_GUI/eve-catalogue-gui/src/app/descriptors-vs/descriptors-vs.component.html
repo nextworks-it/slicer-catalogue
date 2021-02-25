@@ -1,0 +1,61 @@
+<app-catalogue-sub-toolbar></app-catalogue-sub-toolbar>
+<mat-toolbar style="background: transparent;">
+  <span style="margin-left: 15px;"><h1 class="mat-h1">Vertical Service Descriptors</h1></span>
+</mat-toolbar>
+<div height="100%" style="background: transparent; padding: 30px;">
+  <table mat-table class="full-width-table" matSort aria-label="Elements" height="100%">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <td mat-cell *matCellDef="let row"><b>{{row.vsDescriptorId}}</b></td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row"><b>{{row.name}}</b></td>
+    </ng-container>
+
+    <!-- VS Blueprint Column -->
+    <ng-container matColumnDef="vsBlueprintId">
+      <th mat-header-cell *matHeaderCellDef>Vertical Service</th>
+      <!--td mat-cell *matCellDef="let row">{{row.vsBlueprintId}}</td-->
+      <td mat-cell *matCellDef="let row">
+        <tr *ngFor="let name of idToVsbId.get(row.vsDescriptorId) | keyvalue"><td><a (click)="viewVsBlueprint(name.key)">{{name.value}}</a></td></tr>
+      </td>
+      </ng-container>
+
+    <!-- SST Column -->
+    <ng-container matColumnDef="sst">
+      <th mat-header-cell *matHeaderCellDef>Service Slice Type</th>
+      <td mat-cell *matCellDef="let row">{{row.sst}}</td>
+    </ng-container>
+
+    <!-- Management Type Column -->
+    <ng-container matColumnDef="managementType">
+      <th mat-header-cell *matHeaderCellDef>Management Type</th>
+      <td mat-cell *matCellDef="let row">{{row.managementType}}</td>
+    </ng-container>
+
+    <!-- Button Column -->
+    <ng-container matColumnDef="buttons">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <mat-button-toggle-group name="operations" aria-label="Operations" class="margin-all">
+          <mat-button-toggle value="view_descriptor" (click)="viewVsDescriptor(row.vsDescriptorId)"><mat-icon>remove_red_eye</mat-icon></mat-button-toggle>
+        </mat-button-toggle-group>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]"
+      style="background: transparent;">
+  </mat-paginator>
+</div>

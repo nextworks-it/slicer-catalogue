@@ -23,6 +23,6 @@ import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
 
 public interface TranslationRuleRepository extends JpaRepository<VsdNsdTranslationRule, Long> {
 
-	List<VsdNsdTranslationRule> findByVsbId(String vsbId);
+	List<VsdNsdTranslationRule> findByBlueprintId(String vsbId);
 	
 }

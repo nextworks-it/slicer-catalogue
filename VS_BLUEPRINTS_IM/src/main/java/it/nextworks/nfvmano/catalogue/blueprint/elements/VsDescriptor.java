@@ -28,6 +28,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -46,15 +47,7 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 @Entity
 public class VsDescriptor implements DescriptorInformationElement {
 
-	/**
-	 * @param vsBlueprintId the vsBlueprintId to set
-	 */
-	public void setVsBlueprintId(String vsBlueprintId) {
-		this.vsBlueprintId = vsBlueprintId;
-	}
-
-
-
+	
 	@Id
     @GeneratedValue
     @JsonIgnore
@@ -65,7 +58,7 @@ public class VsDescriptor implements DescriptorInformationElement {
 	private String version;
 	private String vsBlueprintId;
 	
-	private it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceType sst;
+
 	private SliceManagementControlType managementType;
 	
 	//Key: parameter ID as in the blueprint; value: desired value
@@ -86,46 +79,94 @@ public class VsDescriptor implements DescriptorInformationElement {
 	@OneToMany(mappedBy = "vsd", cascade=CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<it.nextworks.nfvmano.catalogue.blueprint.elements.ServiceConstraints> serviceConstraints = new ArrayList<>();
+	private List<ServiceConstraints> serviceConstraints = new ArrayList<>();
 	
 	@Embedded
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private VsdSla sla;
-	
-	//TODO: add further fields
-	
+
+	@OneToOne(cascade = CascadeType.ALL)
+	private SliceServiceParameters sliceServiceParameters;
+
+
+	//Used for the composite VSBs
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+
+	//key: vsb component id, value the id received when onboarding the vsd
+	private Map<String, String> nestedVsdIds = new HashMap<>();
+
+	//The id obtained from the driver of the remote site
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String associatedVsdId;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String domainId;
+
+
+
 	public VsDescriptor() {	}
-	
+
+
 	
 
 	/**
 	 * @param name
 	 * @param version
 	 * @param vsBlueprintId
-	 * @param sst
 	 * @param managementType
 	 * @param qosParameters
 	 * @param sla
 	 * @param isPublic
 	 * @param tenantId
-	 * 
+	 * @param sliceServiceParameters
 	 */
-	public VsDescriptor(String name, String version, String vsBlueprintId, it.nextworks.nfvmano.catalogue.blueprint.elements.SliceServiceType sst,
+	public VsDescriptor(String name, String version, String vsBlueprintId,
 			SliceManagementControlType managementType, Map<String, String> qosParameters, VsdSla sla,
-			boolean isPublic, String tenantId) {
+			boolean isPublic, String tenantId, SliceServiceParameters sliceServiceParameters, Map<String, String> nestedVsdIds) {
 		this.name = name;
 		this.version = version;
 		this.vsBlueprintId = vsBlueprintId;
-		this.sst = sst;
+
 		this.managementType = managementType;
 		this.qosParameters = qosParameters;
 		if (sla != null) this.sla = sla;
 		else sla = new VsdSla(ServiceCreationTimeRange.UNDEFINED, AvailabilityCoverageRange.UNDEFINED, false);
 		this.isPublic = isPublic;
 		this.tenantId = tenantId;
+		this.sliceServiceParameters = sliceServiceParameters;
+		if(nestedVsdIds!=null) this.nestedVsdIds = nestedVsdIds;
 	}
 
+	public String getAssociatedVsdId() {
+		return associatedVsdId;
+	}
 
+	public void setAssociatedVsdId(String associatedVsdId) {
+		this.associatedVsdId = associatedVsdId;
+	}
+
+	public void setTenantId(String tenantId){
+		this.tenantId=tenantId;
+	}
+
+	public String getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(String domainId) {
+		this.domainId = domainId;
+	}
+
+	public SliceServiceParameters getSliceServiceParameters() {
+		return sliceServiceParameters;
+	}
+
+	public Map<String, String> getNestedVsdIds() {
+		return nestedVsdIds;
+	}
 
 	/**
 	 * @return the vsDescriptorId
@@ -133,9 +174,8 @@ public class VsDescriptor implements DescriptorInformationElement {
 	public String getVsDescriptorId() {
 		return vsDescriptorId;
 	}
-
-
-
+	
+	
 	/**
 	 * @param vsDescriptorId the vsDescriptorId to set
 	 */
@@ -143,7 +183,9 @@ public class VsDescriptor implements DescriptorInformationElement {
 		this.vsDescriptorId = vsDescriptorId;
 	}
 
-
+	public void setSliceServiceParameters(SliceServiceParameters sliceServiceParameters) {
+		this.sliceServiceParameters = sliceServiceParameters;
+	}
 
 	/**
 	 * @return the id
@@ -179,13 +221,11 @@ public class VsDescriptor implements DescriptorInformationElement {
 		return vsBlueprintId;
 	}
 
-
-
 	/**
-	 * @return the sst
+	 * @param vsBlueprintId the vsBlueprintId to set
 	 */
-	public SliceServiceType getSst() {
-		return sst;
+	public void setVsBlueprintId(String vsBlueprintId) {
+		this.vsBlueprintId = vsBlueprintId;
 	}
 
 

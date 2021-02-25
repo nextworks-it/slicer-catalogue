@@ -1,0 +1,496 @@
+{
+    "vsBlueprint": {
+        "version": "1.0",
+        "name": "ARES2T Tracker service",
+        "description": "Blueprint for 5G EVE Tracker service using 5G network to collect mobility data user devices.",
+        "parameters": [
+            {
+                "parameterId": "number_of_tracked_devices",
+                "parameterName": "Number of tracked devices",
+                "parameterType": "number",
+                "parameterDescription": "Number of devices equipped with the 5G EVE Tracking Service (Mandatory)",
+                "applicabilityField": "Smart transport"
+            }
+        ],
+        "atomicComponents": [
+            {
+                "componentId": "tracker_backend",
+                "serversNumber": 1,
+                "endPointsIds": [
+                    "cp_tracker_ext_in",
+                    "cp_tracker_data",
+                    "cp_tracker_mgt"
+                ]
+            },
+            {
+                "componentId": "visualization_tool",
+                "serversNumber": 1,
+                "endPointsIds": [
+                    "cp_vis_data",
+                    "cp_vis_mgt"
+                ]
+            }
+        ],
+        "endPoints": [
+            {
+                "endPointId": "cp_tracker_ext_in",
+                "external": true,
+                "management": false,
+                "ranConnection": true
+            },
+            {
+                "endPointId": "cp_tracker_data",
+                "external": false,
+                "management": false,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "cp_tracker_mgt",
+                "external": true,
+                "management": true,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "cp_vis_data",
+                "external": false,
+                "management": false,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "cp_vis_mgt",
+                "external": true,
+                "management": true,
+                "ranConnection": false
+            },
+            {
+                "endPointId": "sap_tracking_mobile",
+                "external": true,
+                "management": false,
+                "ranConnection": true
+            },
+            {
+                "endPointId": "sap_tracking_mgt",
+                "external": true,
+                "management": true,
+                "ranConnection": false
+            }
+        ],
+        "connectivityServices": [
+            {
+                "endPointIds": [
+                    "sap_tracking_mobile",
+                    "cp_tracker_ext_in"
+                ],
+                "external": true
+            },
+            {
+                "endPointIds": [
+                    "cp_vis_data",
+                    "cp_tracker_data"
+                ],
+                "external": false
+            },
+            {
+                "endPointIds": [
+                    "sap_tracking_mgt",
+                    "cp_vis_mgt",
+                    "cp_tracker_mgt"
+                ],
+                "external": true
+            }
+        ],
+        "applicationMetrics": [
+            {
+                "metricId": "tracked_devices",
+                "name": "Number of total tracked devices",
+                "metricCollectionType": "CUMULATIVE",
+                "unit": "devices",
+                "interval": "5s",
+                "topic": "/app/tracked_devices"
+            },
+            {
+                "metricId": "processed_records",
+                "name": "Number of total processed records",
+                "metricCollectionType": "CUMULATIVE",
+                "unit": "records",
+                "interval": "5s",
+                "topic": "/app/processed_records"
+            },
+            {
+                "metricId": "tracking_response_time",
+                "name": "Max response time in milliseconds",
+                "metricCollectionType": "GAUGE",
+                "unit": "ms",
+                "interval": "1s",
+                "topic": "/app/tracking_response_time"
+            },
+            {
+                "metricId": "tracking_memory_usage",
+                "name": "Memory usage in %",
+                "metricCollectionType": "GAUGE",
+                "unit": "%",
+                "interval": "1s",
+                "topic": "/app/tracking_memory_usage"
+            }
+        ],
+        "compatibleContextBlueprint": [
+            "{{cb_id}}"
+        ],
+        "compatibleSites": [
+            "ITALY_TURIN"
+        ]
+    },
+    "nsds": [
+        {
+            "nsdIdentifier": "ns_ares2t_tracker",
+            "designer": "NXW",
+            "version": "1.0",
+            "nsdName": "ARES2T Tracker Service @ 5GEVE",
+            "nsdInvariantId": "ns_ares2t_tracker_v1.0",
+            "vnfdId": [
+                "c84b227e-520e-43c0-a75e-e52781dd54dd",
+                "419b1884-aea1-4cad-8647-c2cec55287b9",
+                "51c420e3-c83d-4ce9-a5bf-0dbe339b351d"
+            ],
+            "sapd": [
+                {
+                    "cpdId": "sap_tracking_mobile",
+                    "description": "SAP towards mobile equipment",
+                    "layerProtocol": "IPV4",
+                    "cpRole": "ROOT",
+                    "addressData": [
+                        {
+                            "addressType": "IP_ADDRESS",
+                            "iPAddressAssignment": false,
+                            "floatingIpActivated": true,
+                            "iPAddressType": "IPv4",
+                            "numberOfIpAddress": 1
+                        }
+                    ],
+                    "sapAddressAssignment": false,
+                    "nsVirtualLinkDescId": "vl_tracking_mobile"
+                },
+                {
+                    "cpdId": "sap_tracking_mgt",
+                    "description": "SAP for management",
+                    "layerProtocol": "IPV4",
+                    "cpRole": "ROOT",
+                    "addressData": [
+                        {
+                            "addressType": "IP_ADDRESS",
+                            "iPAddressAssignment": false,
+                            "floatingIpActivated": false,
+                            "iPAddressType": "IPv4",
+                            "numberOfIpAddress": 1
+                        }
+                    ],
+                    "sapAddressAssignment": false,
+                    "nsVirtualLinkDescId": "vl_tracking_mgt"
+                }
+            ],
+            "virtualLinkDesc": [
+                {
+                    "virtualLinkDescId": "vl_tracking_mobile",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_tracking_mobile",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Network to connect to the mobile user equipment"
+                },
+                {
+                    "virtualLinkDescId": "vl_tracking_mgt",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_tracking_mgt",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Management network"
+                },
+                {
+                    "virtualLinkDescId": "vl_tracking_data",
+                    "virtualLinkDescProvider": "NXW",
+                    "virtuaLinkDescVersion": "1.0",
+                    "connectivityType": {
+                        "layerProtocol": "IPV4"
+                    },
+                    "virtualLinkDf": [
+                        {
+                            "flavourId": "df_vl_tracking_data",
+                            "qos": {
+                                "latency": 0,
+                                "packetDelayVariation": 0,
+                                "packetLossRatio": 0,
+                                "priority": 0
+                            },
+                            "serviceAvaibilityLevel": "LEVEL_1"
+                        }
+                    ],
+                    "description": "Internal network to connect the tracking service components"
+                }
+            ],
+            "nsDf": [
+                {
+                    "nsDfId": "ns_Ares2T_Tracking_df",
+                    "flavourKey": "ns_Ares2T_Tracking_df_fk",
+                    "vnfProfile": [
+                        {
+                            "vnfProfileId": "vnfp_small_Ares2T_Tracker",
+                            "vnfdId": "419b1884-aea1-4cad-8647-c2cec55287b9",
+                            "flavourId": "vnf_df_Ares2T_Tracker",
+                            "instantiationLevel": "vnf_il_Ares2T_Tracker",
+                            "minNumberOfInstances": 1,
+                            "maxNumberOfInstances": 1,
+                            "nsVirtualLinkConnectivity": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mobile",
+                                    "cpdId": [
+                                        "cp_tracker_ext_in"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_data",
+                                    "cpdId": [
+                                        "cp_tracker_data"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                                    "cpdId": [
+                                        "cp_tracker_mgt"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "vnfProfileId": "vnfp_big_Ares2T_Tracker",
+                            "vnfdId": "c84b227e-520e-43c0-a75e-e52781dd54dd",
+                            "flavourId": "vnf_df_Ares2T_Tracker",
+                            "instantiationLevel": "vnf_il_Ares2T_Tracker",
+                            "minNumberOfInstances": 1,
+                            "maxNumberOfInstances": 1,
+                            "nsVirtualLinkConnectivity": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mobile",
+                                    "cpdId": [
+                                        "cp_tracker_ext_in"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_data",
+                                    "cpdId": [
+                                        "cp_tracker_data"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                                    "cpdId": [
+                                        "cp_tracker_mgt"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "vnfProfileId": "vnfp_Ares2T_Vis",
+                            "vnfdId": "51c420e3-c83d-4ce9-a5bf-0dbe339b351d",
+                            "flavourId": "vnf_df_Ares2T_Vis",
+                            "instantiationLevel": "vnf_il_Ares2T_Vis",
+                            "minNumberOfInstances": 1,
+                            "maxNumberOfInstances": 1,
+                            "nsVirtualLinkConnectivity": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_data",
+                                    "cpdId": [
+                                        "cp_vis_data"
+                                    ]
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                                    "cpdId": [
+                                        "cp_vis_mgt"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "virtualLinkProfile": [
+                        {
+                            "virtualLinkProfileId": "vlp_vl_tracking_mobile",
+                            "virtualLinkDescId": "vl_tracking_mobile",
+                            "flavourId": "df_vl_tracking_mobile",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        },
+                        {
+                            "virtualLinkProfileId": "vlp_vl_tracking_data",
+                            "virtualLinkDescId": "vl_tracking_data",
+                            "flavourId": "df_vl_tracking_data",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        },
+                        {
+                            "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                            "virtualLinkDescId": "vl_tracking_mgt",
+                            "flavourId": "df_vl_tracking_mgt",
+                            "maxBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            },
+                            "minBitrateRequirements": {
+                                "root": "1",
+                                "leaf": "1"
+                            }
+                        }
+                    ],
+                    "nsInstantiationLevel": [
+                        {
+                            "nsLevelId": "ns_ares2t_tracker_il_big",
+                            "description": "Big instantiation level for the ARES2T tracking service",
+                            "vnfToLevelMapping": [
+                                {
+                                    "vnfProfileId": "vnfp_big_Ares2T_Tracker",
+                                    "numberOfInstances": 1
+                                },
+                                {
+                                    "vnfProfileId": "vnfp_Ares2T_Vis",
+                                    "numberOfInstances": 1
+                                }
+                            ],
+                            "virtualLinkToLevelMapping": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mobile",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_data",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "nsLevelId": "ns_ares2t_tracker_il_small",
+                            "description": "Small instantiation level for the ARES2T tracking service",
+                            "vnfToLevelMapping": [
+                                {
+                                    "vnfProfileId": "vnfp_small_Ares2T_Tracker",
+                                    "numberOfInstances": 1
+                                },
+                                {
+                                    "vnfProfileId": "vnfp_Ares2T_Vis",
+                                    "numberOfInstances": 1
+                                }
+                            ],
+                            "virtualLinkToLevelMapping": [
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mobile",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_data",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                },
+                                {
+                                    "virtualLinkProfileId": "vlp_vl_tracking_mgt",
+                                    "bitRateRequirements": {
+                                        "root": "1",
+                                        "leaf": "1"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "defaultNsInstantiationLevelId": "ns_ares2t_tracker_il_small",
+                    "dependencies": []
+                }
+            ],
+            "security": {
+                "signature": "FC_NSD_SIGNATURE",
+                "algorithm": "FC_NSD_ALGORITHM",
+                "certificate": "FC_NSD_CERTIFICATE"
+            }
+        }
+    ],
+    "translationRules": [
+        {
+            "nsdId": "ns_ares2t_tracker",
+            "nsdVersion": "1.0",
+            "nsFlavourId": "ns_Ares2T_Tracking_df",
+            "nsInstantiationLevelId": "ns_ares2t_tracker_il_small",
+            "input": [
+                {
+                    "parameterId": "number_of_tracked_devices",
+                    "minValue": "1",
+                    "maxValue": "100"
+                }
+            ]
+        },
+        {
+            "nsdId": "ns_ares2t_tracker",
+            "nsdVersion": "1.0",
+            "nsFlavourId": "ns_Ares2T_Tracking_df",
+            "nsInstantiationLevelId": "ns_ares2t_tracker_il_big",
+            "input": [
+                {
+                    "parameterId": "number_of_tracked_devices",
+                    "minValue": "101",
+                    "maxValue": "1000"
+                }
+            ]
+        }
+    ]
+}

@@ -9,13 +9,13 @@
     <packaging>jar</packaging>
 
     <name>NS_TEMPLATES_CATALOGUE</name>
-    <description>NS Teamplates catalogue</description>
+    <description>NS Templates catalogue including rest controllers, services and catalogues for the elements</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.8.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+      <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -25,16 +25,28 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    	<dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+    	<scope>runtime</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-test</artifactId>
+    	<scope>test</scope>
+    </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -85,6 +97,11 @@
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
+		<dependency>
+               <groupId>it.nextworks.nfvmano</groupId>
+               <artifactId>NfvManoLibsTemplates</artifactId>
+               <version>0.0.2-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
@@ -93,15 +110,23 @@
         </dependency>
     </dependencies>
 
+    <!--
+      <build>
+         <plugins>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-        </plugins>
+          <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          </plugin>
+
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-javadoc-plugin</artifactId>
+           </plugin>
+    </plugins>
+
+
     </build>
-
+-->
 
 </project>

@@ -1,0 +1,141 @@
+{
+	"domainId": "domain1",
+	"name": "domain1",
+	"description": "domain1 example",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "NHDomainLayer",
+			"ranEnabled": true,
+			"type": "NEUTRAL_HOSTING_NSP",
+			"userId": "xxxx",
+			"tenantId": "xxxx"
+		},
+		{
+			"domainLayerId": "osmDomainLayer",
+			"type": "OSM_NFVO",
+			"username": "xxxx",
+			"password": "xxxx",
+			"project": "xxxx"
+		}
+	],
+	"domainInterface": {
+		"url": "http://x.x.x.x",
+		"port": "xxxx",
+		"auth": false,
+		"interfaceType": "HTTP"
+	}
+}
+---
+{
+	"domainId": "domain2",
+	"name": "domain2",
+	"description": "domain2 example",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "SonataDomainLayer",
+			"ranEnabled": false,
+			"type": "SONATA_NSP",
+			"username": "xxxx",
+			"password": "xxxx"
+		}
+	],
+	"domainInterface": {
+		"url": "http://x.x.x.x",
+		"port": "xxxx",
+		"auth": true,
+		"interfaceType": "HTTP"
+	}
+}
+---
+{
+	"domainId": "domain3",
+	"name": "domain3",
+	"description": "domain3 example",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "OsmDomainLayer",
+			"ranEnabled": false,
+			"type": "OSM_NSP",
+			"username": "xxxx",
+			"password": "xxxx",
+            "project": "xxxx",
+            "vimAccount": "xxxx"
+		}
+	],
+	"domainInterface": {
+		"url": "https://x.x.x.x",
+		"port": "xxxx",
+		"auth": true,
+		"interfaceType": "HTTP"
+	}
+}
+---
+{
+	"domainId": "testNsp",
+	"name": "testNsp",
+	"description": "testNsp",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "testDomainLayerNsp",
+			"ranEnabled": false,
+			"type": "NSP",
+			"nspNbiType": "THREE_GPP"
+		}
+	],
+	"domainInterface": {
+		"url": "https://x.x.x.x",
+		"port": "xxxx",
+		"auth": true,
+		"interfaceType": "HTTP"
+	}
+}
+---
+{
+	"domainId": "testNfvo",
+	"name": "testNfvo",
+	"description": "testNfvo",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "testDomainLayerNfvo",
+			"type": "NFVO",
+			"manoNbiType": "NMRO_DRIVER"
+		}
+	],
+	"domainInterface": {
+		"url": "https://x.x.x.x",
+		"port": "xxxx",
+		"auth": true,
+		"interfaceType": "HTTP"
+	}
+}
+---
+{
+	"domainId": "testVertical",
+	"name": "testVertical",
+	"description": "testVertical",
+	"owner": "nxw",
+	"admin": "nxw",
+	"domainStatus": "ACTIVE",
+	"ownedLayers": [{
+			"domainLayerId": "testDomainLayerVertical",
+			"type": "VERTICAL",
+			"dspType": "VERTICAL_SERVICE"
+		}
+	],
+	"domainInterface": {
+		"url": "https://x.x.x.x",
+		"port": "xxxx",
+		"auth": true,
+		"interfaceType": "HTTP"
+	}
+}

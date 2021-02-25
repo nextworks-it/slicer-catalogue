@@ -15,6 +15,10 @@
 
 package it.nextworks.nfvmano.catalogues.template.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import it.nextworks.nfvmano.catalogue.template.elements.NsTemplateInfo;
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
@@ -36,6 +40,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+@Api(tags = "Network Slice Template Management API")
 
 @RestController
 @CrossOrigin
@@ -89,7 +95,7 @@ public class NsTemplateCatalogueRestController {
         log.debug("Received request to retrieve all the NS Templates.");
         try {
             QueryNsTemplateResponse response = nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(new Filter(), null));
-            return new ResponseEntity<List<NsTemplateInfo>>(response.getNsTemplateInfo(), HttpStatus.OK);
+            return new ResponseEntity<List<NsTemplateInfo>>(response.getNsTemplateInfos(), HttpStatus.OK);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -107,7 +113,7 @@ public class NsTemplateCatalogueRestController {
         log.debug("Received request to retrieve Ns Template with ID " + nstId);
         try {
             QueryNsTemplateResponse response = nsTemplateCatalogueService.queryNsTemplate(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildNsTemplateFilter(nstId), null));
-            return new ResponseEntity<NsTemplateInfo>(response.getNsTemplateInfo().get(0), HttpStatus.OK);
+            return new ResponseEntity<NsTemplateInfo>(response.getNsTemplateInfos().get(0), HttpStatus.OK);
         } catch (MalformattedElementException e) {
             log.error("Malformatted request");
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -120,7 +126,7 @@ public class NsTemplateCatalogueRestController {
         }
     }
 
-    @RequestMapping(value = "/nstemplate/{vsbId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/nstemplate/{nstId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteNsTemplate(@PathVariable String nstId, Authentication auth) {
         log.debug("Received request to delete NS Template with ID " + nstId);
         String user = getUserFromAuth(auth);
