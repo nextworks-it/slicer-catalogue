@@ -66,9 +66,6 @@ public class VsComponent implements DescriptorInformationElement {
 	@Fetch(FetchMode.SELECT)
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> endPointsIds = new ArrayList<>();
-
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String nfvId;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -76,9 +73,23 @@ public class VsComponent implements DescriptorInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Map<String, String> lifecycleOperations = new HashMap<>();
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
+
 	private AtomicComponentPlacement placement;
-	
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private VsComponentType type;
+
+
+	private String nfvId;
+
+	//Reference to the blueprint in the case of type VS
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String associatedVsbId;
+
+
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	private String compatibleSite;
+
 	public VsComponent() {
 		// JPA only
 	}
@@ -86,36 +97,46 @@ public class VsComponent implements DescriptorInformationElement {
 	/**
 	 * Constructor
 	 * 
-	 * @param blueprint this component belongs to
+	 * @param vsb this component belongs to
 	 * @param componentId ID of the atomic component
 	 * @param serversNumber number of application servers
 	 * @param imagesUrls URLs of the images of the application
 	 * @param endPointsIds IDs of the connection end points of the applications 
-	 * @param lifecycleOperations map with LCM operation as key and script to be executed as value 
+	 * @param lifecycleOperations map with LCM operation as key and script to be executed as value
+	 * @param vsComponentType the type of component (VS/VNF at the moment)
+	 *  @param placement high-level placement indications for the component, used for the VNFs for the moment
 	 */
 	public VsComponent(Blueprint vsb,
-			String componentId,
-			int serversNumber,
-			List<String> imagesUrls,
-			List<String> endPointsIds,
-			Map<String, String> lifecycleOperations, String nfvId, AtomicComponentPlacement placement ) {
+					   String componentId,
+					   int serversNumber,
+					   List<String> imagesUrls,
+					   List<String> endPointsIds,
+					   Map<String, String> lifecycleOperations,
+					   VsComponentType vsComponentType,
+					   String nfvId,
+					   AtomicComponentPlacement placement,
+					   String associatedVsbId,
+					   String compatibleSite) {
 		this.vsb = vsb;
 		this.componentId = componentId;
 		this.serversNumber = serversNumber;
 		if (imagesUrls != null) this.imagesUrls = imagesUrls;
 		if (endPointsIds != null) this.endPointsIds = endPointsIds;
 		if (lifecycleOperations != null) this.lifecycleOperations = lifecycleOperations;
-		this.nfvId = nfvId;
-		this.placement= placement;
+		this.type = vsComponentType;
+		this.placement = placement;
+		this.associatedVsbId = associatedVsbId;
+		this.compatibleSite =compatibleSite;
+		this.nfvId= nfvId;
 	}
 
 
-	public AtomicComponentPlacement getPlacement() {
-		return placement;
-	}
 
 	public String getNfvId() {
 		return nfvId;
+	}
+	public String getAssociatedVsbId() {
+		return associatedVsbId;
 	}
 
 	/**
@@ -123,6 +144,10 @@ public class VsComponent implements DescriptorInformationElement {
 	 */
 	public Blueprint getVsb() {
 		return vsb;
+	}
+
+	public String getCompatibleSite() {
+		return compatibleSite;
 	}
 
 	/**
@@ -162,14 +187,15 @@ public class VsComponent implements DescriptorInformationElement {
 
 	@Override
 	public void isValid() throws MalformattedElementException {
-		if (componentId == null) throw new MalformattedElementException("VS component without ID.");
-		if (endPointsIds == null || endPointsIds.isEmpty()){
-			throw new MalformattedElementException("VS components without endpoints");
-		}
-
-		if(placement!=null && nfvId==null){
-			throw new MalformattedElementException("Component with placement but without the NfvId:"+componentId);
-		}
+		if (componentId == null) throw new MalformattedElementException("VSB atomic component without ID.");
+		if (this.type==VsComponentType.SERVICE &&  associatedVsbId==null) throw new MalformattedElementException("Component of type service without associated VSB id");
 	}
 
+	public AtomicComponentPlacement getPlacement() {
+		return placement;
+	}
+
+	public VsComponentType getType() {
+		return type;
+	}
 }

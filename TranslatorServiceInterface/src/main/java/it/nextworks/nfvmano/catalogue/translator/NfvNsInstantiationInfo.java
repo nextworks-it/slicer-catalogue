@@ -16,7 +16,9 @@
 package it.nextworks.nfvmano.catalogue.translator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NfvNsInstantiationInfo {
 
@@ -26,6 +28,10 @@ public class NfvNsInstantiationInfo {
 	private String deploymentFlavourId;
 	private String instantiationLevelId;
 	private List<String> domainIds = new ArrayList<String>();
+
+	//this is used for the composite VS
+	//key: vsb atomic component id, value: the translation info for the nested VSs
+	private Map<String, NfvNsInstantiationInfo> nestedVsTranslation = new HashMap<>();
 	
 	public NfvNsInstantiationInfo() {
 		
@@ -44,12 +50,14 @@ public class NfvNsInstantiationInfo {
 			String nsdVersion,
 			String deploymentFlavourId,
 			String instantiationLevelId,
-			List<String> domainIds) {
+			List<String> domainIds,
+								  Map<String, NfvNsInstantiationInfo> nestedVsTranslation) {
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
+		if(nestedVsTranslation!=null)this.nestedVsTranslation=nestedVsTranslation;
 	}
 	
 	/**
@@ -67,13 +75,15 @@ public class NfvNsInstantiationInfo {
 			String nsdVersion,
 			String deploymentFlavourId,
 			String instantiationLevelId,
-			List<String> domainIds) {
+			List<String> domainIds,
+								  Map<String, NfvNsInstantiationInfo> nestedVsTranslation) {
 		this.nstId=nstId;
 		this.nfvNsdId = nfvNsdId;
 		this.nsdVersion = nsdVersion;
 		this.deploymentFlavourId = deploymentFlavourId;
 		this.instantiationLevelId = instantiationLevelId;
 		if (domainIds != null) this.domainIds = domainIds;
+		if(nestedVsTranslation!=null)this.nestedVsTranslation=nestedVsTranslation;
 	}
 	
 	
@@ -95,8 +105,10 @@ public class NfvNsInstantiationInfo {
 	public void setInstantiationLevelId(String instantiationLevelId) {
 		this.instantiationLevelId = instantiationLevelId;
 	}
-	
-	
+
+	public Map<String, NfvNsInstantiationInfo> getNestedVsTranslation() {
+		return nestedVsTranslation;
+	}
 
 	public String getNstId() {
 		return nstId;

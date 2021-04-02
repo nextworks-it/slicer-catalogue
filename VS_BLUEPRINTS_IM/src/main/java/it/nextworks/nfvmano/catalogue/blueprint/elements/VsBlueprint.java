@@ -95,6 +95,10 @@ public class VsBlueprint extends Blueprint {
 //	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 //	private List<String> configurableParameters = new ArrayList<>();
 
+
+	private boolean interSite = false;
+
+
 	public VsBlueprint() { }
 
 	public VsBlueprint(String vsBlueprinId,
@@ -106,11 +110,13 @@ public class VsBlueprint extends Blueprint {
 			List<String> configurableParameters, 
 			List<EveSite> compatibleSites,
 			List<String> compatibleContextBlueprint, 
-			List<ApplicationMetric> applicationMetrics) {
+			List<ApplicationMetric> applicationMetrics,
+					   boolean interSite) {
 		super(vsBlueprinId, version, name, description, parameters, endPoints, 
 				configurableParameters, applicationMetrics);
 		if (compatibleSites != null) this.compatibleSites = compatibleSites;
 		if (compatibleContextBlueprint != null) this.compatibleContextBlueprint = compatibleContextBlueprint;
+		this.interSite=interSite;
 //		this.vsBlueprintId = vsBlueprinId;
 //		this.version = version;
 //		this.name = name;
@@ -210,8 +216,11 @@ public class VsBlueprint extends Blueprint {
 //	public List<String> getConfigurableParameters() {
 //		return configurableParameters;
 //	}
-	
-	
+
+
+	public boolean isInterSite() {
+		return interSite;
+	}
 
 	/**
 	 * 
@@ -242,6 +251,14 @@ public class VsBlueprint extends Blueprint {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		super.isValid();
+		if (endPoints == null || endPoints.isEmpty()) {
+			if(!isInterSite())
+				throw new MalformattedElementException("Blueprint without end points");
+		} else {
+			for (VsbEndpoint e : endPoints) {
+				e.isValid();
+			}
+		}
 		if (compatibleSites == null || compatibleSites.isEmpty()) {
 			throw new MalformattedElementException("VS Blueprint without compatible sites");
 		}

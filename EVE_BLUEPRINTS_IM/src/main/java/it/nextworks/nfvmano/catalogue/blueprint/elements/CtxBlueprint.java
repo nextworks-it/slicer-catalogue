@@ -85,6 +85,14 @@ public class CtxBlueprint extends Blueprint {
 	@Override
 	public void isValid() throws MalformattedElementException {
 		super.isValid();
+		if (endPoints == null || endPoints.isEmpty()) {
+			throw new MalformattedElementException("Blueprint without end points");
+		} else {
+			for (VsbEndpoint e : endPoints) {
+				e.isValid();
+			}
+		}
+
 		if (compatibleSites == null || compatibleSites.isEmpty()) {
 			throw new MalformattedElementException("Ctx Blueprint without compatible sites");
 		}

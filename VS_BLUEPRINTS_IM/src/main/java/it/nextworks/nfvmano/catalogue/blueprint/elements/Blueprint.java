@@ -274,13 +274,7 @@ public class Blueprint implements DescriptorInformationElement {
 		if (serviceSequence != null) {
 			for (VsbForwardingPathHop e : serviceSequence) e.isValid();
 		}
-		if (endPoints == null || endPoints.isEmpty()) {
-			throw new MalformattedElementException("Blueprint without end points");
-		} else {
-            for (VsbEndpoint e : endPoints) {
-                e.isValid();
-            }
-        }
+
 		if (connectivityServices == null || connectivityServices.isEmpty()) {
 			throw new MalformattedElementException("Blueprint without connectivity services");
 		} else {

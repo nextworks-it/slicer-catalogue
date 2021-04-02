@@ -15,10 +15,7 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
@@ -34,7 +31,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnboardNsdRequest;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.QueryNsdResponse;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
@@ -95,10 +91,32 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 				am.isValid();
 			}
 		}
+		if (request.getVsBlueprint().isInterSite()){
+			for(VsComponent component : request.getVsBlueprint().getAtomicComponents()){
+				if(component.getType()!=null && component.getType().equals(VsComponentType.SERVICE)){
+					Optional<VsBlueprint> nestedVsb = vsBlueprintRepository.findByBlueprintId(component.getAssociatedVsbId());
+					if(!nestedVsb.isPresent())
+						throw  new MalformattedElementException("Could not find associated VSB with ID:"+component.getAssociatedVsbId());
+
+					List<VsBlueprintParameter> nestedParameters = request.getVsBlueprint().getParameters();
+					for(VsBlueprintParameter nestedParameter: nestedVsb.get().getParameters()){
+						String nestedParameterId = component.getComponentId()+"."+nestedParameter.getParameterId();
+						if(!isParameterInList(nestedParameterId, nestedParameters)){
+							log.debug("nested parameter not included, adding it:"+nestedParameterId);
+							nestedParameters.add(new VsBlueprintParameter(nestedParameterId, nestedParameter.getParameterName(), nestedParameter.getParameterType(),
+									nestedParameter.getParameterDescription(), nestedParameter.getApplicabilityField()));
+						}
+					}
+
+				}
+
+			}
+
+		}
 		Map<String, Nsd> nsdInfoNsd = storeNsds(request);
 		//disabled nsdInfoId setting in blueprint/translationrule
 		nsdInfoNsd = new HashMap<>();
-		String vsbId = storeVsBlueprint(request.getVsBlueprint(), request.getOwner(), nsdInfoNsd);
+		String vsbId = storeVsBlueprint(request, request.getOwner(), nsdInfoNsd);
 		
 		VsBlueprintInfo vsBlueprintInfo;
 		try {
@@ -112,6 +130,14 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		return vsbId;
 			
 
+	}
+
+
+	private boolean isParameterInList(String parameterId, List<VsBlueprintParameter> parameterList){
+		Optional<VsBlueprintParameter> parameter = parameterList.stream()
+														.filter(p -> p.getParameterId().equals(parameterId))
+														.findFirst();
+		return parameter.isPresent();
 	}
 	
 	@Override
@@ -252,18 +278,41 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		log.debug("Removed VSD " + vsdId + " from blueprint " + vsBlueprintId);
 	}
 	
-	private String storeVsBlueprint(VsBlueprint vsBlueprint, String owner, Map<String, Nsd> nsdInfoNsd) throws AlreadyExistingEntityException {
+	private String storeVsBlueprint(OnBoardVsBlueprintRequest request, String owner, Map<String, Nsd> nsdInfoNsd) throws AlreadyExistingEntityException, MalformattedElementException {
+		VsBlueprint vsBlueprint = request.getVsBlueprint();
 		log.debug("Onboarding VS blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion());
 		if ( (vsBlueprintInfoRepository.findByNameAndVsBlueprintVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ||
 				(vsBlueprintRepository.findByNameAndVersion(vsBlueprint.getName(), vsBlueprint.getVersion()).isPresent()) ) {
 			log.error("VS Blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion() + " already present in DB.");
 			throw new AlreadyExistingEntityException("VS Blueprint with name " + vsBlueprint.getName() + " and version " + vsBlueprint.getVersion() + " already present in DB.");
 		}
-		
+
+		if (request.getVsBlueprint().isInterSite()){
+			for(VsComponent component : request.getVsBlueprint().getAtomicComponents()){
+				if(component.getType().equals(VsComponentType.SERVICE)){
+					Optional<VsBlueprint> nestedVsb = vsBlueprintRepository.findByBlueprintId(component.getAssociatedVsbId());
+					if(!nestedVsb.isPresent())
+						throw  new MalformattedElementException("Could not find associated VSB with ID:"+component.getAssociatedVsbId());
+
+					List<VsBlueprintParameter> nestedParameters = request.getVsBlueprint().getParameters();
+					for(VsBlueprintParameter nestedParameter: nestedVsb.get().getParameters()){
+						String nestedParameterId = component.getComponentId()+"."+nestedParameter.getParameterId();
+						if(!isParameterInList(nestedParameterId, nestedParameters)){
+							log.debug("nested parameter not included, adding it:"+nestedParameterId);
+							nestedParameters.add(new VsBlueprintParameter(nestedParameterId, nestedParameter.getParameterName(), nestedParameter.getParameterType(),
+									nestedParameter.getParameterDescription(), nestedParameter.getApplicabilityField()));
+						}
+					}
+
+				}
+
+			}
+
+		}
 		VsBlueprint target = new VsBlueprint(null, vsBlueprint.getVersion(), vsBlueprint.getName(), vsBlueprint.getDescription(), vsBlueprint.getParameters(),
 				vsBlueprint.getEndPoints(), vsBlueprint.getConfigurableParameters(), 
 				vsBlueprint.getCompatibleSites(), vsBlueprint.getCompatibleContextBlueprint(),
-				vsBlueprint.getApplicationMetrics());
+				vsBlueprint.getApplicationMetrics(), vsBlueprint.isInterSite());
 		vsBlueprintRepository.saveAndFlush(target);
 		
 		Long vsbId = target.getId();
@@ -275,8 +324,16 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		List<VsComponent> atomicComponents = vsBlueprint.getAtomicComponents();
 		if (atomicComponents != null) {
 			for (VsComponent c : atomicComponents) {
-				VsComponent targetComponent = new VsComponent(target, c.getComponentId(), c.getServersNumber(), c.getImagesUrls(), c.getEndPointsIds(), c.getLifecycleOperations(),
-				c.getNfvId(), c.getPlacement());
+				VsComponent targetComponent = new VsComponent(target,
+						c.getComponentId(),
+						c.getServersNumber(),
+						c.getImagesUrls(),
+						c.getEndPointsIds(),
+						c.getLifecycleOperations(),
+						c.getType(),
+						c.getNfvId(), c.getPlacement(),
+						c.getAssociatedVsbId(),
+						c.getCompatibleSite());
 				vsComponentRepository.saveAndFlush(targetComponent);
 			}
 			log.debug("Added atomic components in VS blueprint " + vsbIdString);
@@ -369,21 +426,34 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			String nsdInfoId = null;
 			try {
 				Map<String, String> userDefinedData = new HashMap<>();
-				List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
-				for (EveSite site : sites) {
-					userDefinedData.put(site.toString(), "yes");
-					if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS||site==EveSite.FRANCE_SACLAY
-							||site==EveSite.FRANCE_CHATILLON||site==EveSite.FRANCE_SOPHIA_ANTIPOLIS){
-						log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
-						userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
+				if(!request.getVsBlueprint().isInterSite()){
+					log.debug("onboarding single site NSDs for VSB");
 
+					List<EveSite> sites = request.getVsBlueprint().getCompatibleSites();
+					for (EveSite site : sites) {
+						userDefinedData.put(site.toString(), "yes");
+						if(site==EveSite.FRANCE_RENNES || site==EveSite.FRANCE_NICE|| site==EveSite.FRANCE_PARIS||site==EveSite.FRANCE_SACLAY
+								||site==EveSite.FRANCE_CHATILLON||site==EveSite.FRANCE_SOPHIA_ANTIPOLIS||site==EveSite.FRANCE_LANNION){
+							log.debug("Adding nsd_invariant_id to userDefinedData:"+nsd.getNsdInvariantId());
+							userDefinedData.put("NSD_INVARIANT_ID",nsd.getNsdInvariantId());
+
+						}
 					}
+
+				}else{
+					log.debug("onboarding inter-site NSDs for VSB");
+					if(nsd.getNestedNsdId()==null || nsd.getNestedNsdId().isEmpty())
+						throw new MalformattedElementException("Inter-site VSB with non composite NSD");
+					userDefinedData.put("multiSite","yes");
+
+
 				}
 				nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
 				log.debug("Added NSD " + nsd.getNsdIdentifier() +
 						", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
 
 				nsdInfoIdNsd.put(nsdInfoId, nsd);
+
 			} catch (AlreadyExistingEntityException e) {
 				log.debug("The NSD is already present in the NFVO catalogue. IGNORING.");
 

@@ -15,12 +15,14 @@
 */
 package it.nextworks.nfvmano.catalogue.blueprint.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import it.nextworks.nfvmano.catalogue.blueprint.BlueprintCatalogueUtilities;
+import it.nextworks.nfvmano.catalogue.blueprint.elements.*;
 import it.nextworks.nfvmano.catalogue.blueprint.interfaces.VsDescriptorCatalogueInterface;
+import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsBlueprintResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.VsDescriptorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +37,6 @@ import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementExcept
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MethodNotImplementedException;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.NotExistingEntityException;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.ServiceConstraints;
-import it.nextworks.nfvmano.catalogue.blueprint.elements.VsDescriptor;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.OnboardVsDescriptorRequest;
 import it.nextworks.nfvmano.catalogue.blueprint.messages.QueryVsDescriptorResponse;
 import it.nextworks.nfvmano.catalogue.blueprint.repo.ServiceConstraintsRepository;
@@ -65,8 +65,38 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 			throws MethodNotImplementedException, MalformattedElementException, AlreadyExistingEntityException, FailedOperationException {
 		log.debug("Processing request to on-board a new VS descriptor");
 		request.isValid();
-		VsDescriptor vsd = new VsDescriptor(request.getVsd().getName(), request.getVsd().getVersion(), request.getVsd().getVsBlueprintId(), 
-				request.getVsd().getSst(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId());
+		VsBlueprint vsBlueprint = null;
+		try {
+			QueryVsBlueprintResponse response =
+					vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(request.getVsd().getVsBlueprintId(), request.getTenantId()), null));
+			vsBlueprint= response.getVsBlueprintInfo().get(0).getVsBlueprint();
+		} catch (NotExistingEntityException e) {
+			log.error("Error during VSB retrieval during VSD onboarding", e);
+			throw new MalformattedElementException(e);
+		}
+
+
+		Map<String, String> nestedVsdIds = new HashMap<>();
+		for(VsComponent component : vsBlueprint.getAtomicComponents()){
+			if(component.getType()== VsComponentType.SERVICE){
+				log.debug("triggering onboard of nested VSD for component:"+component.getComponentId());
+				try {
+					String nestedVsdId;
+					nestedVsdId = this.onboardNestedVsd(component,request.getVsd(), request.getTenantId()  );
+					nestedVsdIds.put(component.getComponentId(), nestedVsdId);
+
+
+
+				} catch (NotExistingEntityException e) {
+					log.error(e.getMessage(), e);
+					throw new MalformattedElementException(e);
+				}
+			}
+		}
+
+
+		VsDescriptor vsd = new VsDescriptor(request.getVsd().getName(), request.getVsd().getVersion(), request.getVsd().getVsBlueprintId(), request.getVsd().getManagementType(), request.getVsd().getQosParameters(), request.getVsd().getSla(), request.isPublic(), request.getTenantId()
+		, nestedVsdIds, request.getVsd().getSliceProfiles());
 		String vsdId = storeVsd(vsd, request.getVsd().getServiceConstraints());
 		try {
 			vsBlueprintCatalogueService.addVsdInBlueprint(vsd.getVsBlueprintId(), vsdId);
@@ -75,7 +105,52 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		}
 		return vsdId;
 	}
-	
+
+	private String onboardNestedVsd(VsComponent component, VsDescriptor descriptor, String tenant) throws MalformattedElementException, FailedOperationException, NotExistingEntityException, MethodNotImplementedException, AlreadyExistingEntityException {
+		log.debug("Triggering nested VSD onboarding");
+		String nestedBlueprintId = component.getAssociatedVsbId();
+		String name = descriptor.getName()+"_"+component.getComponentId();
+		String version = descriptor.getVersion();
+		List<String> nestedVsdQosParams = descriptor.getQosParameters().keySet().stream()
+				.filter(paramId -> paramId.startsWith(component.getComponentId()+"."))
+				.collect(Collectors.toList());
+		Map<String, String> qosParams = new HashMap<>();
+		for(String nestedQosParam : nestedVsdQosParams){
+			String nestedId = nestedQosParam.replace(component.getComponentId()+".","");
+			qosParams.put(nestedId, descriptor.getQosParameters().get(nestedQosParam) );
+		}
+
+
+
+		QueryVsBlueprintResponse response =
+				vsBlueprintCatalogueService.queryVsBlueprint(new GeneralizedQueryRequest(BlueprintCatalogueUtilities.buildVsBlueprintFilter(nestedBlueprintId, tenant), null));
+		//qosParams.keySet().retainAll(vsBlueprint.getParameters().stream().map(param -> param.getParameterId()).collect(Collectors.toList()));
+
+		VsBlueprint nestedVsb = response.getVsBlueprintInfo().get(0).getVsBlueprint();
+		List<String> nestedEndpoints = nestedVsb.getEndPoints().stream()
+											.map(e -> e.getEndPointId())
+											.collect(Collectors.toList());
+		Map<String, SliceProfile> endpoints = descriptor.getSliceProfiles();
+		Map<String, SliceProfile> nestedSliceProfiles =  nestedEndpoints.stream()
+															.filter(endpoints::containsKey)
+															.collect(Collectors.toMap(Function.identity(), endpoints::get));
+		VsDescriptor nestedVsd = new VsDescriptor(name,
+				version,
+				nestedBlueprintId,
+				descriptor.getManagementType(),
+				qosParams, descriptor.getSla(),
+				descriptor.isPublic(),
+				tenant,
+				new HashMap<>(),
+				nestedSliceProfiles);
+
+		OnboardVsDescriptorRequest tReq = new OnboardVsDescriptorRequest(nestedVsd, tenant, descriptor.isPublic());
+		return this.onBoardVsDescriptor(tReq);
+
+
+	}
+
+
 	@Override
 	public QueryVsDescriptorResponse queryVsDescriptor(GeneralizedQueryRequest request) 
 			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
@@ -137,7 +212,7 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 	
 	@Override
 	public synchronized void deleteVsDescriptor(String vsDescriptorId, String tenantId)
-			throws MethodNotImplementedException, MalformattedElementException, NotExistingEntityException, FailedOperationException {
+			throws MalformattedElementException, NotExistingEntityException, FailedOperationException {
 		log.debug("Processing request to delete a VS descriptor");
 		if  (vsDescriptorId == null) throw new MalformattedElementException("VSD ID is null");
 		
@@ -145,6 +220,13 @@ public class VsDescriptorCatalogueService implements VsDescriptorCatalogueInterf
 		if (vsdOpt.isPresent()) {
 			VsDescriptor vsd = vsdOpt.get();
 			if ( (vsd.getTenantId().equals(tenantId)) || (tenantId.equals(adminTenant)) ) {
+				if(vsd.getNestedVsdIds()!=null&&!vsd.getNestedVsdIds().isEmpty()){
+					log.debug("Removing nested VSDs:{}", vsd.getNestedVsdIds());
+					for(String nestedId: vsd.getNestedVsdIds().values()){
+						deleteVsDescriptor(nestedId, tenantId);
+					}
+
+				}
 				String vsbId = vsd.getVsBlueprintId();
 				vsDescriptorRepository.delete(vsd);
 				vsBlueprintCatalogueService.removeVsdInBlueprint(vsbId, vsDescriptorId);

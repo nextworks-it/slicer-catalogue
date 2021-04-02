@@ -62,7 +62,16 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	
 	@JsonIgnore
 	private String nsdInfoId;
-	
+
+
+	//this is used to override the translation rules of the Vertical sub-services
+	//Key component id, value the nsdid, df, il that should be used for the nested VS
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	private Map<String, VsdNestedNsdTranslation> vsdNestedNsdTranslations= new HashMap<>();
+
 	public VsdNsdTranslationRule() { }
 	
 	
@@ -75,12 +84,13 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	 * @param nsInstantiationLevelId
 	 */
 	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nsdId, String nsdVersion,
-                                 String nsFlavourId, String nsInstantiationLevelId) {
+                                 String nsFlavourId, String nsInstantiationLevelId, Map<String, VsdNestedNsdTranslation> vsdNestedNsdTranslations) {
 		if (input!= null) this.input = input;
 		this.nsdId = nsdId;
 		this.nsdVersion = nsdVersion;
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
+		if(vsdNestedNsdTranslations!=null) this.vsdNestedNsdTranslations = vsdNestedNsdTranslations;
 	}
 	
 	/**
@@ -122,8 +132,9 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	}
 
 
-
-
+	public Map<String, VsdNestedNsdTranslation> getVsdNestedNsdTranslations() {
+		return vsdNestedNsdTranslations;
+	}
 
 	public String getNstId() {
 		return nstId;
@@ -179,12 +190,11 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	public String getNsInstantiationLevelId() {
 		return nsInstantiationLevelId;
 	}
-	
-	
-	
 
 
-
+	public void setVsdNestedNsdTranslations(Map<String, VsdNestedNsdTranslation> vsdNestedNsdTranslations) {
+		this.vsdNestedNsdTranslations = vsdNestedNsdTranslations;
+	}
 
 	/**
 	 * @return the blueprintId
