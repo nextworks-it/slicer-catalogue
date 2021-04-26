@@ -17,10 +17,14 @@ package it.nextworks.nfvmano.catalogue.template.messages;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardNsTemplateRequest implements InterfaceMessage {
@@ -28,6 +32,9 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
     private NST nst;
     private List<Nsd> nsds = new ArrayList<>();
 	private List<OnBoardVnfPackageRequest> vnfPackages = new ArrayList<>();
+	private List<Pnfd> pnfds = new ArrayList<>();
+
+	private List<NstConfigurationRule> configurationRules = new ArrayList<>();
 
     public OnBoardNsTemplateRequest() { }
 	/**
@@ -36,12 +43,15 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 	 * @param nsds
 	 */
 
-    public OnBoardNsTemplateRequest(NST nst,List<Nsd> nsds,List<OnBoardVnfPackageRequest> vnfPackages) {
+	public OnBoardNsTemplateRequest(NST nst, List<Nsd> nsds, List<OnBoardVnfPackageRequest> vnfPackages, List<Pnfd> pnfds, List<NstConfigurationRule> configurationRules) {
     	if(this.nsds!=null)
 			this.nsds = nsds;
         this.nst = nst;
 		if(vnfPackages!=null)
 			this.vnfPackages= vnfPackages;
+		if(pnfds!=null)
+			this.pnfds = pnfds;
+		if (configurationRules != null) this.configurationRules = configurationRules;
     }
 
     @Override
@@ -57,6 +67,10 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 		if (nst == null) throw new MalformattedElementException("On board NS Template request without NS Template");
         else nst.isValid();
 
+        if(pnfds != null && !pnfds.isEmpty()){
+        	for (Pnfd pnfd : pnfds) pnfd.isValid();
+		}
+		if(!configurationRules.isEmpty()) for (NstConfigurationRule r : configurationRules) r.isValid();
 	}
 
 	public NST getNst() {
@@ -71,10 +85,22 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 		return nsds;
 	}
 
+	public List<Pnfd> getPnfds() { return pnfds; }
+
 	/**
 	 * @return the vnfPackages
 	 */
 	public List<OnBoardVnfPackageRequest> getVnfPackages() {
 		return vnfPackages;
+	}
+
+	public List<NstConfigurationRule> getConfigurationRules() {
+		return configurationRules;
+	}
+
+	@JsonIgnore
+	public void setNstIdInConfigurationRules(String nstId) {
+		for (NstConfigurationRule cr : configurationRules)
+			cr.setNstId(nstId);
 	}
 }
