@@ -20,11 +20,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardBlueprintRequest implements InterfaceMessage {
@@ -32,6 +34,8 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	private List<Nsd> nsds = new ArrayList<>();
 	private List<VsdNsdTranslationRule> translationRules = new ArrayList<>();
 	private List<NST> nsts = new ArrayList<>();
+	private List<Pnfd> pnfds = new ArrayList<>();
+	private List<NstConfigurationRule> configurationRules = new ArrayList<>();
 
 	private String owner;
 
@@ -47,10 +51,14 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	 */
 	public OnBoardBlueprintRequest(List<Nsd> nsds,
 								   List<VsdNsdTranslationRule> translationRules,
-								   List<NST> nsts) {
+								   List<NST> nsts,
+								   List<Pnfd> pnfds,
+								   List<NstConfigurationRule> configurationRules) {
 		if (nsds != null) this.nsds = nsds;
 		if (translationRules != null) this.translationRules = translationRules;
 		if (nsts!=null) this.nsts = nsts;
+		if (pnfds!=null) this.pnfds = pnfds;
+		if (configurationRules != null) this.configurationRules = configurationRules;
 	}
 
 
@@ -60,6 +68,11 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	public List<Nsd> getNsds() {
 		return nsds;
 	}
+
+	/**
+	 * @return the pnfds
+	 */
+	public List<Pnfd> getPnfds(){ return pnfds; }
 
 	/**
 	 * @return the translationRules
@@ -92,7 +105,7 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 		//if (nsds.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without NSD");
 		//if (translationRules.isEmpty()) throw new MalformattedElementException("Onboard VS blueprint request without translation rules");
 		if(!translationRules.isEmpty()) for (VsdNsdTranslationRule tr : translationRules) tr.isValid();
-
+		if(!configurationRules.isEmpty()) for (NstConfigurationRule cr : configurationRules) cr.isValid();
 		//for (Nsd nsd : nsds) nsd.isValid();
 	}
 
@@ -105,4 +118,7 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 		this.owner = owner;
 	}
 
+	public List<NstConfigurationRule> getConfigurationRules() {
+		return configurationRules;
+	}
 }

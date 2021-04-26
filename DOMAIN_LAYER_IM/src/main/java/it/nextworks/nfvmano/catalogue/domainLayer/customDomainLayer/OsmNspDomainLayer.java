@@ -1,9 +1,12 @@
 package it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.nextworks.nfvmano.catalogue.domainLayer.ManoNbiType;
 import it.nextworks.nfvmano.catalogue.domainLayer.NspDomainLayer;
 import it.nextworks.nfvmano.catalogue.domainLayer.NspNbiType;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.persistence.Entity;
 

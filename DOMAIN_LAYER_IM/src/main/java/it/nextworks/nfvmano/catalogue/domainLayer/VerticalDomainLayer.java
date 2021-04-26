@@ -13,7 +13,6 @@ import javax.persistence.*;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = EvePortalDomainLayer.class, name = "EVE_PORTAL_DSP")})
-
 public class VerticalDomainLayer extends DomainLayer {
 
     @JsonProperty("dspType")

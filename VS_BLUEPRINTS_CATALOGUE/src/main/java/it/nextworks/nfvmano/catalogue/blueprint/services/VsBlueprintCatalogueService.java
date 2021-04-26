@@ -129,7 +129,8 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 	private void processNsDescriptorOnboarding(OnBoardVsBlueprintRequest request) throws MalformattedElementException, FailedOperationException, AlreadyExistingEntityException, MethodNotImplementedException {
 
 		if(request.getNsts()!=null && request.getNsts().isEmpty() && request.getNsds()!=null && request.getNsds().isEmpty()
-		&& request.getVnfPackages()!=null && request.getVnfPackages().isEmpty()){
+		&& request.getVnfPackages()!=null && request.getVnfPackages().isEmpty()
+		&& request.getPnfds()!=null && request.getPnfds().isEmpty()){
 			log.debug("No descriptors to onboard, moving on");
 			return;
 		}
@@ -138,11 +139,12 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 			throw new MalformattedElementException("Onboarding request including NS descriptors, but no NSTemplateCatalogueProvider set");
 
 		}
+		
 		if(request.getNsts()!=null && !request.getNsts().isEmpty()){
-			OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages());
+			OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages(),request.getPnfds(),request.getConfigurationRules());
 			nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
 			for(int i=1; i<request.getNsts().size(); i++) {
-				nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null);
+				nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null,null,null);
 				nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
 			}
 		}else{
