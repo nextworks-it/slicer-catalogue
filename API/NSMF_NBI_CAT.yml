@@ -1,0 +1,1144 @@
+swagger: '2.0'
+info:
+  description: NSMF Catalogue Interface - Api Documentation
+  version: '1.0'
+  title: NSMF Catalogue Interface - Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8082'
+
+paths:
+  '/ns/catalogue/nstemplate':
+    get:
+      tags:
+        - Network Slice Template Management API
+      summary: getAllNsTemplates
+      operationId: getAllNsTemplatesUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - Network Slice Template Management API
+      summary: createNsTemplate
+      operationId: createNsTemplateUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: authenticated
+          in: query
+          required: false
+          type: boolean
+        - name: 'authorities[0].authority'
+          in: query
+          required: false
+          type: string
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            $ref: '#/definitions/OnBoardNsTemplateRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/ns/catalogue/nstemplate/{nstId}':
+    get:
+      tags:
+        - Network Slice Template Management API
+      summary: getNsTemplate
+      operationId: getNsTemplateUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: nstId
+          in: path
+          description: nstId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    delete:
+      tags:
+        - Network Slice Template Management API
+      summary: deleteNsTemplate
+      operationId: deleteNsTemplateUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: authenticated
+          in: query
+          required: false
+          type: boolean
+        - name: 'authorities[0].authority'
+          in: query
+          required: false
+          type: string
+        - name: nstId
+          in: path
+          description: nstId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+
+definitions:
+  OnBoardNsTemplateRequest:
+    type: object
+    properties:
+      configurationRules:
+        type: array
+        items:
+          $ref: '#/definitions/NstConfigurationRule'
+      nsds:
+        type: array
+        items:
+          $ref: '#/definitions/Nsd'
+      nst:
+        $ref: '#/definitions/NST'
+      pnfds:
+        type: array
+        items:
+          $ref: '#/definitions/Pnfd'
+      vnfPackages:
+        type: array
+        items:
+          $ref: '#/definitions/OnBoardVnfPackageRequest'
+    title: OnBoardNsTemplateRequest
+
+  NstConfigurationRule:
+    type: object
+    properties:
+      name:
+        type: string
+      nsdId:
+        type: string
+      params:
+        type: array
+        items:
+          type: string
+      type:
+        type: string
+        enum:
+          - REST
+          - SSH
+    title: NstConfigurationRule
+
+  Nsd:
+    type: object
+    properties:
+      autoScalingRule:
+        type: array
+        items:
+          $ref: '#/definitions/NsAutoscalingRule'
+      designer:
+        type: string
+      lifeCycleManagementScript:
+        type: array
+        items:
+          $ref: '#/definitions/LifeCycleManagementScript'
+      monitoredInfo:
+        type: array
+        items:
+          $ref: '#/definitions/MonitoredData'
+      nestedNsdId:
+        type: array
+        items:
+          type: string
+      nsDf:
+        type: array
+        items:
+          $ref: '#/definitions/NsDf'
+      nsdIdentifier:
+        type: string
+      nsdInvariantId:
+        type: string
+      nsdName:
+        type: string
+      pnfdId:
+        type: array
+        items:
+          type: string
+      sapd:
+        type: array
+        items:
+          $ref: '#/definitions/Sapd'
+      security:
+        $ref: '#/definitions/SecurityParameters'
+      version:
+        type: string
+      virtualLinkDesc:
+        type: array
+        items:
+          $ref: '#/definitions/NsVirtualLinkDesc'
+      vnfdId:
+        type: array
+        items:
+          type: string
+      vnffgd:
+        type: array
+        items:
+          $ref: '#/definitions/Vnffgd'
+    title: Nsd
+
+  NST:
+    type: object
+    properties:
+      geographicalAreaInfoList:
+        type: array
+        items:
+          $ref: '#/definitions/GeographicalAreaInfo'
+      nsdId:
+        type: string
+      nsdVersion:
+        type: string
+      nsst:
+        type: array
+        items:
+          $ref: '#/definitions/NST'
+      nsstIds:
+        type: array
+        items:
+          type: string
+      nsstType:
+        type: string
+        enum:
+          - NONE
+          - RAN
+          - CORE
+          - EHEALTH
+      nstId:
+        type: string
+      nstName:
+        type: string
+      nstProvider:
+        type: string
+      nstServiceProfile:
+        $ref: '#/definitions/NstServiceProfile'
+      nstVersion:
+        type: string
+    title: NST
+  
+  Pnfd:
+    type: object
+    properties:
+      configurableProperty:
+        type: array
+        items:
+          type: string
+      pnfExtCp:
+        type: array
+        items:
+          $ref: '#/definitions/PnfExtCpd'
+      pnfdId:
+        type: string
+      provider:
+        type: string
+      security:
+        $ref: '#/definitions/SecurityParameters'
+      version:
+        type: string
+    title: Pnfd
+
+  OnBoardVnfPackageRequest:
+    type: object
+    properties:
+      checksum:
+        type: string
+      name:
+        type: string
+      provider:
+        type: string
+      userDefinedData:
+        type: object
+        additionalProperties:
+          type: string
+      version:
+        type: string
+      vnfPackagePath:
+        type: string
+    title: OnBoardVnfPackageRequest
+
+  NsAutoscalingRule:
+    type: object
+    properties:
+      ruleActions:
+        type: array
+        items:
+          $ref: '#/definitions/AutoscalingAction'
+      ruleCondition:
+        $ref: '#/definitions/AutoscalingRuleCondition'
+      ruleId:
+        type: string
+    title: NsAutoscalingRule
+
+  LifeCycleManagementScript:
+    type: object
+    properties:
+      event:
+        type: array
+        items:
+          type: string
+          enum:
+            - START_VNF_INSTANTIATION
+            - END_VNF_INSTANTIATION
+            - START_VNF_SCALING
+            - END_VNF_SCALING
+            - START_VNF_HEALING
+            - END_VNF_HEALING
+            - START_VNF_TERMINATION
+            - END_VNF_TERMINATION
+            - START_VNF_FLAVOUR_CHANGE
+            - END_VNF_FLAVOUR_CHANGE
+            - START_VNF_OP_STATE_CHANGE
+            - END_VNF_OP_STATE_CHANGE
+            - START_CHANGE_VNF_EXTERNAL_CONNECTIVITY
+            - END_CHANGE_VNF_EXTERNAL_CONNECTIVITY
+            - RECEIVED_MSG_VNF_INSTANTIATE
+            - RECEIVED_MSG_VNF_SCALE
+            - RECEIVED_MSG_VNF_HEAL
+            - RECEIVED_MSG_VNF_TERMINATE
+            - RECEIVED_MSG_CHANGE_VNF_FLAVOUR
+            - RECEIVED_MSG_CHANGE_VNF_EXTERNAL_CONNECTIVITY
+            - RECEIVED_MSG_CHANGE_VNF_OP_STATE
+            - RECEIVED_MSG_VNF_CHANGE_INDICATION
+            - START_NS_INSTANTIATION
+            - END_NS_INSTANTIATION
+            - START_NS_SCALING
+            - END_NS_SCALING
+            - START_NS_HEALING
+            - END_NS_HEALING
+            - START_NS_TERMINATION
+            - END_NS_TERMINATION
+            - START_NS_UPDATE
+            - END_NS_UPDATE
+            - RECEIVED_MSG_NS_INSTANTIATE
+            - RECEIVED_MSG_NS_SCALE
+            - RECEIVED_MSG_NS_HEAL
+            - RECEIVED_MSG_NS_TERMINATE
+            - RECEIVED_MSG_NS_UPDATE
+      script:
+        type: string
+    title: LifeCycleManagementScript
+
+  MonitoredData:
+    type: object
+    properties:
+      monitoringParameter:
+        $ref: '#/definitions/MonitoringParameter'
+      vnfIndicatorInfo:
+        $ref: '#/definitions/VnfIndicatorData'
+    title: MonitoredData
+
+  MonitoringParameter:
+    type: object
+    properties:
+      exporter:
+        type: string
+      monitoringParameterId:
+        type: string
+      name:
+        type: string
+      params:
+        type: object
+        additionalProperties:
+          type: string
+      performanceMetric:
+        type: string
+      type:
+        type: string
+    title: MonitoringParameter
+
+  NsDf:
+    type: object
+    properties:
+      affinityOrAntiAffinityGroup:
+        type: array
+        items:
+          $ref: '#/definitions/AffinityOrAntiAffinityGroup'
+      defaultNsInstantiationLevelId:
+        type: string
+      dependencies:
+        type: array
+        items:
+          $ref: '#/definitions/Dependencies'
+      flavourKey:
+        type: string
+      nsDfId:
+        type: string
+      nsInstantiationLevel:
+        type: array
+        items:
+          $ref: '#/definitions/NsLevel'
+      nsProfile:
+        type: array
+        items:
+          $ref: '#/definitions/NsProfile'
+      pnfProfile:
+        type: array
+        items:
+          $ref: '#/definitions/PnfProfile'
+      scalingAspect:
+        type: array
+        items:
+          $ref: '#/definitions/NsScalingAspect'
+      virtualLinkProfile:
+        type: array
+        items:
+          $ref: '#/definitions/VirtualLinkProfile'
+      vnfProfile:
+        type: array
+        items:
+          $ref: '#/definitions/VnfProfile'
+    title: NsDf
+
+  Sapd:
+    type: object
+    properties:
+      addressData:
+        type: array
+        items:
+          $ref: '#/definitions/AddressData'
+      associatedCpdId:
+        type: string
+      cpRole:
+        type: string
+        enum:
+          - ROOT
+          - LEAF
+      cpdId:
+        type: string
+      description:
+        type: string
+      layerProtocol:
+        type: string
+        enum:
+          - ETHERNET
+          - MPLS
+          - ODU2
+          - IPV4
+          - IPV6
+          - PSEUDO_WIRE
+          - OTSIA
+          - OCH
+          - OTU
+          - ODU
+          - SDM
+          - AROF
+          - NOT_SPECIFIED
+      nsVirtualLinkDescId:
+        type: string
+      sapAddressAssignment:
+        type: boolean
+    title: Sapd
+
+  SecurityParameters:
+    type: object
+    properties:
+      algorithm:
+        type: string
+      certificate:
+        type: string
+      signature:
+        type: string
+    title: SecurityParameters
+
+  NsVirtualLinkDesc:
+    type: object
+    properties:
+      connectivityType:
+        $ref: '#/definitions/ConnectivityType'
+      description:
+        type: string
+      security:
+        $ref: '#/definitions/SecurityParameters'
+      testAccess:
+        type: array
+        items:
+          type: string
+      virtuaLinkDescVersion:
+        type: string
+      virtualLinkDescId:
+        type: string
+      virtualLinkDescProvider:
+        type: string
+      virtualLinkDf:
+        type: array
+        items:
+          $ref: '#/definitions/VirtualLinkDf'
+    title: NsVirtualLinkDesc
+
+  Vnffgd:
+    type: object
+    properties:
+      cpdPoolId:
+        type: array
+        items:
+          type: string
+      nfpd:
+        type: array
+        items:
+          $ref: '#/definitions/Nfpd'
+      pnfdId:
+        type: array
+        items:
+          type: string
+      virtualLinkDescId:
+        type: array
+        items:
+          type: string
+      vnfdId:
+        type: array
+        items:
+          type: string
+      vnffgdId:
+        type: string
+    title: Vnffgd
+
+  GeographicalAreaInfo:
+    type: object
+    properties:
+      description:
+        type: string
+      lat:
+        type: number
+        format: double
+      lon:
+        type: number
+        format: double
+      used:
+        type: boolean
+    title: GeographicalAreaInfo
+
+  NstServiceProfile:
+    type: object
+    properties:
+      availability:
+        type: number
+        format: float
+      coverageAreaTAList:
+        type: array
+        items:
+          type: string
+      eMBBPerfReq:
+        type: array
+        items:
+          $ref: '#/definitions/EMBBPerfReq'
+      latency:
+        type: integer
+        format: int32
+      maxNumberofUEs:
+        type: integer
+        format: int32
+      pLMNIdList:
+        type: array
+        items:
+          type: string
+      resourceSharingLevel:
+        type: boolean
+      sST:
+        type: string
+        enum:
+          - EMBB
+          - URLLC
+      serviceProfileId:
+        type: string
+      uEMobilityLevel:
+        type: string
+        enum:
+          - STATIONARY
+          - NOMADIC
+          - RESTRICTED_MOBILITY
+          - FULLY_MOBILITY
+      uRLLCPerfReq:
+        type: array
+        items:
+          $ref: '#/definitions/URLLCPerfReq'
+    title: NstServiceProfile
+
+  PnfExtCpd:
+    type: object
+    properties:
+      addressData:
+        type: array
+        items:
+          $ref: '#/definitions/AddressData'
+      cpRole:
+        type: string
+        enum:
+          - ROOT
+          - LEAF
+      cpdId:
+        type: string
+      description:
+        type: string
+      layerProtocol:
+        type: string
+        enum:
+          - ETHERNET
+          - MPLS
+          - ODU2
+          - IPV4
+          - IPV6
+          - PSEUDO_WIRE
+          - OTSIA
+          - OCH
+          - OTU
+          - ODU
+          - SDM
+          - AROF
+          - NOT_SPECIFIED
+    title: PnfExtCpd
+  
+  AutoscalingAction:
+    type: object
+    properties:
+      scaleNsToLevelData:
+        $ref: '#/definitions/ScaleNsToLevelData'
+      scaleType:
+        type: string
+        enum:
+          - SCALE_NS
+          - SCALE_VNF
+    title: AutoscalingAction
+
+  AutoscalingRuleCondition:
+    type: object
+    properties:
+      cooldownTime:
+        type: integer
+        format: int32
+      enabled:
+        type: boolean
+      initialInstantiationLevel:
+        type: string
+      name:
+        type: string
+      scaleInOperationType:
+        type: string
+        enum:
+          - AND
+          - OR
+      scaleOutOperationType:
+        type: string
+        enum:
+          - AND
+          - OR
+      scalingCriteria:
+        type: array
+        items:
+          $ref: '#/definitions/AutoscalingRuleCriteria'
+      scalingType:
+        type: string
+        enum:
+          - MANUAL_SCALING
+          - AUTOMATED_SCALING
+      thresholdTime:
+        type: integer
+        format: int32
+    title: AutoscalingRuleCondition
+
+  VnfIndicatorData:
+    type: object
+    properties:
+      vnfIndicator:
+        type: string
+      vnfdId:
+        type: string
+    title: VnfIndicatorData
+
+  AffinityOrAntiAffinityGroup:
+    type: object
+    properties:
+      affinityOrAntiAffinity:
+        type: string
+        enum:
+          - AFFINITY
+          - ANTI_AFFINITY
+      groupId:
+        type: string
+      scope:
+        type: string
+        enum:
+          - NFVI_NODE
+          - NFVI_POP
+          - ZONE
+          - ZONE_GROUP
+    title: AffinityOrAntiAffinityGroup
+
+  Dependencies:
+    type: object
+    properties:
+      primaryId:
+        type: array
+        items:
+          type: string
+      secondaryId:
+        type: array
+        items:
+          type: string
+    title: Dependencies
+
+  NsLevel:
+    type: object
+    properties:
+      description:
+        type: string
+      nsLevelId:
+        type: string
+      nsToLevelMapping:
+        type: array
+        items:
+          $ref: '#/definitions/NsToLevelMapping'
+      virtualLinkToLevelMapping:
+        type: array
+        items:
+          $ref: '#/definitions/VirtualLinkToLevelMapping'
+      vnfToLevelMapping:
+        type: array
+        items:
+          $ref: '#/definitions/VnfToLevelMapping'
+    title: NsLevel
+
+  NsProfile:
+    type: object
+    properties:
+      affinityOrAntiaffinityGroupId:
+        type: array
+        items:
+          type: string
+      maxNumberOfInstances:
+        type: integer
+        format: int32
+      minNumberOfInstances:
+        type: integer
+        format: int32
+      nsDfId:
+        type: string
+      nsInstantiationLevelId:
+        type: string
+      nsProfileId:
+        type: string
+      nsVirtualLinkConnectivity:
+        type: array
+        items:
+          $ref: '#/definitions/NsVirtualLinkConnectivity'
+      nsdId:
+        type: string
+    title: NsProfile
+
+  PnfProfile:
+    type: object
+    properties:
+      pnfProfileId:
+        type: string
+      pnfVirtualLinkConnectivity:
+        type: array
+        items:
+          $ref: '#/definitions/NsVirtualLinkConnectivity'
+      pnfdId:
+        type: string
+    title: PnfProfile
+
+  NsScalingAspect:
+    type: object
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      nsScaleLevel:
+        type: array
+        items:
+          $ref: '#/definitions/NsLevel'
+      nsScalingAspectId:
+        type: string
+    title: NsScalingAspect
+
+  VirtualLinkProfile:
+    type: object
+    properties:
+      affinityOrAntiAffinityGroupId:
+        type: array
+        items:
+          type: string
+      flavourId:
+        type: string
+      localAffinityOrAntiAffinityRule:
+        type: array
+        items:
+          $ref: '#/definitions/AffinityRule'
+      maxBitrateRequirements:
+        $ref: '#/definitions/LinkBitrateRequirements'
+      minBitrateRequirements:
+        $ref: '#/definitions/LinkBitrateRequirements'
+      virtualLinkDescId:
+        type: string
+      virtualLinkProfileId:
+        type: string
+    title: VirtualLinkProfile
+
+  VnfProfile:
+    type: object
+    properties:
+      affinityOrAntiAffinityGroupId:
+        type: array
+        items:
+          type: string
+      flavourId:
+        type: string
+      instantiationLevel:
+        type: string
+      localAffinityOrAntiAffinityRule:
+        type: array
+        items:
+          $ref: '#/definitions/AffinityRule'
+      maxNumberOfInstances:
+        type: integer
+        format: int32
+      minNumberOfInstances:
+        type: integer
+        format: int32
+      nsVirtualLinkConnectivity:
+        type: array
+        items:
+          $ref: '#/definitions/NsVirtualLinkConnectivity'
+      script:
+        type: array
+        items:
+          $ref: '#/definitions/VnfLCMScripts'
+      vnfProfileId:
+        type: string
+      vnfdId:
+        type: string
+    title: VnfProfile
+
+  AddressData:
+    type: object
+    properties:
+      addressType:
+        type: string
+        enum:
+          - MAC_ADDRESS
+          - IP_ADDRESS
+      floatingIpActivated:
+        type: boolean
+      iPAddressAssignment:
+        type: boolean
+      iPAddressType:
+        type: string
+        enum:
+          - IPv4
+          - IPv6
+      management:
+        type: boolean
+      numberOfIpAddress:
+        type: integer
+        format: int32
+    title: AddressData
+
+  ConnectivityType:
+    type: object
+    properties:
+      flowPattern:
+        type: string
+      layerProtocol:
+        type: string
+        enum:
+          - ETHERNET
+          - MPLS
+          - ODU2
+          - IPV4
+          - IPV6
+          - PSEUDO_WIRE
+          - OTSIA
+          - OCH
+          - OTU
+          - ODU
+          - SDM
+          - AROF
+          - NOT_SPECIFIED
+    title: ConnectivityType
+
+  VirtualLinkDf:
+    type: object
+    properties:
+      flavourId:
+        type: string
+      qos:
+        $ref: '#/definitions/QoS'
+      serviceAvaibilityLevel:
+        type: string
+        enum:
+          - LEVEL_1
+          - LEVEL_2
+          - LEVEL_3
+    title: VirtualLinkDf
+
+  Nfpd:
+    type: object
+    properties:
+      cpd:
+        type: array
+        items:
+          type: string
+      nfpId:
+        type: string
+      nfpRule:
+        $ref: '#/definitions/Rule'
+      qos:
+        $ref: '#/definitions/QoS'
+    title: Nfpd
+
+  EMBBPerfReq:
+    type: object
+    properties:
+      activityFactor:
+        type: integer
+        format: int32
+      areaTrafficCapDL:
+        type: integer
+        format: int32
+      areaTrafficCapUL:
+        type: integer
+        format: int32
+      coverage:
+        type: string
+      expDataRateDL:
+        type: integer
+        format: int32
+      expDataRateUL:
+        type: integer
+        format: int32
+      uESpeed:
+        type: integer
+        format: int32
+      userDensity:
+        type: integer
+        format: int32
+    title: EMBBPerfReq
+
+  URLLCPerfReq:
+    type: object
+    properties:
+      cSAvailability:
+        type: number
+        format: float
+      connDensity:
+        type: integer
+        format: int32
+      e2eLatency:
+        type: integer
+        format: int32
+      expDataRate:
+        type: integer
+        format: int32
+      jitter:
+        type: integer
+        format: int32
+      payloadSize:
+        type: string
+      reliability:
+        type: number
+        format: float
+      serviceAreaDimension:
+        type: string
+      survivalTime:
+        type: integer
+        format: int32
+      trafficDensity:
+        type: integer
+        format: int32
+    title: URLLCPerfReq
+
+  ScaleNsToLevelData:
+    type: object
+    properties:
+      nsInstantiationLevel:
+        type: string
+      nsScaleInfo:
+        type: array
+        items:
+          $ref: '#/definitions/NsScaleInfo'
+    title: ScaleNsToLevelData
+
+  AutoscalingRuleCriteria:
+    type: object
+    properties:
+      name:
+        type: string
+      nsMonitoringParamRef:
+        type: string
+      scaleInRelationalOperation:
+        type: string
+        enum:
+          - GE
+          - LE
+          - GT
+          - LT
+          - EQ
+      scaleInThreshold:
+        type: integer
+        format: int32
+      scaleOutRelationalOperation:
+        type: string
+        enum:
+          - GE
+          - LE
+          - GT
+          - LT
+          - EQ
+      scaleOutThreshold:
+        type: integer
+        format: int32
+    title: AutoscalingRuleCriteria
+
+  NsToLevelMapping:
+    type: object
+    properties:
+      nsProfileId:
+        type: string
+      numberOfInstances:
+        type: integer
+        format: int32
+    title: NsToLevelMapping
+
+  VirtualLinkToLevelMapping:
+    type: object
+    properties:
+      bitRateRequirements:
+        $ref: '#/definitions/LinkBitrateRequirements'
+      virtualLinkProfileId:
+        type: string
+    title: VirtualLinkToLevelMapping
+
+  VnfToLevelMapping:
+    type: object
+    properties:
+      numberOfInstances:
+        type: integer
+        format: int32
+      vnfProfileId:
+        type: string
+    title: VnfToLevelMapping
+
+  NsVirtualLinkConnectivity:
+    type: object
+    properties:
+      cpdId:
+        type: array
+        items:
+          type: string
+      virtualLinkProfileId:
+        type: string
+    title: NsVirtualLinkConnectivity
+
+  AffinityRule:
+    type: object
+    properties:
+      affinityOrAntiAffinity:
+        type: string
+        enum:
+          - AFFINITY
+          - ANTI_AFFINITY
+      scope:
+        type: string
+        enum:
+          - NFVI_NODE
+          - NFVI_POP
+          - ZONE
+          - ZONE_GROUP
+    title: AffinityRule
+
+  LinkBitrateRequirements:
+    type: object
+    properties:
+      leaf:
+        type: string
+      root:
+        type: string
+    title: LinkBitrateRequirements
+
+  VnfLCMScripts:
+    type: object
+    properties:
+      target:
+        type: string
+    title: VnfLCMScripts
+
+  QoS:
+    type: object
+    properties:
+      latency:
+        type: integer
+        format: int32
+      packetDelayVariation:
+        type: integer
+        format: int32
+      packetLossRatio:
+        type: integer
+        format: int32
+      priority:
+        type: integer
+        format: int32
+    title: QoS
+
+  Rule:
+    type: object
+    title: Rule
+
+  NsScaleInfo:
+    type: object
+    properties:
+      nsScaleLevelId:
+        type: string
+      nsScalingAspectId:
+        type: string
+    title: NsScaleInfo
