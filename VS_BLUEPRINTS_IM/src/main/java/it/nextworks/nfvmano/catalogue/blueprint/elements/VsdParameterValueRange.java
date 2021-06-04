@@ -79,4 +79,26 @@ public class VsdParameterValueRange implements InterfaceInformationElement {
 		if (parameterId == null) throw new MalformattedElementException("VSD parameter value range without ID.");
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		// If the object is compared with itself then return true
+		if (o == this) {
+			return true;
+		}
+
+        /* Check if o is an instance of VsdParameterValueRange or not
+          "null instanceof [type]" also returns false */
+		if (!(o instanceof VsdParameterValueRange)) {
+			return false;
+		}
+
+		// typecast o to VsdParameterValueRange so that we can compare data members
+		VsdParameterValueRange c = (VsdParameterValueRange) o;
+
+		// Compare the data members and return accordingly
+		return parameterId.equals(c.parameterId)
+				&& minValue == c.minValue
+				&& maxValue == c.maxValue;
+	}
+
 }

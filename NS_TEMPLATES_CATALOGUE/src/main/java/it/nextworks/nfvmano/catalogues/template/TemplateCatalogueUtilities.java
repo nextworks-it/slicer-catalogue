@@ -62,6 +62,13 @@ public class TemplateCatalogueUtilities {
         return new Filter(filterParams);
     }
 
+    public static Filter buildPnfdInfoFilter(String pnfdId, String pnfdVersion){
+        Map<String, String> filterParams = new HashMap<>();
+        filterParams.put("PNFD_ID", pnfdId);
+        filterParams.put("NSD_VERSION", pnfdVersion);
+        return new Filter(filterParams);
+    }
+
     public static Filter buildNstInfoFilter(String nstId, String nstVersion) {
         //NSD_ID
         //NSD_VERSION

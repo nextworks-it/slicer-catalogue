@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
+import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
+import it.nextworks.nfvmano.catalogues.template.repo.ConfigurationRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +64,9 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 
 	@Autowired
 	private NsTemplateRepository nstRepository;
+
+	@Autowired
+	private ConfigurationRuleRepository configurationRuleRepository;
 
 	public NsTemplateCatalogueService() { }
 
@@ -131,7 +137,25 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 						//nsTemplateInfo.addNsdInfoId(oldNsdInfoId);
 					}
 				}
-
+			}
+			if(request.getPnfds()!=null) {
+				log.debug("Storing Pnfds");
+				List<Pnfd> pnfds = request.getPnfds();
+				for (Pnfd pnfd : pnfds) {
+					try {
+						Map<String, String> userDefinedData = new HashMap<>();
+						String pnfdInfoId = nfvoCatalogueService.onboardPnfd(new OnboardPnfdRequest(pnfd,userDefinedData));
+						log.debug("Added PNFD " + pnfd.getPnfdId() +
+								", version " + pnfd.getVersion() + " in NFVO catalogue. NSD Info ID: " + pnfdInfoId);
+						//nsTemplateInfo.addVnfPackageInfoId(vnfPackageId);
+					} catch (AlreadyExistingEntityException e) {
+						log.debug("The PNFD is already present in the NFVO catalogue. Retrieving its ID.");
+						QueryPnfdResponse queryPnfdResponse = nfvoCatalogueService.queryPnfd(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildPnfdInfoFilter(pnfd.getPnfdId(),pnfd.getVersion()),null));
+						String oldPnfdInfoId = queryPnfdResponse.getQueryResult().get(0).getPnfdInfoId();
+						log.debug("Retrieved PNFD Info ID: " + oldPnfdInfoId);
+						//nsTemplateInfo.addVnfPackageInfoId(oldVnfPackageId);
+					}
+				}
 			}
 			String nstId = storeNsTemplate(request.getNst());
 			NsTemplateInfo nsTemplateInfo;
@@ -143,6 +167,16 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 				throw new FailedOperationException("Internal error: impossible to retrieve NsTemplateInfo.");
 			}
 			nstInfoRepository.saveAndFlush(nsTemplateInfo);
+
+			request.setNstIdInConfigurationRules(nstId);
+			log.debug("Storing configuration rules");
+			List<NstConfigurationRule> crs = request.getConfigurationRules();
+			for (NstConfigurationRule cr : crs) {
+				cr.isValid();
+				configurationRuleRepository.saveAndFlush(cr);
+			}
+			log.debug("Configuration rules saved in internal DB.");
+
 			return nstId;
 		}catch (Exception e) {
 			log.error("Something went wrong when processing SO descriptors.",e );
