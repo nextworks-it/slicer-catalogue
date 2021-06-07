@@ -19,17 +19,20 @@ package it.nextworks.nfvmano.catalogue.blueprint.messages;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
 import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsdNsdTranslationRule;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 
 public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 
 	private VsBlueprint vsBlueprint;
 	private List<OnBoardVnfPackageRequest> vnfPackages = new ArrayList<>();
+
 	public OnBoardVsBlueprintRequest() { }
 
 	/**
@@ -41,9 +44,12 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	 */
 	public OnBoardVsBlueprintRequest(VsBlueprint vsBlueprint,
 									 List<Nsd> nsds,
-									 List<VsdNsdTranslationRule> translationRules,  List<OnBoardVnfPackageRequest> vnfPackages,
-									 List<NST> nsts) {
-		super(nsds, translationRules, nsts);
+									 List<VsdNsdTranslationRule> translationRules,
+									 List<OnBoardVnfPackageRequest> vnfPackages,
+									 List<NST> nsts,
+									 List<Pnfd> pnfdList,
+									 List<NstConfigurationRule> configurationRules) {
+		super(nsds, translationRules, nsts, pnfdList, configurationRules);
 		if(vnfPackages!=null) this.vnfPackages= vnfPackages;
 		this.vsBlueprint = vsBlueprint;
 	}
@@ -69,6 +75,5 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 	public List<OnBoardVnfPackageRequest> getVnfPackages() {
 		return vnfPackages;
 	}
-
 
 }

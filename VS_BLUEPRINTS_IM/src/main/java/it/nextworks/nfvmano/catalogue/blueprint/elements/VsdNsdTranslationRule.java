@@ -16,6 +16,7 @@
 package it.nextworks.nfvmano.catalogue.blueprint.elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 
 	@Id
 	@GeneratedValue
-    @JsonIgnore
+	@JsonInclude(JsonInclude.Include.NON_NULL)
     private Long id;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
@@ -61,12 +62,14 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	@JsonIgnore
 	private String nsdInfoId;
 
-
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	//map<vsb_param_name, nst_param_name>
+	private Map<String, String> parametersMapping = new HashMap<>();
 	
 	public VsdNsdTranslationRule() { }
-	
-	
-	
+
 	/**
 	 * @param input
 	 * @param nsdId
@@ -75,12 +78,13 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	 * @param nsInstantiationLevelId
 	 */
 	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nsdId, String nsdVersion,
-                                 String nsFlavourId, String nsInstantiationLevelId) {
+                                 String nsFlavourId, String nsInstantiationLevelId, Map<String, String> nstConfigParamsMapping) {
 		if (input!= null) this.input = input;
 		this.nsdId = nsdId;
 		this.nsdVersion = nsdVersion;
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
+		this.parametersMapping = nstConfigParamsMapping;
 	}
 	
 	/**
@@ -92,23 +96,24 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	 * @param nsInstantiationLevelId
 	 */
 	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nstId, String nsdId, String nsdVersion,
-                                 String nsFlavourId, String nsInstantiationLevelId) {
+                                 String nsFlavourId, String nsInstantiationLevelId, Map<String, String> nstConfigParamsMapping) {
 		if (input!= null) this.input = input;
 		this.nstId = nstId;
 		this.nsdId = nsdId;
 		this.nsdVersion = nsdVersion;
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
+		this.parametersMapping = nstConfigParamsMapping;
 	}
 
 
-	
+	public Long getId(){
+		return id;
+	}
 
 	public String getNstId() {
 		return nstId;
 	}
-
-
 
 	/**
 	 * @return the nsdInfoId
@@ -159,19 +164,12 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		return nsInstantiationLevelId;
 	}
 	
-	
-	
-
-
-
-
 	/**
 	 * @return the blueprintId
 	 */
 	public String getBlueprintId() {
 		return blueprintId;
 	}
-
 
 
 	/**
@@ -181,6 +179,13 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		this.blueprintId = blueprintId;
 	}
 
+	public Map<String, String> getParametersMapping() {
+		return parametersMapping;
+	}
+
+	public void setParametersMapping(Map<String, String> parametersMapping) {
+		this.parametersMapping = parametersMapping;
+	}
 
 	@JsonIgnore
 	public boolean matchesNstId(String id) {
