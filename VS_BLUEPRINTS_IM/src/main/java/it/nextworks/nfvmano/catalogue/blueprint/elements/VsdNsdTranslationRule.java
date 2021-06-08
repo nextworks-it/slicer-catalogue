@@ -67,6 +67,13 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	//map<vsb_param_name, nst_param_name>
 	private Map<String, String> parametersMapping = new HashMap<>();
+
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	//map<nsstId, domainId>
+	private Map<String, String> nsstDomain = new HashMap<>();
 	
 	public VsdNsdTranslationRule() { }
 
@@ -104,6 +111,26 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 		this.nsFlavourId = nsFlavourId;
 		this.nsInstantiationLevelId = nsInstantiationLevelId;
 		this.parametersMapping = nstConfigParamsMapping;
+	}
+
+	/**
+	 * @param input
+	 * @param nstId
+	 * @param nsdId
+	 * @param nsdVersion
+	 * @param nsFlavourId
+	 * @param nsInstantiationLevelId
+	 */
+	public VsdNsdTranslationRule(List<VsdParameterValueRange> input, String nstId, String nsdId, String nsdVersion,
+								 String nsFlavourId, String nsInstantiationLevelId, Map<String, String> nstConfigParamsMapping, Map<String, String> nsstDomain) {
+		if (input!= null) this.input = input;
+		this.nstId = nstId;
+		this.nsdId = nsdId;
+		this.nsdVersion = nsdVersion;
+		this.nsFlavourId = nsFlavourId;
+		this.nsInstantiationLevelId = nsInstantiationLevelId;
+		this.parametersMapping = nstConfigParamsMapping;
+		if(nsstDomain!=null) this.nsstDomain = nsstDomain;
 	}
 
 
@@ -228,6 +255,10 @@ public class VsdNsdTranslationRule implements InterfaceInformationElement {
 			if (p.getParameterId().equals(parameterId)) return p;
 		}
 		throw new NotExistingEntityException("VSD parameter not found in the rule");
+	}
+
+	public Map<String, String> getNsstDomain() {
+		return nsstDomain;
 	}
 
 	@Override
