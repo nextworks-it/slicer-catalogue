@@ -1,0 +1,103 @@
+- debug:
+    msg: "Trying to create folder at {{ default_folder }}"
+
+- name: check if working dir already exist
+  stat:
+    path: "{{ default_folder }}"
+  register: check_output
+
+- name: confirm file deletion
+  pause:
+    prompt: "The directory {{ default_folder }} already exists. Do you want to delete it?[y/n]"
+  register: confirm_delete
+  when: check_output['stat']['exists'] == true
+
+#validating input
+- fail:
+    msg: Invalid input. [y/n]
+  when: check_output['stat']['exists'] == true and confirm_delete.user_input != "Y" and confirm_delete.user_input != "N" and confirm_delete.user_input != "y" and confirm_delete.user_input != "n" and confirm_delete.user_input != "yes" and confirm_delete.user_input != "no"
+
+- name: delete directory
+  file:
+    path: "{{ default_folder }}"
+    state: absent
+  when: check_output['stat']['exists'] == true and (confirm_delete.user_input == "Y" or confirm_delete.user_input == "y" or confirm_delete.user_input == "yes")
+
+- name: creating directory
+  file:
+    path: "{{ default_folder }}"
+    state: directory
+  when: check_output['stat']['exists'] == false or (confirm_delete.user_input == "Y" or confirm_delete.user_input == "y" or confirm_delete.user_input == "yes")
+
+- name: set delete variable
+  set_fact:
+      deleted: true
+  when: check_output['stat']['exists'] == true and (confirm_delete.user_input == "Y" or confirm_delete.user_input == "y" or confirm_delete.user_input == "yes")
+
+#check java
+- name: Fetch Java version
+  shell: java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+  register: java_version
+
+- fail:
+    msg: "JRE is present, but in a version different than 8. Only JRE 8 is officially supported. Please install Java 8 manually and configure it."
+  when: '"1.8" not in java_version.stdout and java_version.stdout != ""'
+
+- name: Installing java 8
+  apt:
+    name: openjdk-8-jdk
+    state: present
+  become: yes
+
+- name: Update packages
+  apt:
+    update_cache: yes
+  become: yes
+
+#check maven
+- name: "Check if maven is installed"
+  package_facts:
+    manager: "auto"
+
+- name: Installing maven
+  apt:
+    name: maven
+  when: "'maven' not in ansible_facts.packages"
+  become: yes
+
+#check postgresdb
+- name: "Check if postgres is installed"
+  apt:
+    name: postgresql
+  become: yes
+  when: "'postgresql' not in ansible_facts.packages"
+  
+#get repos    
+- name: get nfv-ifa-libs
+  shell: cd {{ default_folder }} && git clone --branch {{ ifa_libs_branch }} {{ ifa_libs_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+- name: get identity-mangement
+  shell: cd {{ default_folder }} && git clone {{ identity_mangement_path }} slicer-identity-mgmt
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+- name: get slicer-catalogue
+  shell: cd {{ default_folder }} && git clone --branch {{ blueprint_catalogue_branch }} {{ blueprint_catalogue_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+- name: get nfv-sol-libs
+  shell: cd {{ default_folder }} && git clone {{ sol_libs_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+#5g repo and config manager repo
+- name: get 5g-catalogue repo
+  shell: cd {{ default_folder }} && git clone {{ fiveg_catalogue_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+- name: get config manager client repo
+  shell: cd {{ default_folder }} && git clone {{ config_manager_client_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false
+
+- name: get nfvo-driver
+  shell: cd {{ default_folder }} && git clone --branch {{ nfvo_driver_branch }} {{ nfvo_driver_path }}
+  when: deleted is defined or check_output['stat']['exists'] == false

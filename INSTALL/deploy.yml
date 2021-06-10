@@ -1,0 +1,15 @@
+# Start the playbook. 
+# $ ansible-playbook deploy.yml -K
+
+# To avoid execution set the start value to false in dependency_vars file
+
+# To avoid compilation set the skip_compilation value to true in dependency_vars file
+
+- hosts: localhost
+  connection: local
+  #debugger: on_failed
+  gather_facts: no
+  vars_files:
+    - ./vars/dependency_vars.yml
+  roles:
+    - role: portal_catalogue

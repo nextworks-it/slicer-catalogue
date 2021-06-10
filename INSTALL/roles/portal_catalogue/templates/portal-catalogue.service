@@ -1,0 +1,12 @@
+[Unit]
+Description=Portal Catalogue Service
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+User={{ default_user }}
+ExecStart=/usr/bin/java -jar {{ default_folder }}/slicer-catalogue/EVE_CATALOGUE_APP/target/EveCatalogueApp-0.0.2-SNAPSHOT.jar --spring.config.location={{ default_folder }}/slicer-catalogue/EVE_CATALOGUE_APP/src/main/resources/application.properties
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

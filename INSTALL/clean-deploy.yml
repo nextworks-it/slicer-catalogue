@@ -1,0 +1,27 @@
+- hosts: localhost
+  connection: local
+  #debugger: on_failed
+  gather_facts: no
+  vars_files:
+    - ./vars/dependency_vars.yml
+
+  tasks:
+  
+  - name: Stop service postgresql, if started
+    ansible.builtin.service:
+      name: postgresql
+      state: stopped
+    become: yes
+
+  - name: Stop service portal-catalogue, if started
+    ansible.builtin.service:
+      name: portal-catalogue
+      state: stopped
+    become: yes
+
+  - name: remove portal catalogue service
+    file:
+      state: absent
+      path: /etc/systemd/system/portal-catalogue.service
+    become: yes
+

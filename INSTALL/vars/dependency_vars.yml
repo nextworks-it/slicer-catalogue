@@ -1,0 +1,39 @@
+#Start experimental application
+#Set to "true" to execute application
+start: "true"
+
+#Set to "true" to compile
+skip_compilation: "false"
+
+#path to the folder that will contain the application
+default_folder: /home/ubuntu/test
+
+#default user
+default_user: ubuntu
+
+#path of the log directory
+log_folder: /var/log/catalogue/
+
+#nfv-ifa-libs
+ifa_libs_branch: 5geve-intersite
+ifa_libs_path: https://github.com/nextworks-it/nfv-ifa-libs.git
+
+#identity-management
+identity_mangement_path: https://github.com/nextworks-it/slicer-identity-mgmt.git
+
+#blueprint-catalogue
+blueprint_catalogue_branch: 5geve-release
+blueprint_catalogue_path: https://github.com/nextworks-it/slicer-catalogue.git
+
+#nfv-sol-libs
+sol_libs_path: https://github.com/nextworks-it/nfv-sol-libs.git
+
+#5g-catalogue
+fiveg_catalogue_path: https://github.com/nextworks-it/5g-catalogue.git
+
+#config manager
+config_manager_client_path: https://github.com/nextworks-it/config-manager-client.git
+
+#nfvo-driver
+nfvo_driver_branch: 5geve-multisite
+nfvo_driver_path: https://github.com/nextworks-it/nfvo-drivers.git

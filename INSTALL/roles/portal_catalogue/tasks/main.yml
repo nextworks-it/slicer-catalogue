@@ -1,0 +1,71 @@
+- include: dependencies-task.yml
+
+- include: install-modules.yml
+  when: skip_compilation is defined and skip_compilation == "false"
+
+- name: check if log folder already exist
+  stat:
+    path: "{{ log_folder}}"
+  register: check_output_log
+
+- name: create log directory
+  become: yes
+  file:
+    path: "{{ log_folder}}"
+    state: directory
+  when: check_output_log['stat']['exists'] == false
+
+- name: change right
+  become: yes
+  shell: chown {{ default_user }} {{ log_folder}} && chgrp {{ default_user }} {{ log_folder}}
+  when: check_output_log['stat']['exists'] == false
+
+#start
+- name: start postgresql
+  shell: service postgresql start || true
+  become: yes
+  when: start is defined and start == "true"
+
+- name: check db postgres
+  shell: psql -lqt | cut -d \| -f 1 | grep -w eveportalcatalogue | xargs
+  become_user: postgres
+  become: yes
+  register: db_output
+
+- name: configure postgresql
+  shell: psql -c "ALTER USER postgres PASSWORD 'postgres';" >/dev/null
+  become: yes
+  become_user: postgres
+  when: start is defined and start == "true"
+
+- name: configure postgresql
+  shell: psql -c "CREATE DATABASE eveportalcatalogue;" >/dev/null
+  become: yes
+  become_user: postgres
+  when: start is defined and start == "true" and db_output.stdout==""
+
+- name: copy configuration file
+  copy:
+    src: ./templates/application.properties
+    dest: "{{ default_folder }}/slicer-catalogue/EVE_CATALOGUE_APP/src/main/resources"
+    mode: '0664'
+    backup: yes
+
+- name: creating the service
+  template: src=portal-catalogue.service dest=/etc/systemd/system/ mode=644
+  become: yes
+  notify:
+    - reload systemctl
+  when: start is defined and start == "true"
+
+- name: Flushing handler
+  meta: flush_handlers
+
+- name: starting the service
+  service: name=portal-catalogue state=started
+  become: yes
+  when: start is defined and start == "true"
+
+- debug:
+    msg: "Service is starting. Check status with sudo service portal-service status"
+  when: start is defined and start == "true"

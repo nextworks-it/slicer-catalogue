@@ -1,0 +1,20 @@
+- name: compiling nfv-ifa-libs
+  shell: cd {{ default_folder }}/nfv-ifa-libs && mvn clean install
+
+- name: compiling identity-management
+  shell: cd {{ default_folder }}/slicer-identity-mgmt && mvn clean install
+
+- name: compiling nfv-sol-libs
+  shell: cd {{ default_folder }}/nfv-sol-libs && ./install_nfv_sol_libs.sh
+
+- name: compiling OSMr4PlusClient
+  shell: cd {{ default_folder }}/5g-catalogue/OSMr4PlusDataModel && mvn clean install
+
+- name: compiling ConfigManagerClient
+  shell: cd {{ default_folder }}/config-manager-client/ConfigManagerClient && mvn clean install
+
+- name: compiling nfvo-driver
+  shell: cd {{ default_folder }}/nfvo-drivers && mvn clean install
+
+- name: compiling slicer-catalogue
+  shell: cd {{ default_folder }}/slicer-catalogue && mvn clean install
