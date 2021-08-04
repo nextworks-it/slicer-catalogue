@@ -82,7 +82,7 @@ public class ArbitratorPolicyInfo {
         if(arbitratorPolicy.getPolicyUpdateStrategy().equals(PolicyUpdateStrategy.ALWAYS)){
             return true;
         }else if(arbitratorPolicy.getPolicyUpdateStrategy().equals(PolicyUpdateStrategy.EVERY_N_EXECUTIONS)
-            && Integer.parseInt(this.arbitratorPolicy.getPolicyUpdateStrategyParams().get(PolicyUpdateStrategyParams.EXECUTION_TIMES))>=timesUsed){
+            && Integer.parseInt(this.arbitratorPolicy.getPolicyUpdateStrategyParams().get("EXECUTION_TIMES"))<=timesUsed){
             return true;
         }else if(arbitratorPolicy.isDefault()&&timesUsed==0){
             return true;

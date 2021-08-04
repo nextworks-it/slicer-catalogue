@@ -45,6 +45,7 @@ public class ArbitratorPolicyFilter {
 
     public ArbitratorPolicyFilter(ArbitratorPolicy policy, Map<ArbitratorPolicySelector, String> filterData) {
         this.filterData = filterData;
+        this.policy = policy;
     }
 
     public Map<ArbitratorPolicySelector, String> getFilterData() {

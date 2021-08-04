@@ -167,8 +167,8 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 				throw new FailedOperationException("Internal error: impossible to retrieve NsTemplateInfo.");
 			}
 			nstInfoRepository.saveAndFlush(nsTemplateInfo);
-
-			request.setNstIdInConfigurationRules(nstId);
+			//change with nsTemplateInfo.getNstInfoId()
+			//request.setNstIdInConfigurationRules(nstId);
 			log.debug("Storing configuration rules");
 			List<NstConfigurationRule> crs = request.getConfigurationRules();
 			for (NstConfigurationRule cr : crs) {

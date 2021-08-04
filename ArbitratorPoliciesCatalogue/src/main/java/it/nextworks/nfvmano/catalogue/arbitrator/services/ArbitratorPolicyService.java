@@ -1,5 +1,6 @@
 package it.nextworks.nfvmano.catalogue.arbitrator.services;
 
+import it.nextworks.nfvmano.catalogue.arbitrator.im.ArbitratorPolicyFilter;
 import it.nextworks.nfvmano.catalogue.arbitrator.im.ArbitratorPolicySelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +50,14 @@ public class ArbitratorPolicyService implements ArbitratorPolicyCatalogueInterfa
         List<String> obtainedIds = new ArrayList<>();
         for(ArbitratorPolicy policy : request.getPolicies()){
             log.debug("Onboarding "+policy.getName());
-            ArbitratorPolicy nPolicy = new ArbitratorPolicy(null, policy.getName(), policy.getPolicyUpdateStrategy(), policy.getFilter(), policy.getModelId(), policy.getPolicyUpdateStrategyParams(), false);
-
+            ArbitratorPolicy nPolicy = new ArbitratorPolicy(null, policy.getName(), policy.getPolicyUpdateStrategy(), null, policy.getModelId(), policy.getPolicyUpdateStrategyParams(), false);
             arbitratorPolicyRepo.saveAndFlush(nPolicy);
+
+            ArbitratorPolicyFilter arbitratorPolicyFilter = new ArbitratorPolicyFilter(nPolicy,policy.getFilter().getFilterData());
             String arbitratorPolicyId = String.valueOf(nPolicy.getId());
-            log.debug("Received ID "+arbitratorPolicyId);
             nPolicy.setArbitratorPolicyId(arbitratorPolicyId);
+            nPolicy.setFilter(arbitratorPolicyFilter);
+            log.debug("Received ID "+arbitratorPolicyId);
             arbitratorPolicyRepo.saveAndFlush(nPolicy);
 
             ArbitratorPolicyInfo arbitratorPolicyInfo = new ArbitratorPolicyInfo(arbitratorPolicyId, 0, null, null, nPolicy);
@@ -110,15 +113,15 @@ public class ArbitratorPolicyService implements ArbitratorPolicyCatalogueInterfa
                 if(policy.getFilter().getFilterData().containsKey(ArbitratorPolicySelector.VSB)&&
                         policy.getFilter().getFilterData().get(ArbitratorPolicySelector.VSB).equals(vsbId)){
                     log.debug("Found arbitrator policy for VSB_ID:"+ vsbId);
-                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyId(policy.getArbitratorPolicyId()).get();
+                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyInfoId(policy.getArbitratorPolicyId()).get();
                 }else if(policy.getFilter().getFilterData().containsKey(ArbitratorPolicySelector.NETWORK_SLICE_SERVICE_TYPE)&&
                         policy.getFilter().getFilterData().get(ArbitratorPolicySelector.NETWORK_SLICE_SERVICE_TYPE).equals(nsServiceType)){
                     log.debug("Found arbitrator policy for NST:"+ nsServiceType);
-                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyId(policy.getArbitratorPolicyId()).get();
+                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyInfoId(policy.getArbitratorPolicyId()).get();
                 }else if(policy.getFilter().getFilterData().containsKey(ArbitratorPolicySelector.TENANT)&&
                         policy.getFilter().getFilterData().get(ArbitratorPolicySelector.TENANT).equals(tenant)){
                     log.debug("Found arbitrator policy for TENANT:"+ tenant);
-                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyId(policy.getArbitratorPolicyId()).get();
+                    return arbitratorPolicyInfoRepo.findByArbitratorPolicyInfoId(policy.getArbitratorPolicyId()).get();
                 }
             }
 
@@ -148,10 +151,15 @@ public class ArbitratorPolicyService implements ArbitratorPolicyCatalogueInterfa
 
     public void updateArbitratorPolicyInfoFile(String policyId, File file){
         log.debug("Received request to update and arbiration policy trained model file");
-        ArbitratorPolicyInfo policyInfo = arbitratorPolicyInfoRepo.findByArbitratorPolicyId(policyId).get();
+        ArbitratorPolicyInfo policyInfo = arbitratorPolicyInfoRepo.findByArbitratorPolicyInfoId(policyId).get();
         policyInfo.setTrainedModelFilePath(file.getAbsolutePath());
         arbitratorPolicyInfoRepo.saveAndFlush(policyInfo);
 
+    }
+
+    public String getArbitratorPolicyInfoFile(String policyId){
+        ArbitratorPolicyInfo policyInfo = arbitratorPolicyInfoRepo.findByArbitratorPolicyInfoId(policyId).get();
+        return new File(policyInfo.getTrainedModelFilePath()).getName();
     }
 
     public void updateArbitratorPolicyUsage(String policyId){

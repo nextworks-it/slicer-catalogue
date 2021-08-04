@@ -55,7 +55,7 @@ public abstract class NstConfigurationRule implements InterfaceInformationElemen
 	@Cascade(org.hibernate.annotations.CascadeType.ALL)
 	protected List<String> params;
 
-	@JsonIgnore
+	//@JsonIgnore
 	protected String nstId;
 
 	public NstConfigurationRule() { }

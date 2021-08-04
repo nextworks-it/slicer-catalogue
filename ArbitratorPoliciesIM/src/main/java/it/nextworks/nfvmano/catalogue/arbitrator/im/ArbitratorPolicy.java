@@ -49,14 +49,13 @@ public class ArbitratorPolicy {
 
 
 
-    /*
-    @ElementCollection
-    @CollectionTable(name = "policy_update_params",
-            joinColumns = {@JoinColumn(name = "arbitrator_policy_param", referencedColumnName = "arbitrator_policy_id")})
-    @MapKeyColumn(name = "policy_update_param_name")
-    @Column(name = "value")
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @ElementCollection(fetch=FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Map<String, String> policyUpdateStrategyParams = new HashMap<>();
- */
+
     public ArbitratorPolicy() {
     }
 
@@ -66,7 +65,7 @@ public class ArbitratorPolicy {
         this.filter = filter;
         this.modelId = modelId;
         this.name= name;
-        //this.policyUpdateStrategyParams = policyUpdateStrategyParams;
+        if(policyUpdateStrategyParams!=null) this.policyUpdateStrategyParams = policyUpdateStrategyParams;
         this.isDefault = isDefault;
     }
 
@@ -86,6 +85,10 @@ public class ArbitratorPolicy {
         return filter;
     }
 
+    public void setFilter(ArbitratorPolicyFilter filter) {
+        this.filter = filter;
+    }
+
     public Long getId() {
         return id;
     }
@@ -98,10 +101,10 @@ public class ArbitratorPolicy {
         return modelId;
     }
 
-    @JsonIgnore
+
     public Map<String, String> getPolicyUpdateStrategyParams() {
-        //return policyUpdateStrategyParams;
-        return new HashMap<>();
+        return policyUpdateStrategyParams;
+        //return new HashMap<>();
     }
 
 
