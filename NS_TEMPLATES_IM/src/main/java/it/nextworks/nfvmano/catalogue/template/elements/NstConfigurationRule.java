@@ -58,6 +58,10 @@ public abstract class NstConfigurationRule implements InterfaceInformationElemen
 	//@JsonIgnore
 	protected String nstId;
 
+	protected String vnfdId;
+
+	protected boolean day1;
+
 	public NstConfigurationRule() { }
 
 	public Long getId() {
@@ -108,6 +112,14 @@ public abstract class NstConfigurationRule implements InterfaceInformationElemen
 		this.nstId = nstId;
 	}
 
+	public String getVnfdId() { return vnfdId; }
+
+	public void setVnfdId(String vnfdId) { this.vnfdId = vnfdId;}
+
+	public boolean isDay1() { return day1; }
+
+	public void setDay1(boolean day1) { this.day1 = day1;}
+
 	@Override
 	public void isValid() throws MalformattedElementException {
 		if (type == null) throw new MalformattedElementException("NST configuration rule without type");
@@ -123,6 +135,8 @@ public abstract class NstConfigurationRule implements InterfaceInformationElemen
 				", name='" + name + '\'' +
 				", nsdId='" + nsdId + '\'' +
 				", params=" + params + '\'' +
+				", vnfdId=" + vnfdId + '\'' +
+				", day1=" + day1 + '\'' +
 				'}';
 	}
 }
