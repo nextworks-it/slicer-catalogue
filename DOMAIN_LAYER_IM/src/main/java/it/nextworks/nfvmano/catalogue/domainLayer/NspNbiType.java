@@ -5,5 +5,6 @@ public enum NspNbiType {
     SONATA,
     NEUTRAL_HOSTING,
     SEBASTIAN,
+    SLICE_MANAGER,
     OSM
 }

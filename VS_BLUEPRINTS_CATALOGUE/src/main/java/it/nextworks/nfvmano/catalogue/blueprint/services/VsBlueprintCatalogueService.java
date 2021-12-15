@@ -27,7 +27,8 @@ import it.nextworks.nfvmano.catalogue.template.interfaces.NsTemplateCatalogueInt
 import it.nextworks.nfvmano.catalogue.template.messages.OnBoardNsTemplateRequest;
 import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.services.NsTemplateCatalogueService;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
+import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.libs.ifa.templates.NST;
 import it.nextworks.nfvmano.nfvodriver.NfvoCatalogueService;
 import org.slf4j.Logger;
@@ -141,7 +142,17 @@ public class VsBlueprintCatalogueService implements VsBlueprintCatalogueInterfac
 		}
 		
 		if(request.getNsts()!=null && !request.getNsts().isEmpty()){
-			OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), request.getNsds(), request.getVnfPackages(),request.getPnfds(),request.getConfigurationRules());
+			ArrayList<OnboardNsdRequest> nsdRequests = new ArrayList<>();
+			for(Nsd currentNsd: request.getNsds()){
+				nsdRequests.add(new OnboardNsdIfaRequest(currentNsd, null));
+			}
+			nsdRequests.addAll(request.getOnboardNsdRequests());
+			ArrayList<OnboardPnfdRequest> pnfdRequests = new ArrayList<>();
+			for(Pnfd currentPnfd: request.getPnfds()){
+				pnfdRequests.add(new OnboardPnfdIfaRequest(currentPnfd, null));
+			}
+
+			OnBoardNsTemplateRequest nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(0), nsdRequests, request.getVnfPackages(),pnfdRequests,request.getConfigurationRules());
 			nsTemplateCatalogueService.onBoardNsTemplate(nstRequest);
 			for(int i=1; i<request.getNsts().size(); i++) {
 				nstRequest = new OnBoardNsTemplateRequest(request.getNsts().get(i), null, null,null,null);

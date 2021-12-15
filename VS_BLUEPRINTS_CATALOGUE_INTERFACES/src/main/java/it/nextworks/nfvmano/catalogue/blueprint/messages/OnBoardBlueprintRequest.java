@@ -21,7 +21,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnboardNsdRequest;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
@@ -36,6 +36,8 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 	private List<NST> nsts = new ArrayList<>();
 	private List<Pnfd> pnfds = new ArrayList<>();
 	private List<NstConfigurationRule> configurationRules = new ArrayList<>();
+	private List<OnboardNsdRequest> onboardNsdRequests = new ArrayList<>();
+
 
 	private String owner;
 
@@ -53,14 +55,20 @@ public class OnBoardBlueprintRequest implements InterfaceMessage {
 								   List<VsdNsdTranslationRule> translationRules,
 								   List<NST> nsts,
 								   List<Pnfd> pnfds,
-								   List<NstConfigurationRule> configurationRules) {
+								   List<NstConfigurationRule> configurationRules,
+								   List<OnboardNsdRequest> nsdRequests
+	) {
 		if (nsds != null) this.nsds = nsds;
 		if (translationRules != null) this.translationRules = translationRules;
 		if (nsts!=null) this.nsts = nsts;
 		if (pnfds!=null) this.pnfds = pnfds;
 		if (configurationRules != null) this.configurationRules = configurationRules;
+		if (nsdRequests!=null) this.onboardNsdRequests =nsdRequests;
 	}
 
+	public List<OnboardNsdRequest> getOnboardNsdRequests() {
+		return onboardNsdRequests;
+	}
 
 	/**
 	 * @return the nsds

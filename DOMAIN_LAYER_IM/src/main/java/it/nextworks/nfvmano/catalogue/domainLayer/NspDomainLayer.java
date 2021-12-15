@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer.NHNspDomainLayer;
 import it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer.OsmNspDomainLayer;
+import it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer.SliceManagerNspDomainLayer;
 import it.nextworks.nfvmano.catalogue.domainLayer.customDomainLayer.SonataNspDomainLayer;
 
 import javax.persistence.Entity;
@@ -17,7 +18,9 @@ import javax.persistence.InheritanceType;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = NHNspDomainLayer.class, name = "NEUTRAL_HOSTING_NSP"),
         @JsonSubTypes.Type(value = OsmNspDomainLayer.class, name = "OSM_NSP"),
-        @JsonSubTypes.Type(value = SonataNspDomainLayer.class, name = "SONATA_NSP")})
+        @JsonSubTypes.Type(value = SonataNspDomainLayer.class, name = "SONATA_NSP"),
+        @JsonSubTypes.Type(value = SliceManagerNspDomainLayer.class, name = "SLICE_MANAGER_NSP")
+})
 public class NspDomainLayer extends DomainLayer {
     @JsonProperty("nspNbiType")
     private NspNbiType nspNbiType;

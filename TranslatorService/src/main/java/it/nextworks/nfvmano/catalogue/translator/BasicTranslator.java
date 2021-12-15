@@ -59,10 +59,10 @@ public class BasicTranslator extends AbstractTranslator {
 			VsDescriptor vsd = entry.getValue();
 			VsdNsdTranslationRule rule = findMatchingTranslationRule(vsd);
 
-			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(),  null, rule.getNsstDomain(), null);
+			NfvNsInstantiationInfo info = new NfvNsInstantiationInfo(rule.getNstId(), rule.getNsdId(), rule.getNsdVersion(), rule.getNsFlavourId(), rule.getNsInstantiationLevelId(), null, null, null);
 			nfvNsInfo.put(vsdId, info);
 			log.debug("Added NS instantiation info for VSD " + vsdId + " - NST ID: " + rule.getNstId() + " - NSD ID: " + rule.getNsdId() + " - NSD version: " + rule.getNsdVersion() + " - DF ID: " 
-					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId()+" nsstDomains: "+rule.getNsstDomain());
+					+ rule.getNsFlavourId() + " - IL ID: " + rule.getNsInstantiationLevelId());
 		}
 		return nfvNsInfo;
 	}

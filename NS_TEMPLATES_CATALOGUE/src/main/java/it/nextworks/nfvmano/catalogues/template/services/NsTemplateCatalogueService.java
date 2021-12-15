@@ -23,6 +23,7 @@ import java.util.UUID;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
 import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
 import it.nextworks.nfvmano.catalogues.template.repo.ConfigurationRuleRepository;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.enums.NsdFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ import it.nextworks.nfvmano.catalogue.template.messages.QueryNsTemplateResponse;
 import it.nextworks.nfvmano.catalogues.template.TemplateCatalogueUtilities;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateInfoRepository;
 import it.nextworks.nfvmano.catalogues.template.repo.NsTemplateRepository;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.*;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.*;
 import it.nextworks.nfvmano.libs.ifa.common.elements.Filter;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.*;
 import it.nextworks.nfvmano.libs.ifa.common.messages.GeneralizedQueryRequest;
@@ -110,50 +111,38 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 								", version " + vnfR.getVersion() + ", provider " + vnfR.getProvider() + " in NFVO catalogue. VNF package ID: " + vnfPackageId);
 						//nsTemplateInfo.addVnfPackageInfoId(vnfPackageId);
 					} catch (AlreadyExistingEntityException e) {
-						log.debug("The VNF package is already present in the NFVO catalogue. Retrieving its ID.");
-						QueryOnBoardedVnfPkgInfoResponse r =
-								nfvoCatalogueService.queryVnfPackageInfo(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildVnfPackageInfoFilter(vnfR.getName(), vnfR.getVersion(), vnfR.getProvider()), null));
-						String oldVnfPackageId = r.getQueryResult().get(0).getOnboardedVnfPkgInfoId();
-						log.debug("Retrieved VNF package ID: " + oldVnfPackageId);
+						log.debug("The VNF package is already present in the NFVO catalogue. ");
+
 						//nsTemplateInfo.addVnfPackageInfoId(oldVnfPackageId);
 					}
 				}
 			}
 			if(request.getNsds()!=null) {
 				log.debug("Storing NSDs");
-				List<Nsd> nsds = request.getNsds();
-				for (Nsd nsd : nsds) {
+
+				for (OnboardNsdRequest nsdReq : request.getNsds()) {
 					try {
 						Map<String, String> userDefinedData = new HashMap<>();
-						String nsdInfoId = nfvoCatalogueService.onboardNsd(new OnboardNsdRequest(nsd, userDefinedData));
-						log.debug("Added NSD " + nsd.getNsdIdentifier() +
-								", version " + nsd.getVersion() + " in NFVO catalogue. NSD Info ID: " + nsdInfoId);
+						String nsdInfoId = nfvoCatalogueService.onboardNsd(nsdReq);
 						//nsTemplateInfo.addNsdInfoId(nsdInfoId);
 					} catch (AlreadyExistingEntityException e) {
-						log.debug("The NSD is already present in the NFVO catalogue. Retrieving its ID.");
-						QueryNsdResponse nsdR = nfvoCatalogueService.queryNsd(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildNsdInfoFilter(nsd.getNsdIdentifier(), nsd.getVersion()), null));
-						String oldNsdInfoId = nsdR.getQueryResult().get(0).getNsdInfoId();
-						log.debug("Retrieved NSD Info ID: " + oldNsdInfoId);
-						//nsTemplateInfo.addNsdInfoId(oldNsdInfoId);
+						log.debug("The NSD is already present in the NFVO catalogue. IGNORING");
+
 					}
 				}
 			}
 			if(request.getPnfds()!=null) {
 				log.debug("Storing Pnfds");
-				List<Pnfd> pnfds = request.getPnfds();
-				for (Pnfd pnfd : pnfds) {
+
+				for (OnboardPnfdRequest pnfdReq : request.getPnfds()) {
 					try {
 						Map<String, String> userDefinedData = new HashMap<>();
-						String pnfdInfoId = nfvoCatalogueService.onboardPnfd(new OnboardPnfdRequest(pnfd,userDefinedData));
-						log.debug("Added PNFD " + pnfd.getPnfdId() +
-								", version " + pnfd.getVersion() + " in NFVO catalogue. NSD Info ID: " + pnfdInfoId);
+						String pnfdInfoId = nfvoCatalogueService.onboardPnfd(pnfdReq);
+						log.debug("Added PNFD " + pnfdInfoId);
 						//nsTemplateInfo.addVnfPackageInfoId(vnfPackageId);
 					} catch (AlreadyExistingEntityException e) {
-						log.debug("The PNFD is already present in the NFVO catalogue. Retrieving its ID.");
-						QueryPnfdResponse queryPnfdResponse = nfvoCatalogueService.queryPnfd(new GeneralizedQueryRequest(TemplateCatalogueUtilities.buildPnfdInfoFilter(pnfd.getPnfdId(),pnfd.getVersion()),null));
-						String oldPnfdInfoId = queryPnfdResponse.getQueryResult().get(0).getPnfdInfoId();
-						log.debug("Retrieved PNFD Info ID: " + oldPnfdInfoId);
-						//nsTemplateInfo.addVnfPackageInfoId(oldVnfPackageId);
+						log.debug("The PNFD is already present in the NFVO catalogue. IGNORING");
+
 					}
 				}
 			}

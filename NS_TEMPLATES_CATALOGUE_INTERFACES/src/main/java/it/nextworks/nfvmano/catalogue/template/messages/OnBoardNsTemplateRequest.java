@@ -20,8 +20,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnboardNsdRequest;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnboardPnfdRequest;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
 import it.nextworks.nfvmano.libs.ifa.common.InterfaceMessage;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Pnfd;
@@ -30,9 +32,9 @@ import it.nextworks.nfvmano.libs.ifa.templates.NST;
 public class OnBoardNsTemplateRequest implements InterfaceMessage {
 
     private NST nst;
-    private List<Nsd> nsds = new ArrayList<>();
+    private List<OnboardNsdRequest> nsds = new ArrayList<>();
 	private List<OnBoardVnfPackageRequest> vnfPackages = new ArrayList<>();
-	private List<Pnfd> pnfds = new ArrayList<>();
+	private List<OnboardPnfdRequest> pnfds = new ArrayList<>();
 
 	private List<NstConfigurationRule> configurationRules = new ArrayList<>();
 
@@ -43,7 +45,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 	 * @param nsds
 	 */
 
-	public OnBoardNsTemplateRequest(NST nst, List<Nsd> nsds, List<OnBoardVnfPackageRequest> vnfPackages, List<Pnfd> pnfds, List<NstConfigurationRule> configurationRules) {
+	public OnBoardNsTemplateRequest(NST nst, List<OnboardNsdRequest> nsds, List<OnBoardVnfPackageRequest> vnfPackages, List<OnboardPnfdRequest> pnfds, List<NstConfigurationRule> configurationRules) {
     	if(this.nsds!=null)
 			this.nsds = nsds;
         this.nst = nst;
@@ -57,7 +59,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
     @Override
 	public void isValid() throws MalformattedElementException {
 		if (nsds!=null && nsds.isEmpty()){
-			for (Nsd nsd : nsds) nsd.isValid();
+			for (OnboardNsdRequest nsd : nsds) nsd.isValid();
 		}
 
 		if(vnfPackages!=null && !vnfPackages.isEmpty()){
@@ -68,7 +70,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
         else nst.isValid();
 
         if(pnfds != null && !pnfds.isEmpty()){
-        	for (Pnfd pnfd : pnfds) pnfd.isValid();
+        	for (OnboardPnfdRequest pnfd : pnfds) pnfd.isValid();
 		}
 		if(!configurationRules.isEmpty()) for (NstConfigurationRule r : configurationRules) r.isValid();
 	}
@@ -81,11 +83,11 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 		this.nst = nst;
 	}
 
-	public List<Nsd> getNsds() {
+	public List<OnboardNsdRequest> getNsds() {
 		return nsds;
 	}
 
-	public List<Pnfd> getPnfds() { return pnfds; }
+	public List<OnboardPnfdRequest> getPnfds() { return pnfds; }
 
 	/**
 	 * @return the vnfPackages

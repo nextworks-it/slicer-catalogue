@@ -88,6 +88,9 @@ public class TranslatorService implements TranslatorInterface {
 		} else if (translatorType.equals("GROWTH_ALB")){
 			log.debug("The Vertical Slicer is configured to operate with VINNI translator.");
 			translator = new GrowthALBTranslator(vsDescriptorRepository, translationRuleRepository, nsTemplateRepository, domainRepository, vsBlueprintRepository);
+		} else if (translatorType.equals("SLICE_MANAGER")) {
+			log.debug("The Vertical Slicer is configured to operate with a SLICE_MANAGER translator.");
+			translator = new SliceManagerTranslator(vsDescriptorRepository, domainRepository, vsBlueprintRepository);
 		} else {
 			log.error("Translator not configured!");
 		}
