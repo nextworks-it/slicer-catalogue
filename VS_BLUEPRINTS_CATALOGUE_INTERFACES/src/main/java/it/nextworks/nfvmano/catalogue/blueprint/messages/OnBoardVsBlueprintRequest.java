@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.nextworks.nfvmano.catalogue.template.elements.NstConfigurationRule;
-import it.nextworks.nfvmano.libs.ifa.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnBoardVnfPackageRequest;
+import it.nextworks.nfvmano.libs.ifasol.catalogues.interfaces.messages.OnboardNsdRequest;
 import it.nextworks.nfvmano.libs.ifa.common.exceptions.MalformattedElementException;
 import it.nextworks.nfvmano.libs.ifa.descriptors.nsd.Nsd;
 import it.nextworks.nfvmano.catalogue.blueprint.elements.VsBlueprint;
@@ -48,8 +49,9 @@ public class OnBoardVsBlueprintRequest extends OnBoardBlueprintRequest {
 									 List<OnBoardVnfPackageRequest> vnfPackages,
 									 List<NST> nsts,
 									 List<Pnfd> pnfdList,
-									 List<NstConfigurationRule> configurationRules) {
-		super(nsds, translationRules, nsts, pnfdList, configurationRules);
+									 List<NstConfigurationRule> configurationRules,
+									 List<OnboardNsdRequest> nsdRequests) {
+		super(nsds, translationRules, nsts, pnfdList, configurationRules, nsdRequests);
 		if(vnfPackages!=null) this.vnfPackages= vnfPackages;
 		this.vsBlueprint = vsBlueprint;
 	}

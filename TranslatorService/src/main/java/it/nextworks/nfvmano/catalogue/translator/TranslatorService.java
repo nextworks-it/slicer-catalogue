@@ -91,6 +91,13 @@ public class TranslatorService implements TranslatorInterface {
 		} else if (translatorType.equals("SLICE_MANAGER")) {
 			log.debug("The Vertical Slicer is configured to operate with a SLICE_MANAGER translator.");
 			translator = new SliceManagerTranslator(vsDescriptorRepository, domainRepository, vsBlueprintRepository);
+		} else if (translatorType.equals("SLICE_MANAGER_RESOURCE")) {
+			log.debug("The Vertical Slicer is configured to operate with a SLICE_MANAGER_RESOURCE translator.");
+			translator = new SliceManagerResourceTranslator(vsDescriptorRepository, domainRepository, vsBlueprintRepository, translationRuleRepository);
+
+		} else if (translatorType.equals("ETSI_FSM")) {
+			log.debug("The Vertical Slicer is configured to operate with a ETSI_FSM translator.");
+			translator = new EtsiFsmTranslator(vsDescriptorRepository, domainRepository, vsBlueprintRepository, nsTemplateRepository, translationRuleRepository);
 		} else {
 			log.error("Translator not configured!");
 		}

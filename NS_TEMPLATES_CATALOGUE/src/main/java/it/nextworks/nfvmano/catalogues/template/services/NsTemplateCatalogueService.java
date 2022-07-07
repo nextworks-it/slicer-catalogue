@@ -131,6 +131,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 					}
 				}
 			}
+			/*
 			if(request.getPnfds()!=null) {
 				log.debug("Storing Pnfds");
 
@@ -145,7 +146,7 @@ public class NsTemplateCatalogueService implements NsTemplateCatalogueInterface 
 
 					}
 				}
-			}
+			}*/
 			String nstId = storeNsTemplate(request.getNst());
 			NsTemplateInfo nsTemplateInfo;
 

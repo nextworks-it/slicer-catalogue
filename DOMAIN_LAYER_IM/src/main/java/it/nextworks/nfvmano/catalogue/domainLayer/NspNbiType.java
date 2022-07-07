@@ -6,5 +6,6 @@ public enum NspNbiType {
     NEUTRAL_HOSTING,
     SEBASTIAN,
     SLICE_MANAGER,
-    OSM
+    OSM,
+    SLICE_MANAGER_FSM,
 }

@@ -60,7 +60,7 @@
 
         <dependency>
             <groupId>it.nextworks.nfvmano</groupId>
-            <artifactId>NfvManoLibsCataloguesIf</artifactId>
+            <artifactId>nfv-mano-libs-catalogue-interfaces</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -34,7 +34,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
     private NST nst;
     private List<OnboardNsdRequest> nsds = new ArrayList<>();
 	private List<OnBoardVnfPackageRequest> vnfPackages = new ArrayList<>();
-	private List<OnboardPnfdRequest> pnfds = new ArrayList<>();
+	//private List<OnboardPnfdRequest> pnfds = new ArrayList<>();
 
 	private List<NstConfigurationRule> configurationRules = new ArrayList<>();
 
@@ -51,8 +51,8 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
         this.nst = nst;
 		if(vnfPackages!=null)
 			this.vnfPackages= vnfPackages;
-		if(pnfds!=null)
-			this.pnfds = pnfds;
+		/*if(pnfds!=null)
+			this.pnfds = pnfds;*/
 		if (configurationRules != null) this.configurationRules = configurationRules;
     }
 
@@ -69,9 +69,9 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 		if (nst == null) throw new MalformattedElementException("On board NS Template request without NS Template");
         else nst.isValid();
 
-        if(pnfds != null && !pnfds.isEmpty()){
+        /*if(pnfds != null && !pnfds.isEmpty()){
         	for (OnboardPnfdRequest pnfd : pnfds) pnfd.isValid();
-		}
+		}*/
 		if(!configurationRules.isEmpty()) for (NstConfigurationRule r : configurationRules) r.isValid();
 	}
 
@@ -87,7 +87,7 @@ public class OnBoardNsTemplateRequest implements InterfaceMessage {
 		return nsds;
 	}
 
-	public List<OnboardPnfdRequest> getPnfds() { return pnfds; }
+	//public List<OnboardPnfdRequest> getPnfds() { return pnfds; }
 
 	/**
 	 * @return the vnfPackages
