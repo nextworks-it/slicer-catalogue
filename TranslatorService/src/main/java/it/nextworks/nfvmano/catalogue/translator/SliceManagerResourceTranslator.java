@@ -58,7 +58,13 @@ public class SliceManagerResourceTranslator extends AbstractTranslator {
             //This translator is meant to be used in a 5GZORRO scenario
             // if the vSB name ends in resource means the allocation should happen through the slice manager
             //otherwise we use the default domain (NSMF) for the instantiation
-            if (blueprint.getName().contains("_resource")) {
+            log.debug("Bluperint Name:"+blueprint.getName());
+            log.debug("Blueprint Description:"+blueprint.getDescription());
+            if(blueprint.getDescription()!=null){
+                log.debug("Blueprint SM:"+blueprint.getDescription().contains("SM"));
+            }
+
+            if (blueprint.getName().contains("_resource") || (blueprint.getDescription()!=null&&blueprint.getDescription().contains("SM"))) {
                 List<String> nstDomains = new ArrayList<>();
                 nstDomains.add("5GBARCELONA");
                 Map<String, String> nsstDomain = new HashMap<>();
